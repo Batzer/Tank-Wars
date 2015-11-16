@@ -1,0 +1,11 @@
+# Cache files
+*.opensdf
+*.sdf
+
+# Build files
+[Bb]uild/
+[Bb]in/
+[Oo]bj/
+
+# VS folder
+.vs/

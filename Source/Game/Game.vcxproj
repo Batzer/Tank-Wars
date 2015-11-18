@@ -73,21 +73,37 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\Bin\</OutDir>
     <IntDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\Obj\$(ProjectName)\</IntDir>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\Bin\</OutDir>
     <IntDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\Obj\$(ProjectName)\</IntDir>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\Bin\</OutDir>
     <IntDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\Obj\$(ProjectName)\</IntDir>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\Bin\</OutDir>
     <IntDir>$(SolutionDir)Build\$(PlatformTarget)-$(Configuration)\Obj\$(ProjectName)\</IntDir>
+    <CustomBuildAfterTargets>
+    </CustomBuildAfterTargets>
+    <CustomBuildBeforeTargets>
+    </CustomBuildBeforeTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,9 +123,24 @@
       <AdditionalLibraryDirectories>..\..\ThirdParty\glfw3\lib\$(PlatformTarget)-$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "..\..\Content" "$(OutDir)Content" /D /S /E /I /Y</Command>
-      <Message>Copy content to output directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Message>Copying content to output directory</Message>
+      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y</Command>
+      <Outputs>thiswillmakemerunalways</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -129,9 +160,24 @@
       <AdditionalLibraryDirectories>..\..\ThirdParty\glfw3\lib\$(PlatformTarget)-$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "..\..\Content" "$(OutDir)Content" /D /S /E /I /Y</Command>
-      <Message>Copy content to output directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Message>Copying content to output directory</Message>
+      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y</Command>
+      <Outputs>thiswillmakemerunalways</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -155,9 +201,24 @@
       <AdditionalLibraryDirectories>..\..\ThirdParty\glfw3\lib\$(PlatformTarget)-$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "..\..\Content" "$(OutDir)Content" /D /S /E /I /Y</Command>
-      <Message>Copy content to output directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Message>Copying content to output directory</Message>
+      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y</Command>
+      <Outputs>thiswillmakemerunalways</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -181,9 +242,24 @@
       <AdditionalLibraryDirectories>..\..\ThirdParty\glfw3\lib\$(PlatformTarget)-$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "..\..\Content" "$(OutDir)Content" /D /S /E /I /Y</Command>
-      <Message>Copy content to output directory</Message>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
+    <CustomBuildStep>
+      <Message>Copying content to output directory</Message>
+      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y</Command>
+      <Outputs>thiswillmakemerunalways</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c" />
@@ -195,7 +271,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Content\Shaders\Basic.fsh" />
+    <None Include="..\..\Content\Shaders\Basic.fsh">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

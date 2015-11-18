@@ -28,4 +28,12 @@
       <Filter>Dependencies</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\Basic.fsh">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\..\Content\Shaders\Basic.vsh">
+      <Filter>Shader Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

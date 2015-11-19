@@ -138,7 +138,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying content to output directory</Message>
-      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y</Command>
+      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y /i</Command>
       <Outputs>thiswillmakemerunalways</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
@@ -175,7 +175,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying content to output directory</Message>
-      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y</Command>
+      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y /i</Command>
       <Outputs>thiswillmakemerunalways</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
@@ -216,7 +216,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying content to output directory</Message>
-      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y</Command>
+      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y /i</Command>
       <Outputs>thiswillmakemerunalways</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
@@ -257,7 +257,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying content to output directory</Message>
-      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y</Command>
+      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y /i</Command>
       <Outputs>thiswillmakemerunalways</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>

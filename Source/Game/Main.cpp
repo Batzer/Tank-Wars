@@ -1,6 +1,8 @@
 #include "StaticMesh.h"
 #include "MeshTools.h"
 #include "GLTools.h"
+#include "Material.h"
+#include "MeshInstance.h"
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -99,11 +101,23 @@ int main() {
     auto boxMesh = gp::createBoxMesh(1, 1, 1);
     auto planeMesh = gp::createPlane(10, 10);
 
+    gp::Material redMaterial;
+    redMaterial.diffuse = { 1, 0, 0 };
+
+    gp::Material greenMaterial;
+    greenMaterial.diffuse = { 0, 1, 0 };
+
+    gp::Material blueMaterial;
+    blueMaterial.diffuse = { 0, 0, 1 };
+
+    gp::MeshInstance box1(&boxMesh, &redMaterial);
+    gp::MeshInstance box2(&boxMesh, &blueMaterial);
+    gp::MeshInstance plane(&planeMesh, &greenMaterial);
+
     glm::vec3 dirToLight(-1, 1, 1);
     dirToLight = glm::normalize(dirToLight);
 
     glm::vec3 ambientColor(0.2f, 0.2f, 0.2f);
-    glm::vec3 materialDiffuse(1.0f, 0.0f, 0.0f);
     glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
     glfwSwapInterval(1); // Turn on VSync
@@ -132,35 +146,52 @@ int main() {
 
         auto projMat = glm::perspective(glm::quarter_pi<float>(), static_cast<float>(width) / height, 0.1f, 100.0f);
         auto viewMat = glm::lookAt(glm::vec3(1, 5, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-        auto modelMat = glm::translate(glm::mat4(1), glm::vec3(0, 2, 0));
+        auto viewProjMat = projMat * viewMat;
+
+        glm::mat4 modelMat(1);
+        modelMat = glm::translate(glm::mat4(1), glm::vec3(2, 1, 0));
         modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 0, 1));
         modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 1, 0));
         modelMat = glm::rotate(modelMat, angle, glm::vec3(1, 0, 0));
-        auto invTrModelMat = glm::transpose(glm::inverse(modelMat));
-        auto viewProjMat = projMat * viewMat;
+        box1.setModelMatrix(modelMat);
+
+        modelMat = glm::translate(glm::mat4(1), glm::vec3(-2, 1, 0));
+        modelMat = glm::rotate(modelMat, -angle, glm::vec3(0, 0, 1));
+        modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 1, 0));
+        modelMat = glm::rotate(modelMat, -angle, glm::vec3(1, 0, 0));
+        box2.setModelMatrix(modelMat);
 
         glViewport(0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
-        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMat));
-        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(invTrModelMat));
-        glUniformMatrix4fv(viewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMat));
-
+        
+        // Lighting
         glUniform3fv(ambientColorLocation, 1, glm::value_ptr(ambientColor));
         glUniform3fv(lightColorLocation, 1, glm::value_ptr(lightColor));
         glUniform3fv(dirToLightLocation, 1, glm::value_ptr(dirToLight));
-        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(materialDiffuse));
         
-        boxMesh.bindBuffers();
-        boxMesh.render();
+        // Camera
+        glUniformMatrix4fv(viewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMat));
 
-        glUniform3f(materialDiffuseLocation, 0, 1, 0);
-        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
-        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+        // Render the meshes
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(box1.getModelMatrix()));
+        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(box1.getInvTrModelMatrix()));
+        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(box1.getMaterial()->diffuse));
+        box1.getMesh()->bindBuffers();
+        box1.getMesh()->render();
+        
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(box2.getModelMatrix()));
+        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(box2.getInvTrModelMatrix()));
+        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(box2.getMaterial()->diffuse));
+        box2.getMesh()->bindBuffers();
+        box2.getMesh()->render();
 
-        planeMesh.bindBuffers();
-        planeMesh.render();
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(plane.getModelMatrix()));
+        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(plane.getInvTrModelMatrix()));
+        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(plane.getMaterial()->diffuse));
+        plane.getMesh()->bindBuffers();
+        plane.getMesh()->render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

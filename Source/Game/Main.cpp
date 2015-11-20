@@ -1,5 +1,6 @@
 #include "StaticMesh.h"
 #include "MeshTools.h"
+#include "GLTools.h"
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -13,96 +14,10 @@
 #include <fstream>
 #include <memory>
 
-GLuint CreateAndCompileShader(const GLchar* source, GLenum type)
-{
-    auto shader = glCreateShader(type);
-    glShaderSource(shader, 1, &source, nullptr);
-    glCompileShader(shader);
-
-    GLint compileStatus;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
-
-    if (!compileStatus)
-    {
-        GLint infoLogLength;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-        std::unique_ptr<GLchar[]> infoLogBuffer(new GLchar[infoLogLength]);
-        glGetShaderInfoLog(shader, infoLogLength, nullptr, infoLogBuffer.get());
-        glDeleteShader(shader);
-
-        std::string errorMessage("Failed to compile shader with error message:\n");
-        errorMessage += infoLogBuffer.get();
-        throw std::runtime_error(errorMessage);
-    }
-
-    return shader;
-}
-
-GLuint CreateShaderFromFile(const std::string& path, GLenum type)
-{
-    std::ifstream file(path);
-    if (!file.is_open())
-    {
-        throw std::runtime_error("Failed to open shader-file: " + path);
-    }
-
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    return CreateAndCompileShader(buffer.str().c_str(), type);
-}
-
-GLuint CreateAndLinkProgram(GLuint vertexShader, GLuint fragmentShader)
-{
-    auto program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    GLint linkStatus;
-    glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
-
-    if (!linkStatus)
-    {
-        GLint infoLogLength;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-        std::unique_ptr<GLchar[]> infoLogBuffer(new GLchar[infoLogLength]);
-        glGetProgramInfoLog(program, infoLogLength, nullptr, infoLogBuffer.get());
-        glDeleteProgram(program);
-
-        std::string errorMessage("Failed to link program with error message:\n");
-        errorMessage += infoLogBuffer.get();
-        throw std::runtime_error(errorMessage);
-    }
-
-    glValidateProgram(program);
-
-    GLint validateStatus;
-    glGetProgramiv(program, GL_VALIDATE_STATUS, &validateStatus);
-
-    if (!validateStatus)
-    {
-        GLint infoLogLength;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &infoLogLength);
-
-        std::unique_ptr<GLchar[]> infoLogBuffer(new GLchar[infoLogLength]);
-        glGetProgramInfoLog(program, infoLogLength, nullptr, infoLogBuffer.get());
-        glDeleteProgram(program);
-
-        std::string errorMessage("Failed to validate program with error message:\n");
-        errorMessage += infoLogBuffer.get();
-        throw std::runtime_error(errorMessage);
-    }
-
-    return program;
-}
-
 /*
 * Gets called by GLFW3 when an error occurs.
 */
-void ErrorCallback(int error, const char* description)
-{
+void errorCallback(int error, const char* description) {
     (void)error;
 
     std::cerr << description;
@@ -111,13 +26,11 @@ void ErrorCallback(int error, const char* description)
 /*
 * Gets called by GLFW3 when a keyboard key is pressed or released.
 */
-void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     (void)scancode;
     (void)mods;
 
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-    {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
 }
@@ -125,19 +38,16 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 /*
 * Gets called everytime the framebuffer resizes.
 */
-void FramebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
+void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     (void)window;
 
     glViewport(0, 0, width, height);
 }
 
-int main()
-{
-    glfwSetErrorCallback(&ErrorCallback);
+int main() {
+    glfwSetErrorCallback(&errorCallback);
 
-    if (!glfwInit())
-    {
+    if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW3.\n";
     }
 
@@ -152,22 +62,19 @@ int main()
 
     GLFWwindow* window = glfwCreateWindow(1280, 720, "The Game", nullptr, nullptr);
 
-    if (!window)
-    {
+    if (!window) {
         std::cerr << "Failed to create a window and context.\n";
     }
 
-    glfwSetKeyCallback(window, &KeyCallback);
-    glfwSetFramebufferSizeCallback(window, &FramebufferSizeCallback);
+    glfwSetKeyCallback(window, &keyCallback);
+    glfwSetFramebufferSizeCallback(window, &framebufferSizeCallback);
     glfwMakeContextCurrent(window);
 
-    if (gl3wInit())
-    {
+    if (gl3wInit()) {
         std::cerr << "Failed to initialize GL3W.\n";
     }
 
-    if (!gl3wIsSupported(3, 3))
-    {
+    if (!gl3wIsSupported(3, 3)) {
         std::cerr << "OpenGL 3.3 Core is not supported on this device.\n";
     }
 
@@ -177,9 +84,9 @@ int main()
     std::cout << "Renderer:       " << reinterpret_cast<const char*>(glGetString(GL_RENDERER)) << "\n";
 
     // Create some opengl stuff
-    auto vertexShader = CreateShaderFromFile("Content/Shaders/Basic.vsh", GL_VERTEX_SHADER);
-    auto fragmentShader = CreateShaderFromFile("Content/Shaders/Basic.fsh", GL_FRAGMENT_SHADER);
-    auto shaderProgram = CreateAndLinkProgram(vertexShader, fragmentShader);
+    auto vertexShader = gp::createShaderFromFile("Content/Shaders/Basic.vsh", GL_VERTEX_SHADER);
+    auto fragmentShader = gp::createShaderFromFile("Content/Shaders/Basic.fsh", GL_FRAGMENT_SHADER);
+    auto shaderProgram = gp::createAndLinkProgram(vertexShader, fragmentShader);
 
     auto modelMatrixLocation = glGetUniformLocation(shaderProgram, "ModelMatrix");
     auto invTrModelMatrixLocation = glGetUniformLocation(shaderProgram, "InvTrModelMatrix");
@@ -213,8 +120,7 @@ int main()
     float angle = 0.0f;
     double lastTime = glfwGetTime();
 
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         auto currTime = glfwGetTime();
         auto dt = static_cast<float>(currTime - lastTime);
         lastTime = currTime;

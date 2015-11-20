@@ -190,6 +190,7 @@ int main()
     auto materialDiffuseLocation = glGetUniformLocation(shaderProgram, "MaterialDiffuse");
 
     auto boxMesh = gp::createBoxMesh(1, 1, 1);
+    auto planeMesh = gp::createPlane(10, 10);
 
     glm::vec3 dirToLight(-1, 1, 1);
     dirToLight = glm::normalize(dirToLight);
@@ -224,8 +225,9 @@ int main()
         glfwGetFramebufferSize(window, &width, &height);
 
         auto projMat = glm::perspective(glm::quarter_pi<float>(), static_cast<float>(width) / height, 0.1f, 100.0f);
-        auto viewMat = glm::lookAt(glm::vec3(1, 1, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-        auto modelMat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 0, 1));
+        auto viewMat = glm::lookAt(glm::vec3(1, 5, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        auto modelMat = glm::translate(glm::mat4(1), glm::vec3(0, 2, 0));
+        modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 0, 1));
         modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 1, 0));
         modelMat = glm::rotate(modelMat, angle, glm::vec3(1, 0, 0));
         auto invTrModelMat = glm::transpose(glm::inverse(modelMat));
@@ -246,6 +248,13 @@ int main()
         
         boxMesh.bindBuffers();
         boxMesh.render();
+
+        glUniform3f(materialDiffuseLocation, 0, 1, 0);
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
+
+        planeMesh.bindBuffers();
+        planeMesh.render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

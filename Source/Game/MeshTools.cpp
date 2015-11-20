@@ -1,4 +1,5 @@
 #include "MeshTools.h"
+#include <vector>
 
 namespace gp {
     StaticMesh createBoxMesh(float width, float height, float depth) {
@@ -54,5 +55,23 @@ namespace gp {
         };
 
         return StaticMesh(vertices, 24, indices, 36);
+    }
+
+    StaticMesh createPlane(float width, float depth) {
+        const auto hw = width * 0.5f;
+        const auto hd = depth * 0.5f;
+
+        const VertexPosNormal vertices[] = {
+            { glm::vec3(-hw, 0,  hd), glm::vec3(0, 1, 0) },
+            { glm::vec3( hw, 0,  hd), glm::vec3(0, 1, 0) },
+            { glm::vec3( hw, 0, -hd), glm::vec3(0, 1, 0) },
+            { glm::vec3(-hw, 0, -hd), glm::vec3(0, 1, 0) }
+        };
+
+        const GLushort indices[] = {
+            0,  1,  2,  0,  2,  3
+        };
+
+        return StaticMesh(vertices, 4, indices, 6);
     }
 }

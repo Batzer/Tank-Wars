@@ -43,8 +43,8 @@ namespace gp {
     }
 
     void StaticMesh::bindBuffers() const {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
         glBindVertexArray(_vao);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ibo);
     }
 
     void StaticMesh::render() const {

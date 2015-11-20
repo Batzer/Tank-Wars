@@ -1,3 +1,5 @@
+#include "StaticMesh.h"
+#include "MeshTools.h"
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -179,29 +181,33 @@ int main()
     auto fragmentShader = CreateShaderFromFile("Content/Shaders/Basic.fsh", GL_FRAGMENT_SHADER);
     auto shaderProgram = CreateAndLinkProgram(vertexShader, fragmentShader);
 
-    const GLfloat vertices[] =
-    {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f,  0.5f, 0.0f
-    };
-
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, 3 * 3 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
-    glBindVertexArray(0);
-
     auto modelMatrixLocation = glGetUniformLocation(shaderProgram, "ModelMatrix");
+    auto invTrModelMatrixLocation = glGetUniformLocation(shaderProgram, "InvTrModelMatrix");
+    auto viewProjMatrixLocation = glGetUniformLocation(shaderProgram, "ViewProjMatrix");
+    auto ambientColorLocation = glGetUniformLocation(shaderProgram, "AmbientColor");
+    auto lightColorLocation = glGetUniformLocation(shaderProgram, "LightColor");
+    auto dirToLightLocation = glGetUniformLocation(shaderProgram, "DirToLight");
+    auto materialDiffuseLocation = glGetUniformLocation(shaderProgram, "MaterialDiffuse");
+
+    auto boxMesh = gp::createBoxMesh(1, 1, 1);
+
+    glm::vec3 dirToLight(-1, 1, 1);
+    dirToLight = glm::normalize(dirToLight);
+
+    glm::vec3 ambientColor(0.2f, 0.2f, 0.2f);
+    glm::vec3 materialDiffuse(1.0f, 0.0f, 0.0f);
+    glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
     glfwSwapInterval(1); // Turn on VSync
     glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
+    glClearDepthf(1.0f);
+
+    // Back face culling, CCW faces are front faces
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+
+    glEnable(GL_DEPTH_TEST);
 
     float angle = 0.0f;
     double lastTime = glfwGetTime();
@@ -211,22 +217,40 @@ int main()
         auto currTime = glfwGetTime();
         auto dt = static_cast<float>(currTime - lastTime);
         lastTime = currTime;
-
+        
         angle += glm::half_pi<float>() * dt;
-        auto modelMatrix = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 0, 1));
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
+
+        auto projMat = glm::perspective(glm::quarter_pi<float>(), static_cast<float>(width) / height, 0.1f, 100.0f);
+        auto viewMat = glm::lookAt(glm::vec3(1, 1, 3), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+        auto modelMat = glm::rotate(glm::mat4(1), angle, glm::vec3(0, 0, 1));
+        modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 1, 0));
+        modelMat = glm::rotate(modelMat, angle, glm::vec3(1, 0, 0));
+        auto invTrModelMat = glm::transpose(glm::inverse(modelMat));
+        auto viewProjMat = projMat * viewMat;
+
+        glViewport(0, 0, width, height);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         glUseProgram(shaderProgram);
-        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMat));
+        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(invTrModelMat));
+        glUniformMatrix4fv(viewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMat));
+
+        glUniform3fv(ambientColorLocation, 1, glm::value_ptr(ambientColor));
+        glUniform3fv(lightColorLocation, 1, glm::value_ptr(lightColor));
+        glUniform3fv(dirToLightLocation, 1, glm::value_ptr(dirToLight));
+        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(materialDiffuse));
+        
+        boxMesh.bindBuffers();
+        boxMesh.render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
     glDeleteShader(fragmentShader);
     glDeleteShader(vertexShader);
     glDeleteProgram(shaderProgram);

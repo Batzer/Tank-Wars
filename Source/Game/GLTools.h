@@ -1,9 +1,9 @@
 #pragma once
 
-#include <cstdint>
+#include <GL/gl3w.h>
 
 namespace gp {
-    inline void* bufferOffset(std::uintptr_t offset) {
+    inline void* bufferOffset(GLsizeiptr offset) {
         return reinterpret_cast<void*>(offset);
     }
 }

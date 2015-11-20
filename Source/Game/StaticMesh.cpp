@@ -18,9 +18,9 @@ namespace gp {
         glGenVertexArrays(1, &_vao);
         glBindVertexArray(_vao);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPosNormal), 0);
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), bufferOffset(sizeof(glm::vec3)));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VertexPosNormal), bufferOffset(sizeof(glm::vec3)));
         glBindVertexArray(0);
     }
     

@@ -264,6 +264,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +279,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
+    <ClInclude Include="MeshTools.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="VertexTypes.h" />
   </ItemGroup>

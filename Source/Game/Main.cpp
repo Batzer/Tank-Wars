@@ -1,20 +1,14 @@
 #include "StaticMesh.h"
 #include "MeshTools.h"
-#include "GLTools.h"
 #include "Material.h"
 #include "MeshInstance.h"
+#include "Renderer.h"
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include <vector>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <memory>
 
 /*
 * Gets called by GLFW3 when an error occurs.
@@ -85,19 +79,7 @@ int main() {
     std::cout << "GLSL Version:   " << reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)) << "\n";
     std::cout << "Renderer:       " << reinterpret_cast<const char*>(glGetString(GL_RENDERER)) << "\n";
 
-    // Create some opengl stuff
-    auto vertexShader = gp::createShaderFromFile("Content/Shaders/Basic.vsh", GL_VERTEX_SHADER);
-    auto fragmentShader = gp::createShaderFromFile("Content/Shaders/Basic.fsh", GL_FRAGMENT_SHADER);
-    auto shaderProgram = gp::createAndLinkProgram(vertexShader, fragmentShader);
-
-    auto modelMatrixLocation = glGetUniformLocation(shaderProgram, "ModelMatrix");
-    auto invTrModelMatrixLocation = glGetUniformLocation(shaderProgram, "InvTrModelMatrix");
-    auto viewProjMatrixLocation = glGetUniformLocation(shaderProgram, "ViewProjMatrix");
-    auto ambientColorLocation = glGetUniformLocation(shaderProgram, "AmbientColor");
-    auto lightColorLocation = glGetUniformLocation(shaderProgram, "LightColor");
-    auto dirToLightLocation = glGetUniformLocation(shaderProgram, "DirToLight");
-    auto materialDiffuseLocation = glGetUniformLocation(shaderProgram, "MaterialDiffuse");
-
+    // Create the scene
     auto boxMesh = gp::createBoxMesh(1, 1, 1);
     auto planeMesh = gp::createPlane(10, 10);
 
@@ -114,22 +96,14 @@ int main() {
     gp::MeshInstance box2(&boxMesh, &blueMaterial);
     gp::MeshInstance plane(&planeMesh, &greenMaterial);
 
-    glm::vec3 dirToLight(-1, 1, 1);
-    dirToLight = glm::normalize(dirToLight);
-
-    glm::vec3 ambientColor(0.2f, 0.2f, 0.2f);
-    glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+    gp::Renderer renderer;
+    renderer.setAmbientColor({ 0.2f, 0.2f, 0.2f });
+    renderer.setLight({ 1, 1, 1 }, { 1, -1, -1 });
+    renderer.addSceneObject(box1);
+    renderer.addSceneObject(box2);
+    renderer.addSceneObject(plane);
 
     glfwSwapInterval(1); // Turn on VSync
-    glClearColor(0.0f, 0.0f, 0.4f, 1.0f);
-    glClearDepthf(1.0f);
-
-    // Back face culling, CCW faces are front faces
-    glFrontFace(GL_CCW);
-    glCullFace(GL_BACK);
-    glEnable(GL_CULL_FACE);
-
-    glEnable(GL_DEPTH_TEST);
 
     float angle = 0.0f;
     double lastTime = glfwGetTime();
@@ -144,7 +118,7 @@ int main() {
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
 
-        auto projMat = glm::perspective(glm::quarter_pi<float>(), static_cast<float>(width) / height, 0.1f, 100.0f);
+        auto projMat = glm::perspective(glm::quarter_pi<float>(), static_cast<float>(width) / height , 0.1f, 100.0f);
         auto viewMat = glm::lookAt(glm::vec3(1, 5, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
         auto viewProjMat = projMat * viewMat;
 
@@ -161,45 +135,11 @@ int main() {
         modelMat = glm::rotate(modelMat, -angle, glm::vec3(1, 0, 0));
         box2.setModelMatrix(modelMat);
 
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glUseProgram(shaderProgram);
-        
-        // Lighting
-        glUniform3fv(ambientColorLocation, 1, glm::value_ptr(ambientColor));
-        glUniform3fv(lightColorLocation, 1, glm::value_ptr(lightColor));
-        glUniform3fv(dirToLightLocation, 1, glm::value_ptr(dirToLight));
-        
-        // Camera
-        glUniformMatrix4fv(viewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMat));
-
-        // Render the meshes
-        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(box1.getModelMatrix()));
-        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(box1.getInvTrModelMatrix()));
-        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(box1.getMaterial()->diffuse));
-        box1.getMesh()->bindBuffers();
-        box1.getMesh()->render();
-        
-        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(box2.getModelMatrix()));
-        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(box2.getInvTrModelMatrix()));
-        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(box2.getMaterial()->diffuse));
-        box2.getMesh()->bindBuffers();
-        box2.getMesh()->render();
-
-        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(plane.getModelMatrix()));
-        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(plane.getInvTrModelMatrix()));
-        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(plane.getMaterial()->diffuse));
-        plane.getMesh()->bindBuffers();
-        plane.getMesh()->render();
+        renderer.renderScene(viewProjMat);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-    glDeleteShader(fragmentShader);
-    glDeleteShader(vertexShader);
-    glDeleteProgram(shaderProgram);
 
     glfwDestroyWindow(window);
     glfwTerminate();

@@ -8,7 +8,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <btBulletDynamicsCommon.h>
 #include <iostream>
+#include <memory>
 
 /*
 * Gets called by GLFW3 when an error occurs.
@@ -103,6 +106,42 @@ int main() {
     renderer.addSceneObject(box2);
     renderer.addSceneObject(plane);
 
+    // Create some physics stuff
+    std::unique_ptr<btBroadphaseInterface> broadphase(new btDbvtBroadphase);
+    std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration(new btDefaultCollisionConfiguration());
+    std::unique_ptr<btCollisionDispatcher> dispatcher(new btCollisionDispatcher(collisionConfiguration.get()));
+    std::unique_ptr<btSequentialImpulseConstraintSolver> solver(new btSequentialImpulseConstraintSolver);
+
+    std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld(new btDiscreteDynamicsWorld(
+        dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get()));
+    dynamicsWorld->setGravity(btVector3(0, -10, 0));
+
+    std::unique_ptr<btCollisionShape> groundShape(new btStaticPlaneShape(btVector3(0, 1, 0), 0));
+    std::unique_ptr<btCollisionShape> boxShape(new btBoxShape(btVector3(0.5f, 0.5f, 0.5f)));
+
+    std::unique_ptr<btDefaultMotionState> groundMotionState(new btDefaultMotionState(
+        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0))));
+    btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState.get(), groundShape.get(), btVector3(0, 0, 0));
+    std::unique_ptr<btRigidBody> groundRigidBody(new btRigidBody(groundRigidBodyCI));
+
+    btScalar mass = 1;
+    btVector3 fallInertia(0, 0, 0);
+    boxShape->calculateLocalInertia(mass, fallInertia);
+
+    std::unique_ptr<btDefaultMotionState> box1MotionState(new btDefaultMotionState(
+        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 4, 0))));
+    btRigidBody::btRigidBodyConstructionInfo box1RigidBodyCI(mass, box1MotionState.get(), boxShape.get(), fallInertia);
+    std::unique_ptr<btRigidBody> box1RigidBody(new btRigidBody(box1RigidBodyCI));
+
+    std::unique_ptr<btDefaultMotionState> box2MotionState(new btDefaultMotionState(
+        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0.5f, 6, 0))));
+    btRigidBody::btRigidBodyConstructionInfo box2RigidBodyCI(mass, box2MotionState.get(), boxShape.get(), fallInertia);
+    std::unique_ptr<btRigidBody> box2RigidBody(new btRigidBody(box2RigidBodyCI));
+
+    dynamicsWorld->addRigidBody(groundRigidBody.get());
+    dynamicsWorld->addRigidBody(box1RigidBody.get());
+    dynamicsWorld->addRigidBody(box2RigidBody.get());
+
     glfwSwapInterval(1); // Turn on VSync
 
     float angle = 0.0f;
@@ -121,7 +160,22 @@ int main() {
         auto projMat = glm::perspective(glm::quarter_pi<float>(), static_cast<float>(width) / height , 0.1f, 100.0f);
         auto viewMat = glm::lookAt(glm::vec3(1, 5, 5), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
         auto viewProjMat = projMat * viewMat;
+        
+        dynamicsWorld->stepSimulation(1 / 60.f, 10);
 
+        btTransform trans;
+        box1RigidBody->getMotionState()->getWorldTransform(trans);
+        
+        glm::mat4 modelMat;
+        trans.getOpenGLMatrix(glm::value_ptr(modelMat));
+        box1.setModelMatrix(modelMat);
+
+        box2RigidBody->getMotionState()->getWorldTransform(trans);
+
+        trans.getOpenGLMatrix(glm::value_ptr(modelMat));
+        box2.setModelMatrix(modelMat);
+
+        /*
         glm::mat4 modelMat(1);
         modelMat = glm::translate(glm::mat4(1), glm::vec3(2, 1, 0));
         modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 0, 1));
@@ -134,12 +188,17 @@ int main() {
         modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 1, 0));
         modelMat = glm::rotate(modelMat, -angle, glm::vec3(1, 0, 0));
         box2.setModelMatrix(modelMat);
+        */
 
         renderer.renderScene(viewProjMat);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    dynamicsWorld->removeRigidBody(groundRigidBody.get());
+    dynamicsWorld->removeRigidBody(box1RigidBody.get());
+    dynamicsWorld->removeRigidBody(box2RigidBody.get());
 
     glfwDestroyWindow(window);
     glfwTerminate();

@@ -4,6 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Source\Game\Game.vcxproj", "{5ECA6EE4-A8B7-4A1A-B212-DCF85CC19B81}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351} = {5BC7C71D-A36E-45A5-91D9-9BC4FD141351}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", "{C0EB1128-83C2-41D8-BA98-EDCC41A2E1A6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glfw3", "ThirdParty\glfw3\glfw3.vcxproj", "{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +28,19 @@ Global
 		{5ECA6EE4-A8B7-4A1A-B212-DCF85CC19B81}.Release|x64.Build.0 = Release|x64
 		{5ECA6EE4-A8B7-4A1A-B212-DCF85CC19B81}.Release|x86.ActiveCfg = Release|Win32
 		{5ECA6EE4-A8B7-4A1A-B212-DCF85CC19B81}.Release|x86.Build.0 = Release|Win32
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}.Debug|x64.ActiveCfg = Debug|x64
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}.Debug|x64.Build.0 = Debug|x64
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}.Debug|x86.ActiveCfg = Debug|Win32
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}.Debug|x86.Build.0 = Debug|Win32
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}.Release|x64.ActiveCfg = Release|x64
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}.Release|x64.Build.0 = Release|x64
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}.Release|x86.ActiveCfg = Release|Win32
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5BC7C71D-A36E-45A5-91D9-9BC4FD141351} = {C0EB1128-83C2-41D8-BA98-EDCC41A2E1A6}
 	EndGlobalSection
 EndGlobal

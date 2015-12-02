@@ -138,7 +138,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying content to output directory</Message>
-      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y /i</Command>
+      <Command>xcopy ..\..\Content "$(OutDir)Content" /d /e /y /i</Command>
       <Outputs>thiswillmakemerunalways</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
@@ -175,7 +175,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying content to output directory</Message>
-      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y /i</Command>
+      <Command>xcopy ..\..\Content "$(OutDir)Content" /d /e /y /i</Command>
       <Outputs>thiswillmakemerunalways</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
@@ -216,7 +216,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying content to output directory</Message>
-      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y /i</Command>
+      <Command>xcopy ..\..\Content "$(OutDir)Content" /d /e /y /i</Command>
       <Outputs>thiswillmakemerunalways</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
@@ -257,7 +257,7 @@
     </PreBuildEvent>
     <CustomBuildStep>
       <Message>Copying content to output directory</Message>
-      <Command>xcopy ..\..\Content $(OutDir)Content /d /e /y /i</Command>
+      <Command>xcopy ..\..\Content "$(OutDir)Content" /d /e /y /i</Command>
       <Outputs>thiswillmakemerunalways</Outputs>
     </CustomBuildStep>
   </ItemDefinitionGroup>
@@ -267,6 +267,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MeshInstance.cpp" />
     <ClCompile Include="MeshTools.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
   </ItemGroup>
@@ -285,6 +286,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshInstance.h" />
     <ClInclude Include="MeshTools.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="VertexTypes.h" />

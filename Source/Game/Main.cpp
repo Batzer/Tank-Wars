@@ -3,6 +3,7 @@
 #include "Material.h"
 #include "MeshInstance.h"
 #include "Renderer.h"
+#include "Object.h"
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -95,14 +96,14 @@ int main() {
     gp::Material blueMaterial;
     blueMaterial.diffuse = { 0, 0, 1 };
 
-    gp::MeshInstance box1(&boxMesh, &redMaterial);
+    //gp::MeshInstance box1(&boxMesh, &redMaterial);
     gp::MeshInstance box2(&boxMesh, &blueMaterial);
     gp::MeshInstance plane(&planeMesh, &greenMaterial);
 
     gp::Renderer renderer;
     renderer.setAmbientColor({ 0.2f, 0.2f, 0.2f });
     renderer.setLight({ 1, 1, 1 }, { 1, -1, -1 });
-    renderer.addSceneObject(box1);
+    //renderer.addSceneObject(box1);
     renderer.addSceneObject(box2);
     renderer.addSceneObject(plane);
 
@@ -128,10 +129,10 @@ int main() {
     btVector3 fallInertia(0, 0, 0);
     boxShape->calculateLocalInertia(mass, fallInertia);
 
-    std::unique_ptr<btDefaultMotionState> box1MotionState(new btDefaultMotionState(
+    /*std::unique_ptr<btDefaultMotionState> box1MotionState(new btDefaultMotionState(
         btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 4, 0))));
     btRigidBody::btRigidBodyConstructionInfo box1RigidBodyCI(mass, box1MotionState.get(), boxShape.get(), fallInertia);
-    std::unique_ptr<btRigidBody> box1RigidBody(new btRigidBody(box1RigidBodyCI));
+    std::unique_ptr<btRigidBody> box1RigidBody(new btRigidBody(box1RigidBodyCI));*/
 
     std::unique_ptr<btDefaultMotionState> box2MotionState(new btDefaultMotionState(
         btTransform(btQuaternion(0, 0, 0, 1), btVector3(0.5f, 6, 0))));
@@ -139,9 +140,9 @@ int main() {
     std::unique_ptr<btRigidBody> box2RigidBody(new btRigidBody(box2RigidBodyCI));
 
     dynamicsWorld->addRigidBody(groundRigidBody.get());
-    dynamicsWorld->addRigidBody(box1RigidBody.get());
+    //dynamicsWorld->addRigidBody(box1RigidBody.get());
     dynamicsWorld->addRigidBody(box2RigidBody.get());
-
+	gp::Object obj(&renderer, dynamicsWorld.get(), 1,1,1, { 1,1,0 }, mass,fallInertia );
     glfwSwapInterval(1); // Turn on VSync
 
     float angle = 0.0f;
@@ -164,11 +165,12 @@ int main() {
         dynamicsWorld->stepSimulation(1 / 60.f, 10);
 
         btTransform trans;
-        box1RigidBody->getMotionState()->getWorldTransform(trans);
+        //box1RigidBody->getMotionState()->getWorldTransform(trans);
         
         glm::mat4 modelMat;
-        trans.getOpenGLMatrix(glm::value_ptr(modelMat));
-        box1.setModelMatrix(modelMat);
+		obj.transform(trans, modelMat);
+        //trans.getOpenGLMatrix(glm::value_ptr(modelMat));
+       // box1.setModelMatrix(modelMat);
 
         box2RigidBody->getMotionState()->getWorldTransform(trans);
 
@@ -197,9 +199,9 @@ int main() {
     }
 
     dynamicsWorld->removeRigidBody(groundRigidBody.get());
-    dynamicsWorld->removeRigidBody(box1RigidBody.get());
+	dynamicsWorld->removeRigidBody(obj.getRigidBody());
+    //dynamicsWorld->removeRigidBody(box1RigidBody.get());
     dynamicsWorld->removeRigidBody(box2RigidBody.get());
-
     glfwDestroyWindow(window);
     glfwTerminate();
 

@@ -1,23 +1,41 @@
 #include "Object.h"
+
 namespace gp {
-	Object::Object(Renderer* renderer,btDiscreteDynamicsWorld* dynamicWorld, float width, float height, float depth, glm::vec3 diffuse,btScalar mass, btVector3 fallInertia)
-							: obj(&createBoxMesh(height,width,depth),&mat),
-								objShape(new btBoxShape(btVector3(width/2, height/2, depth/2))),
-								objMotionState(new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 4, 0)))),
-								objRigidBodyCI(mass, objMotionState.get(), objShape.get(), fallInertia),
-								objRigidBody(new btRigidBody(objRigidBodyCI)){
-		mat.diffuse = diffuse;	
-		//dnmcWrld = dynamicWorld;
-		renderer->addSceneObject(obj);
-		objShape->calculateLocalInertia(mass, fallInertia);
-		dynamicWorld->addRigidBody(objRigidBody.get());
+	Object::Object(Renderer* renderer, btDiscreteDynamicsWorld* world,
+                   float width, float height, float depth, const glm::vec3& diffuse,
+                   const btVector3& center, btScalar mass)
+	    : _renderer(renderer)
+        , _world(world)
+        , _mesh(createBoxMesh(height, width, depth))
+        , _meshInstance(&_mesh, &_material)
+    {
+        // Init rendering
+        _material.diffuse = diffuse;
+        _renderer->addSceneObject(_meshInstance);
+
+        // Init physics
+        _collisionShape.reset(new btBoxShape(btVector3(width / 2, height / 2, depth / 2)));
+        _motionState.reset(new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), center)));
+
+        btVector3 fallInertia;
+        _collisionShape->calculateLocalInertia(mass, fallInertia);
+        btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(mass, _motionState.get(), _collisionShape.get(), fallInertia);
+        _rigidBody.reset(new btRigidBody(rigidBodyCI));
+
+        _world->addRigidBody(_rigidBody.get());
 	}
-	void Object::transform(btTransform trans, glm::mat4 modelMat) {
-		objRigidBody->getMotionState()->getWorldTransform(trans);
-		trans.getOpenGLMatrix(glm::value_ptr(modelMat));
-		obj.setModelMatrix(modelMat);
-	}
-	Object::~Object(){
-		
+
+    Object::~Object() {
+        _renderer->removeSceneObject(_meshInstance);
+        _world->removeRigidBody(_rigidBody.get());
+    }
+
+	void Object::updateTransform() {
+        btTransform transform;
+		_rigidBody->getMotionState()->getWorldTransform(transform);
+
+        glm::mat4 modelMatrix;
+        transform.getOpenGLMatrix(glm::value_ptr(modelMatrix));
+		_meshInstance.setModelMatrix(modelMatrix);
 	}
 }

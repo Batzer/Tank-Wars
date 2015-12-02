@@ -96,15 +96,11 @@ int main() {
     gp::Material blueMaterial;
     blueMaterial.diffuse = { 0, 0, 1 };
 
-    //gp::MeshInstance box1(&boxMesh, &redMaterial);
-    gp::MeshInstance box2(&boxMesh, &blueMaterial);
     gp::MeshInstance plane(&planeMesh, &greenMaterial);
 
     gp::Renderer renderer;
     renderer.setAmbientColor({ 0.2f, 0.2f, 0.2f });
     renderer.setLight({ 1, 1, 1 }, { 1, -1, -1 });
-    //renderer.addSceneObject(box1);
-    renderer.addSceneObject(box2);
     renderer.addSceneObject(plane);
 
     // Create some physics stuff
@@ -118,31 +114,16 @@ int main() {
     dynamicsWorld->setGravity(btVector3(0, -10, 0));
 
     std::unique_ptr<btCollisionShape> groundShape(new btStaticPlaneShape(btVector3(0, 1, 0), 0));
-    std::unique_ptr<btCollisionShape> boxShape(new btBoxShape(btVector3(0.5f, 0.5f, 0.5f)));
-
     std::unique_ptr<btDefaultMotionState> groundMotionState(new btDefaultMotionState(
         btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0))));
     btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, groundMotionState.get(), groundShape.get(), btVector3(0, 0, 0));
     std::unique_ptr<btRigidBody> groundRigidBody(new btRigidBody(groundRigidBodyCI));
-
-    btScalar mass = 1;
-    btVector3 fallInertia(0, 0, 0);
-    boxShape->calculateLocalInertia(mass, fallInertia);
-
-    /*std::unique_ptr<btDefaultMotionState> box1MotionState(new btDefaultMotionState(
-        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 4, 0))));
-    btRigidBody::btRigidBodyConstructionInfo box1RigidBodyCI(mass, box1MotionState.get(), boxShape.get(), fallInertia);
-    std::unique_ptr<btRigidBody> box1RigidBody(new btRigidBody(box1RigidBodyCI));*/
-
-    std::unique_ptr<btDefaultMotionState> box2MotionState(new btDefaultMotionState(
-        btTransform(btQuaternion(0, 0, 0, 1), btVector3(0.5f, 6, 0))));
-    btRigidBody::btRigidBodyConstructionInfo box2RigidBodyCI(mass, box2MotionState.get(), boxShape.get(), fallInertia);
-    std::unique_ptr<btRigidBody> box2RigidBody(new btRigidBody(box2RigidBodyCI));
-
     dynamicsWorld->addRigidBody(groundRigidBody.get());
-    //dynamicsWorld->addRigidBody(box1RigidBody.get());
-    dynamicsWorld->addRigidBody(box2RigidBody.get());
-	gp::Object obj(&renderer, dynamicsWorld.get(), 1,1,1, { 1,1,0 }, mass,fallInertia );
+
+    gp::Object rigidBox1(&renderer, dynamicsWorld.get(), 1, 1, 1, { 1, 1, 0 }, { 0, 4, 0 }, 1);
+    gp::Object rigidBox2(&renderer, dynamicsWorld.get(), 1, 1, 1, { 1, 0, 1 }, { -0.5f, 5, 0 }, 1);
+    gp::Object rigidBox3(&renderer, dynamicsWorld.get(), 1, 1, 1, { 1, 0, 0 }, { 0.5f, 3, 0 }, 1);
+
     glfwSwapInterval(1); // Turn on VSync
 
     float angle = 0.0f;
@@ -164,33 +145,9 @@ int main() {
         
         dynamicsWorld->stepSimulation(1 / 60.f, 10);
 
-        btTransform trans;
-        //box1RigidBody->getMotionState()->getWorldTransform(trans);
-        
-        glm::mat4 modelMat;
-		obj.transform(trans, modelMat);
-        //trans.getOpenGLMatrix(glm::value_ptr(modelMat));
-       // box1.setModelMatrix(modelMat);
-
-        box2RigidBody->getMotionState()->getWorldTransform(trans);
-
-        trans.getOpenGLMatrix(glm::value_ptr(modelMat));
-        box2.setModelMatrix(modelMat);
-
-        /*
-        glm::mat4 modelMat(1);
-        modelMat = glm::translate(glm::mat4(1), glm::vec3(2, 1, 0));
-        modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 0, 1));
-        modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 1, 0));
-        modelMat = glm::rotate(modelMat, angle, glm::vec3(1, 0, 0));
-        box1.setModelMatrix(modelMat);
-
-        modelMat = glm::translate(glm::mat4(1), glm::vec3(-2, 1, 0));
-        modelMat = glm::rotate(modelMat, -angle, glm::vec3(0, 0, 1));
-        modelMat = glm::rotate(modelMat, angle, glm::vec3(0, 1, 0));
-        modelMat = glm::rotate(modelMat, -angle, glm::vec3(1, 0, 0));
-        box2.setModelMatrix(modelMat);
-        */
+        rigidBox1.updateTransform();
+        rigidBox2.updateTransform();
+        rigidBox3.updateTransform();
 
         renderer.renderScene(viewProjMat);
 
@@ -199,9 +156,7 @@ int main() {
     }
 
     dynamicsWorld->removeRigidBody(groundRigidBody.get());
-	dynamicsWorld->removeRigidBody(obj.getRigidBody());
-    //dynamicsWorld->removeRigidBody(box1RigidBody.get());
-    dynamicsWorld->removeRigidBody(box2RigidBody.get());
+
     glfwDestroyWindow(window);
     glfwTerminate();
 

@@ -4,6 +4,7 @@
 #include "MeshInstance.h"
 #include "Renderer.h"
 #include "Object.h"
+#include "Map.h"
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -19,7 +20,6 @@
 */
 void errorCallback(int error, const char* description) {
     (void)error;
-
     std::cerr << description;
 }
 
@@ -43,7 +43,6 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
 
     glViewport(0, 0, width, height);
 }
-
 int main() {
     glfwSetErrorCallback(&errorCallback);
 
@@ -120,6 +119,12 @@ int main() {
     std::unique_ptr<btRigidBody> groundRigidBody(new btRigidBody(groundRigidBodyCI));
     dynamicsWorld->addRigidBody(groundRigidBody.get());
 
+	//btHeightfieldTerrainShape TEST
+	
+	gp::Map map(10, 10, "path", 10);
+	
+	
+	//Test end
     gp::Object rigidBox1(&renderer, dynamicsWorld.get(), 1, 1, 1, { 1, 1, 0 }, { 0, 4, 0 }, 1);
     gp::Object rigidBox2(&renderer, dynamicsWorld.get(), 1, 1, 1, { 1, 0, 1 }, { -0.5f, 5, 0 }, 1);
     gp::Object rigidBox3(&renderer, dynamicsWorld.get(), 1, 1, 1, { 1, 0, 0 }, { 0.5f, 3, 0 }, 1);

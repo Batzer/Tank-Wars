@@ -16,7 +16,7 @@ namespace gp {
 		_jpegPath = jpegPath;
 	}
 	HeightField::~HeightField() {}
-	const void* HeightField::get() {
+	byte_t HeightField::get() {
 
 	}
 }

@@ -2,11 +2,12 @@
 #include <BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h>
 #include <string>
 namespace gp {
+	typedef unsigned char byte_t;
 	class HeightField {
 	public:
 		HeightField(std::string jpegPath);
 		~HeightField();
-		const void* get();
+		byte_t get();//const void* get();
 	private:
 		//Byte Array
 		std::string _jpegPath;

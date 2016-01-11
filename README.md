@@ -3,9 +3,19 @@
 
 ```
 #!c++
-#include "OurHeader.h"
-#include <OtherHeader.h>
-#include <stdlib>
+#include "TheCppsHeaderFile.h"
+
+#include <vector>
+#include <cstdlib>
+#include <string>
+
+#include <ThirdPartyHeader1.h>
+#include <ThirdPartyHeader2.h>
+#include <ThirdPartyHeader3.h>
+
+#include "OurHeader1.h"
+#include "OurHeader2.h"
+#include "OurHeader3.h"
 
 void someFreeFuntion() {
 
@@ -17,20 +27,14 @@ public:
     void someRandomMethod(int foo, int bar);
 
 private:
-    double _memberVar; // Note the _
-    float _otherVar;
+    double memberVar;
+    float otherVar;
 };
 
-// No initializer list:
-MyClass::MyClass() {
-
-}
-
-// With initializer list:
 MyClass::MyClass()
-    : _memberVar(1.0)
-    , _otherVar(1.0f)
-{
+		: memberVar(1.0),
+		  otherVar(1.0f) {
+	// My code
 }
 
 void MyClass::someRandomMethod(int foo, int bar) {

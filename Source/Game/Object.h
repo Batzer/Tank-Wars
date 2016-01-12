@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Material.h"
-#include "MeshInstance.h"
 #include "Renderer.h"
-#include "StaticMesh.h"
+#include "Mesh.h"
 #include "MeshTools.h"
 #include <btBulletDynamicsCommon.h>
 #include <glm/glm.hpp>
@@ -12,7 +10,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <memory>
 
-namespace gp {
+namespace tankwars {
 	class Object {
 	public:
 		Object(Renderer* renderer, btDiscreteDynamicsWorld* world,
@@ -24,17 +22,17 @@ namespace gp {
 		void updateTransform();
 
     private:
-        Renderer* _renderer;
-        btDiscreteDynamicsWorld* _world;
+        Renderer* renderer;
+        btDiscreteDynamicsWorld* world;
         
         // Rendering
-        StaticMesh _mesh;
-        Material _material;
-        MeshInstance _meshInstance;
+        Mesh mesh;
+        Material material;
+        MeshInstance meshInstance;
 
         // Physics
-        std::unique_ptr<btCollisionShape> _collisionShape;
-        std::unique_ptr<btDefaultMotionState> _motionState;
-        std::unique_ptr<btRigidBody> _rigidBody;
+        std::unique_ptr<btCollisionShape> collisionShape;
+        std::unique_ptr<btDefaultMotionState> motionState;
+        std::unique_ptr<btRigidBody> rigidBody;
 	};
 }

@@ -3,7 +3,7 @@
 #include <GL/gl3w.h>
 #include <string>
 
-namespace gp {
+namespace tankwars {
     inline void* bufferOffset(GLsizeiptr offset) {
         return reinterpret_cast<void*>(offset);
     }

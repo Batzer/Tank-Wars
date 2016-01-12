@@ -4,8 +4,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace gp {
-    class MeshInstance;
+namespace tankwars {
+    struct MeshInstance;
 
     class Renderer {
     public:
@@ -28,24 +28,24 @@ namespace gp {
 
     private:
         // Shaders
-        GLuint _vertexShader;
-        GLuint _fragmentShader;
-        GLuint _shaderProgram;
+        GLuint vertexShader;
+        GLuint fragmentShader;
+        GLuint shaderProgram;
 
         // Uniform locations
-        GLint _modelMatrixLocation;
-        GLint _invTrModelMatrixLocation;
-        GLint _viewProjMatrixLocation;
-        GLint _ambientColorLocation;
-        GLint _dirToLightLocation;
-        GLint _lightColorLocation;
-        GLint _materialDiffuseLocation;
+        GLint modelMatrixLocation;
+        GLint invTrModelMatrixLocation;
+        GLint viewProjMatrixLocation;
+        GLint ambientColorLocation;
+        GLint dirToLightLocation;
+        GLint lightColorLocation;
+        GLint materialDiffuseLocation;
 
         // Scene managment
         // TODO: Refactor this into a seperate class
-        glm::vec3 _ambientColor = { 0.2f, 0.2f, 0.2f };
-        glm::vec3 _lightDirection = { 1, -1, -1 };
-        glm::vec3 _lightColor = { 1, 1, 1 };
-        std::vector<const MeshInstance*> _sceneObjects;
+        glm::vec3 ambientColor = { 0.2f, 0.2f, 0.2f };
+        glm::vec3 lightDirection = { 1, -1, -1 };
+        glm::vec3 lightColor = { 1, 1, 1 };
+        std::vector<const MeshInstance*> sceneObjects;
     };
 }

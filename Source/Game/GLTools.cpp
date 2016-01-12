@@ -3,7 +3,7 @@
 #include <sstream>
 #include <memory>
 
-namespace gp {
+namespace tankwars {
     GLuint createAndCompileShader(const GLchar* source, GLenum type) {
         auto shader = glCreateShader(type);
         glShaderSource(shader, 1, &source, nullptr);

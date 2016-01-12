@@ -1,13 +1,13 @@
 #include "MeshTools.h"
 #include <vector>
 
-namespace gp {
-    StaticMesh createBoxMesh(float width, float height, float depth) {
+namespace tankwars {
+    Mesh createBoxMesh(float width, float height, float depth) {
         const auto hw = width * 0.5f;
         const auto hh = height * 0.5f;
         const auto hd = depth * 0.5f;
         
-        const VertexPosNormal vertices[] = {
+        const Vertex vertices[] = {
             // Front
             { glm::vec3(-hw, -hh, hd), glm::vec3(0, 0, 1) },
             { glm::vec3( hw, -hh, hd), glm::vec3(0, 0, 1) },
@@ -45,7 +45,7 @@ namespace gp {
             { glm::vec3(-hw, -hh,  hd), glm::vec3(0, -1, 0) }
         };
 
-        const GLushort indices[] = {
+        const uint16_t indices[] = {
             0,  1,  2,  0,  2,  3,  // Front
             4,  5,  6,  4,  6,  7,  // Left
             8,  9,  10, 8,  10, 11, // Right
@@ -54,24 +54,24 @@ namespace gp {
             20, 21, 22, 20, 22, 23  // Bottom
         };
 
-        return StaticMesh(vertices, 24, indices, 36);
+        return Mesh(vertices, 24, indices, 36);
     }
 
-    StaticMesh createPlane(float width, float depth) {
+    Mesh createPlane(float width, float depth) {
         const auto hw = width * 0.5f;
         const auto hd = depth * 0.5f;
 
-        const VertexPosNormal vertices[] = {
+        const Vertex vertices[] = {
             { glm::vec3(-hw, 0,  hd), glm::vec3(0, 1, 0) },
             { glm::vec3( hw, 0,  hd), glm::vec3(0, 1, 0) },
             { glm::vec3( hw, 0, -hd), glm::vec3(0, 1, 0) },
             { glm::vec3(-hw, 0, -hd), glm::vec3(0, 1, 0) }
         };
 
-        const GLushort indices[] = {
+        const uint16_t indices[] = {
             0,  1,  2,  0,  2,  3
         };
 
-        return StaticMesh(vertices, 4, indices, 6);
+        return Mesh(vertices, 4, indices, 6);
     }
 }

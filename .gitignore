@@ -1,6 +1,7 @@
 # Cache files
 *.opensdf
 *.sdf
+*.opendb
 
 # Build files
 [Bb]uild/

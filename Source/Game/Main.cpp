@@ -6,6 +6,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+#include "Mesh.h"
+#include "MeshTools.h"
+#include "Renderer.h"
+#include "Terrain.h"
+
 constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
 constexpr char* WindowTitle = "Tank Wars";
@@ -59,6 +64,30 @@ int main() {
     auto lastTime = glfwGetTime();
     double accumulator = 0.0;
 
+    // REMOVE
+    auto planeMesh = tankwars::createPlaneMesh(5, 5);
+    tankwars::Material mat;
+    mat.diffuseColor = {1, 0, 0};
+    tankwars::MeshInstance ground;
+    ground.mesh = &planeMesh;
+    ground.material = &mat;
+    tankwars::Renderer renderer;
+
+    const float heightMap[] = {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 2, 2, 2, 2, 2, 2, 1, 0,
+        0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
+        0, 1, 2, 3, 4, 5, 3, 2, 1, 0,
+        0, 1, 2, 3, 4, 5, 3, 2, 1, 0,
+        0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
+        0, 1, 2, 2, 2, 2, 2, 2, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+    tankwars::Terrain terrain(heightMap, 10, 10);
+    renderer.setTerrain(&terrain);
+
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = currentTime - lastTime;
@@ -70,6 +99,8 @@ int main() {
             accumulator -= DeltaTime;
         }
 
+        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f)
+            * glm::lookAt(glm::vec3{-5, 2, 0}, glm::vec3{5, 0, 5}, glm::vec3{0, 1, 0}));
         render(static_cast<float>(accumulator / DeltaTime));
 
         glfwSwapBuffers(window);

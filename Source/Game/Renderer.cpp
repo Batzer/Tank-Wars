@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "GLTools.h"
 #include "Mesh.h"
+#include "Terrain.h"
 
 namespace tankwars {
     Renderer::Renderer() {
@@ -68,6 +69,11 @@ namespace tankwars {
         glUniform3fv(dirToLightLocation, 1, glm::value_ptr(-glm::normalize(lightDirection)));
         glUniformMatrix4fv(viewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMatrix));
 
+        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(glm::vec3(0, 1, 0)));
+        terrain->render();
+
         for (auto sceneObject : sceneObjects) {
             auto modelMat = buildMatrixFromTransform(sceneObject->transform);
             auto invTrModelMat = glm::transpose(glm::inverse(modelMat));
@@ -95,5 +101,9 @@ namespace tankwars {
     void Renderer::removeSceneObject(const MeshInstance& instance) {
         auto end = sceneObjects.end();
         sceneObjects.erase(std::remove(sceneObjects.begin(), end, &instance), end);
+    }
+
+    void Renderer::setTerrain(const Terrain* terrain) {
+        this->terrain = terrain;
     }
 }

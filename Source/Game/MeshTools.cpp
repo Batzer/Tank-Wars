@@ -57,7 +57,7 @@ namespace tankwars {
         return Mesh(vertices, 24, indices, 36);
     }
 
-    Mesh createPlane(float width, float depth) {
+    Mesh createPlaneMesh(float width, float depth) {
         const auto hw = width * 0.5f;
         const auto hd = depth * 0.5f;
 

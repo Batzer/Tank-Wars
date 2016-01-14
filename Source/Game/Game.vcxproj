@@ -263,6 +263,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GLTools.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -282,12 +283,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="GLTools.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshTools.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Terrain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\numrech\130963799483028934\A16\camera.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

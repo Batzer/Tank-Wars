@@ -1,34 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{dfbf267f-068d-4d38-bce6-fd3915833a29}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c" />
     <ClCompile Include="GLTools.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c" />
-    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Terrain.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Content\Shaders\Basic.fsh">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\..\Content\Shaders\Basic.vsh">
-      <Filter>Shaders</Filter>
-    </None>
+    <ClCompile Include="Camera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshTools.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Camera.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\Basic.vsh" />
+    <None Include="..\..\Content\Shaders\Basic.fsh" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\numrech\130963799483028934\A16\camera.bmp" />
   </ItemGroup>
 </Project>

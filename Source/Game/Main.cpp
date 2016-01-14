@@ -1,4 +1,5 @@
 #include <GL/gl3w.h>
+#include <GL/GLU.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
@@ -6,10 +7,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
+#include <btBulletDynamicsCommon.h>
+
 #include "Mesh.h"
 #include "MeshTools.h"
 #include "Renderer.h"
 #include "Terrain.h"
+#include "Camera.h"
 
 constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
@@ -18,7 +22,7 @@ constexpr bool GoFullscreen = false;
 constexpr bool UseVSync = true;
 constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
-
+tankwars::Camera Camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
 void update(float dt);
 void render(float alpha);
 void errorCallback(int error, const char* description);
@@ -65,14 +69,14 @@ int main() {
     double accumulator = 0.0;
 
     // REMOVE
-    auto planeMesh = tankwars::createPlaneMesh(5, 5);
+    /*auto planeMesh = tankwars::createPlaneMesh(5, 5);
     tankwars::Material mat;
     mat.diffuseColor = {1, 0, 0};
     tankwars::MeshInstance ground;
     ground.mesh = &planeMesh;
-    ground.material = &mat;
+    ground.material = &mat;*/
     tankwars::Renderer renderer;
-
+	/*
     const float heightMap[] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
@@ -85,9 +89,18 @@ int main() {
         0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
-    tankwars::Terrain terrain(heightMap, 10, 10);
+    tankwars::Terrain terrain(heightMap, 10, 10);*/
+	tankwars::Terrain terrain = tankwars::Terrain("Z:/P Backup/Library/Public/Documents/Uni/numrech/130963799483028934/Penis.bmp",4);
     renderer.setTerrain(&terrain);
-
+	/*TRYING TO DRAW A CUTE SPHERE*/
+	auto boxMesh = tankwars::createBoxMesh(1, 1, 1);
+	tankwars::Material mat;
+	mat.diffuseColor = { 1,0,0 };
+	tankwars::Transform trans;
+	tankwars::MeshInstance notASphere{ &boxMesh,&mat,trans };
+	renderer.addSceneObject(notASphere);
+	
+	/*END OF TRY*/
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = currentTime - lastTime;
@@ -98,9 +111,10 @@ int main() {
             update(static_cast<float>(DeltaTime));
             accumulator -= DeltaTime;
         }
-
-        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f)
-            * glm::lookAt(glm::vec3{-5, 2, 0}, glm::vec3{5, 0, 5}, glm::vec3{0, 1, 0}));
+		/*if (int(accumulator) % 10000 == 0) {				//THIS SHIT KINDA WORKS BUT THE PERFORMANCE IS A PIECE OF SHIIIIT!
+			terrain.explosionAt(glm::vec3(Camera.getCenter().x, 1.5, Camera.getCenter().z), 3);
+		}*/
+        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * Camera.get());
         render(static_cast<float>(accumulator / DeltaTime));
 
         glfwSwapBuffers(window);
@@ -130,6 +144,35 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
+	if (key == GLFW_KEY_Q) {
+		Camera.rotate(0.2);//0.05
+	}
+	if (key == GLFW_KEY_E) {
+		Camera.rotate(-0.2);
+	}
+	float alpha = 1;
+	if (key == GLFW_KEY_W) {
+		Camera.move(0,alpha);
+	}
+	if (key == GLFW_KEY_S) {
+		Camera.move(1,alpha);
+	}
+	if (key == GLFW_KEY_A) {
+		Camera.move(2,alpha);
+	}
+	if (key == GLFW_KEY_D) {
+		Camera.move(3,alpha);
+	}
+	if (key == GLFW_KEY_Y) {	//move up
+
+	}
+	if (key == GLFW_KEY_X) {	//move down
+
+	}
+	if (key == GLFW_KEY_SPACE) {
+		//terrain.explosionAt(glm::vec3(Camera.getCenter().x, 0, Camera.getCenter().z), 20);
+		
+	}
 }
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height) {

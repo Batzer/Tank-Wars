@@ -1,0 +1,43 @@
+#include "Camera.h"
+
+namespace tankwars {
+	Camera::Camera(glm::vec3 eye,glm::vec3 center, glm::vec3 up):eye(eye),center(center),up(up){}
+	void Camera::update(glm::vec3 eye, glm::vec3 center, glm::vec3 up){
+		eye		= eye;
+		center	= center;
+		up		= up;
+	}
+	void Camera::rotate(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
+		glm::mat3x3 rot = {	{ glm::cos(angle),					   0,					-glm::sin(angle) },
+							{				 0,					   1,								   0 },
+							{ glm::sin(angle),					   0,					 glm::cos(angle)}};
+		center = (rot*(center - eye)) + eye;
+	}
+	glm::tmat4x4<float, glm::highp> Camera::get() {
+		return glm::lookAt(eye, center, up);
+	}
+	glm::vec3 Camera::getCenter() {				//For testing puposes
+		return center;
+	}
+	void Camera::move(int direction,float alpha) {
+		glm::vec3 viewDirection = { eye.x - center.x , 0 , eye.z - center.z };
+		viewDirection = glm::normalize(viewDirection);
+		if (direction == 0) {			//FORWARD
+			viewDirection = -viewDirection;
+		}
+		else if (direction == 2) {		//LEFT
+			viewDirection = glm::cross(viewDirection, up);
+		}
+		else if (direction == 3) {		//RIGHT
+			viewDirection = -glm::cross(viewDirection, up);
+		}
+		else {							//BACKWARD schouldn't do anything in this case
+			;
+		}
+		eye			= eye + alpha*viewDirection;
+		center		= center + alpha*viewDirection;
+	}
+	Camera::~Camera() {
+		//?
+	}
+}

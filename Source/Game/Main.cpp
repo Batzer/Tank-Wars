@@ -90,17 +90,21 @@ int main() {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     tankwars::Terrain terrain(heightMap, 10, 10);*/
-	tankwars::Terrain terrain = tankwars::Terrain("Z:/P Backup/Library/Public/Documents/Uni/numrech/130963799483028934/Penis.bmp",4);
+	tankwars::Terrain terrain = tankwars::Terrain("terrain-heightmap.bmp",4);
     renderer.setTerrain(&terrain);
 	/*TRYING TO DRAW A CUTE SPHERE*/
 	auto boxMesh = tankwars::createBoxMesh(1, 1, 1);
 	tankwars::Material mat;
 	mat.diffuseColor = { 1,0,0 };
-	tankwars::Transform trans;
-	tankwars::MeshInstance notASphere{ &boxMesh,&mat,trans };
+	// tankwars::Transform trans;
+	tankwars::MeshInstance notASphere;
+    notASphere.mesh = &boxMesh;
+    notASphere.material = &mat;
 	renderer.addSceneObject(notASphere);
-	
 	/*END OF TRY*/
+
+    float angle = 0.0f;
+
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = currentTime - lastTime;
@@ -114,6 +118,11 @@ int main() {
 		/*if (int(accumulator) % 10000 == 0) {				//THIS SHIT KINDA WORKS BUT THE PERFORMANCE IS A PIECE OF SHIIIIT!
 			terrain.explosionAt(glm::vec3(Camera.getCenter().x, 1.5, Camera.getCenter().z), 3);
 		}*/
+
+        // TEST
+        angle += frameTime;
+        notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
+
         renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * Camera.get());
         render(static_cast<float>(accumulator / DeltaTime));
 

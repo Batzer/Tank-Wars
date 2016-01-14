@@ -6,6 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <memory>
 
 #include <btBulletDynamicsCommon.h>
 
@@ -14,6 +15,7 @@
 #include "Renderer.h"
 #include "Terrain.h"
 #include "Camera.h"
+#include "Game.h"
 
 constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
@@ -22,8 +24,9 @@ constexpr bool GoFullscreen = false;
 constexpr bool UseVSync = true;
 constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
-tankwars::Camera Camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
-void update(float dt);
+tankwars::Camera camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
+tankwars::Game game(&camera);
+void controller();
 void render(float alpha);
 void errorCallback(int error, const char* description);
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -35,7 +38,6 @@ int main() {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW3.\n";
     }
-
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -63,35 +65,16 @@ int main() {
     if (!gl3wIsSupported(3, 3)) {
         std::cerr << "OpenGL 3.3 Core is not supported on this device.\n";
     }
-    
     // The game loop
     auto lastTime = glfwGetTime();
     double accumulator = 0.0;
-
-    // REMOVE
-    /*auto planeMesh = tankwars::createPlaneMesh(5, 5);
-    tankwars::Material mat;
-    mat.diffuseColor = {1, 0, 0};
-    tankwars::MeshInstance ground;
-    ground.mesh = &planeMesh;
-    ground.material = &mat;*/
+	
     tankwars::Renderer renderer;
-	/*
-    const float heightMap[] = {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-        0, 1, 2, 2, 2, 2, 2, 2, 1, 0,
-        0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
-        0, 1, 2, 3, 4, 5, 3, 2, 1, 0,
-        0, 1, 2, 3, 4, 5, 3, 2, 1, 0,
-        0, 1, 2, 3, 3, 3, 3, 2, 1, 0,
-        0, 1, 2, 2, 2, 2, 2, 2, 1, 0,
-        0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-    };
-    tankwars::Terrain terrain(heightMap, 10, 10);*/
-	tankwars::Terrain terrain = tankwars::Terrain("terrain-heightmap.bmp",4);
+	tankwars::Terrain terrain("Content/Animations/Penis.bmp", 4);
     renderer.setTerrain(&terrain);
+	//GAME SETUP
+	game.setupControllers();
+	game.addTerrain(&terrain);
 	/*TRYING TO DRAW A CUTE SPHERE*/
 	auto boxMesh = tankwars::createBoxMesh(1, 1, 1);
 	tankwars::Material mat;
@@ -112,18 +95,18 @@ int main() {
         accumulator += frameTime;
         
         while (accumulator >= DeltaTime) {
-            update(static_cast<float>(DeltaTime));
+			game.update(static_cast<float>(DeltaTime));
             accumulator -= DeltaTime;
         }
-		/*if (int(accumulator) % 10000 == 0) {				//THIS SHIT KINDA WORKS BUT THE PERFORMANCE IS A PIECE OF SHIIIIT!
-			terrain.explosionAt(glm::vec3(Camera.getCenter().x, 1.5, Camera.getCenter().z), 3);
-		}*/
+		if (int(accumulator) % 10000 == 0) {				//THIS SHIT KINDA WORKS BUT THE PERFORMANCE IS A PIECE OF SHIIIIT!
+			terrain.explosionAt(glm::vec3(camera.getCenter().x, 1.5, camera.getCenter().z), 3);
+		}
 
         // TEST
         angle += frameTime;
         notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
 
-        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * Camera.get());
+        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera.get());
         render(static_cast<float>(accumulator / DeltaTime));
 
         glfwSwapBuffers(window);
@@ -133,12 +116,7 @@ int main() {
     // Clean up
     glfwDestroyWindow(window);
     glfwTerminate();
-
     return 0;
-}
-
-void update(float dt) {
-
 }
 
 void render(float alpha) {
@@ -154,23 +132,23 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
 	if (key == GLFW_KEY_Q) {
-		Camera.rotate(0.2);//0.05
+		camera.rotate(0.2);//0.05
 	}
 	if (key == GLFW_KEY_E) {
-		Camera.rotate(-0.2);
+		camera.rotate(-0.2);
 	}
 	float alpha = 1;
 	if (key == GLFW_KEY_W) {
-		Camera.move(0,alpha);
+		camera.move(0,alpha);
 	}
 	if (key == GLFW_KEY_S) {
-		Camera.move(1,alpha);
+		camera.move(1,alpha);
 	}
 	if (key == GLFW_KEY_A) {
-		Camera.move(2,alpha);
+		camera.move(2,alpha);
 	}
 	if (key == GLFW_KEY_D) {
-		Camera.move(3,alpha);
+		camera.move(3,alpha);
 	}
 	if (key == GLFW_KEY_Y) {	//move up
 

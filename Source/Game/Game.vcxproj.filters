@@ -10,6 +10,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -19,6 +20,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Game.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh" />

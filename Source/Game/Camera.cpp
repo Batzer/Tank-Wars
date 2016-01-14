@@ -3,9 +3,9 @@
 namespace tankwars {
 	Camera::Camera(glm::vec3 eye,glm::vec3 center, glm::vec3 up):eye(eye),center(center),up(up){}
 	void Camera::update(glm::vec3 eye, glm::vec3 center, glm::vec3 up){
-		eye		= eye;
-		center	= center;
-		up		= up;
+		this->eye		= eye;
+		this->center	= center;
+		this->up		= up;
 	}
 	void Camera::rotate(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
 		glm::mat3x3 rot = {	{ glm::cos(angle),					   0,					-glm::sin(angle) },

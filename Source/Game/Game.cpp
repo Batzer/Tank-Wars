@@ -8,10 +8,10 @@ namespace tankwars {
 		return joystickAvailable[0] + joystickAvailable[1];
 	}
 	void Game::addCamera(Camera * camera) {
-		camera = camera;
+		this->camera = camera;
 	}
 	void Game::addTerrain(Terrain * terrain) {
-		terrain = terrain;
+		this->terrain = terrain;
 	}
 	void Game::update(float dt) {
 		controller();
@@ -168,7 +168,7 @@ namespace tankwars {
 		}
 	}
 	void Game::pew() {
-		terrain->explosionAt(glm::vec3(camera->getCenter().x, 1.5, camera->getCenter().z), 3);
+		terrain->explosionAt(glm::vec3(camera->getCenter().x, terrain->getHeightAt(camera->getCenter().x, camera->getCenter().z), camera->getCenter().z), explosion_radius);
 	}
 	Game::~Game() {
 

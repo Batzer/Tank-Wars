@@ -123,4 +123,7 @@ namespace tankwars {
 		}
 		terrainMesh = createTerrainMesh(map, width, height);				// gotta be a more efficient way?!
 	}
+	float Terrain::getHeightAt(int x, int z) {
+		return map[x + z*width];
+	}
 }

@@ -10,7 +10,7 @@ namespace tankwars {
         Terrain(const float* heightMap, size_t width, size_t height);
         void render() const;
 		void explosionAt(glm::vec3 location, float radius);
-
+		float getHeightAt(int x, int z);
     private:
 		float maxHeight;
 		float* map;				// is a variable needed or is it better to use a return value in "readBMP"

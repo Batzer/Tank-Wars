@@ -98,9 +98,9 @@ int main() {
 			game.update(static_cast<float>(DeltaTime));
             accumulator -= DeltaTime;
         }
-		if (int(accumulator) % 10000 == 0) {				//THIS SHIT KINDA WORKS BUT THE PERFORMANCE IS A PIECE OF SHIIIIT!
-			terrain.explosionAt(glm::vec3(camera.getCenter().x, 1.5, camera.getCenter().z), 3);
-		}
+		//if (int(accumulator) % 10000 == 0) {				//THIS SHIT KINDA WORKS BUT THE PERFORMANCE IS A PIECE OF SHIIIIT!
+			//terrain.explosionAt(glm::vec3(camera.getCenter().x, 1.5, camera.getCenter().z), 3);
+		//}
 
         // TEST
         angle += frameTime;

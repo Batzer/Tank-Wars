@@ -60,7 +60,7 @@ namespace tankwars {
     }
 
     void Renderer::renderScene(const glm::mat4& viewProjMatrix) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(shaderProgram);
 

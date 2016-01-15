@@ -17,8 +17,8 @@
 #include "Camera.h"
 #include "Game.h"
 #include "Physics.h"
-#define DEBUG
-#ifdef DEBUG
+
+#ifdef _DEBUG
 constexpr char* WindowTitle = "Tank Wars (Debug)";
 constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
@@ -35,7 +35,6 @@ constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
 tankwars::Camera camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
 tankwars::Game game(&camera);
-tankwars::Physics physics;
 void controller();
 void render(float alpha);
 void errorCallback(int error, const char* description);
@@ -96,6 +95,7 @@ int main() {
 	renderer.addSceneObject(notASphere);
 	/*END OF TRY*/
 
+    tankwars::Physics physics;
     float angle = 0.0f;
 
     while (!glfwWindowShouldClose(window)) {
@@ -116,7 +116,12 @@ int main() {
         angle += frameTime;
         notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, 0, ResolutionX, ResolutionY / 2);
         renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera.get());
+        glViewport(0, ResolutionY / 2, ResolutionX, ResolutionY / 2);
+        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera.get());
+
 		game.render(static_cast<float>(accumulator / DeltaTime));
         glfwSwapBuffers(window);
         glfwPollEvents();

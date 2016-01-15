@@ -1,7 +1,7 @@
 #include "Map.h"
 
 namespace gp {
-	Map::Map(int width, int length,std::string jpegPath, int maxHeight,int upAxis) : _hf(jpegPath),_btHTS(width,length,_hf.get(),maxHeight,upAxis,1,0){
+	/*Map::Map(int width, int length,std::string jpegPath, int maxHeight,int upAxis) : _hf(jpegPath),_btHTS(width,length,_hf.get(),maxHeight,upAxis,1,0){
 		_width		= width;
 		_length		= length;
 		_maxHeight	= maxHeight;
@@ -19,4 +19,5 @@ namespace gp {
 	byte_t HeightField::get() {
 
 	}
+    */
 }

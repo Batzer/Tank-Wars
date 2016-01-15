@@ -9,6 +9,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Mesh.h"
 namespace tankwars {
+    class Object;
+
 	class Physics {
 	public:
 		Physics();

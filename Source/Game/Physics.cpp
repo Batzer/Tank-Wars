@@ -17,21 +17,22 @@ namespace tankwars {
 	void Physics::addObject(btVector3 startingPosition,btCollisionShape* shape,btScalar mass ,btVector3 fallInertia) {
 		Object obj(startingPosition, shape, mass, fallInertia);
 		objects.push_back(obj);
-		dynamicsWorld->addRigidBody(objects.back);//is back always the last added?
+		dynamicsWorld->addRigidBody(objects.back().getRigidBody());//is back always the last added?
 		//return objects.back; to identify a certain object??
 	}
 	void Physics::transform() {
-		btTransform trans;
+		/*btTransform trans;
 		glm::mat4 modelMat;
 		for (auto &obj : objects){
 			obj.getRigidBody()->getMotionState()->getWorldTransform(trans);
 			trans.getOpenGLMatrix(glm::value_ptr(modelMat));
 			//obj->mesh.setModelMatrix(modelMat);					similar function has to be implemented
 		}
+        */
 	}
 	void Physics::removeFromWorld() {
 		for (auto &obj : objects) {
-			dynamicsWorld->removeRigidBody(obj.getRigidBody);
+			dynamicsWorld->removeRigidBody(obj.getRigidBody());
 		}
 	}
 

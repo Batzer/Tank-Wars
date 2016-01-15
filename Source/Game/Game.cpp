@@ -16,6 +16,9 @@ namespace tankwars {
 	void Game::update(float dt) {
 		controller();
 	}
+	void Game::render(float alpha) {
+
+	}
 	void Game::controller() {
 		float movement_alpha = 1;
 		float rotation_alpha = 0.1;
@@ -45,11 +48,12 @@ namespace tankwars {
 					break;
 				case 2:		//R-stick x-Axis
 					if (axis[i]>0.001 || axis[i]<-0.001) {
-						camera->rotate(-rotation_alpha*axis[i]);
+						camera->rotateXAxis(-rotation_alpha*axis[i]);
 					}
 					break;
 				case 3:		//R-stick y-Axis
 					if (axis[i]>0.001 || axis[i]<-0.001) {
+						camera->rotateYAxis(-rotation_alpha*axis[i]);
 					}
 					break;
 				}
@@ -84,13 +88,13 @@ namespace tankwars {
 				case 4:
 					if (axes[i]) {
 						std::cout << "L1" << "\n";
-						camera->rotate(rotation_alpha);
+						camera->rotateXAxis(rotation_alpha);
 					}
 					break;
 				case 5:
 					if (axes[i]) {
 						std::cout << "R1" << "\n";
-						camera->rotate(-rotation_alpha);
+						camera->rotateXAxis(-rotation_alpha);
 					}
 					break;
 				case 6:

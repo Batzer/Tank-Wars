@@ -16,16 +16,26 @@
 #include "Terrain.h"
 #include "Camera.h"
 #include "Game.h"
-
+#include "Physics.h"
+#define DEBUG
+#ifdef DEBUG
+constexpr char* WindowTitle = "Tank Wars (Debug)";
 constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
-constexpr char* WindowTitle = "Tank Wars";
 constexpr bool GoFullscreen = false;
+#else
+constexpr char* WindowTitle = "Tank Wars";
+constexpr int ResolutionX = 1920;
+constexpr int ResolutionY = 1080;
+constexpr bool GoFullscreen = true;
+#endif
+
 constexpr bool UseVSync = true;
 constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
 tankwars::Camera camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
 tankwars::Game game(&camera);
+tankwars::Physics physics;
 void controller();
 void render(float alpha);
 void errorCallback(int error, const char* description);
@@ -107,8 +117,7 @@ int main() {
         notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
 
         renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera.get());
-        render(static_cast<float>(accumulator / DeltaTime));
-
+		game.render(static_cast<float>(accumulator / DeltaTime));
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -119,9 +128,7 @@ int main() {
     return 0;
 }
 
-void render(float alpha) {
 
-}
 
 void errorCallback(int error, const char* description) {
     std::cerr << description;
@@ -132,10 +139,10 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
 	if (key == GLFW_KEY_Q) {
-		camera.rotate(0.2);//0.05
+		camera.rotateXAxis(0.2);//0.05
 	}
 	if (key == GLFW_KEY_E) {
-		camera.rotate(-0.2);
+		camera.rotateXAxis(-0.2);
 	}
 	float alpha = 1;
 	if (key == GLFW_KEY_W) {

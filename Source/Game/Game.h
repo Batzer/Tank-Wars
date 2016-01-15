@@ -13,12 +13,13 @@ namespace tankwars {
 		void addCamera(Camera * camera);
 		void addTerrain(Terrain * terrain);
 		void update(float dt);
+		void render(float alpha);
 	private:
 		void pew();
 		void controller();
 		Camera * camera;
 		Terrain * terrain;
 		int joystickAvailable[2];
-		float explosion_radius;
+		float explosion_radius = 3;
 	};
 }

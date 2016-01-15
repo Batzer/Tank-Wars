@@ -1,5 +1,5 @@
 #include "Camera.h"
-
+#include <iostream>
 namespace tankwars {
 	Camera::Camera(glm::vec3 eye,glm::vec3 center, glm::vec3 up):eye(eye),center(center),up(up){}
 	void Camera::update(glm::vec3 eye, glm::vec3 center, glm::vec3 up){
@@ -7,11 +7,14 @@ namespace tankwars {
 		this->center	= center;
 		this->up		= up;
 	}
-	void Camera::rotate(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
+	void Camera::rotateXAxis(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
 		glm::mat3x3 rot = {	{ glm::cos(angle),					   0,					-glm::sin(angle) },
 							{				 0,					   1,								   0 },
 							{ glm::sin(angle),					   0,					 glm::cos(angle)}};
 		center = (rot*(center - eye)) + eye;
+	}
+	void Camera::rotateYAxis(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
+		//how to rotate around arbitary axis
 	}
 	glm::tmat4x4<float, glm::highp> Camera::get() {
 		return glm::lookAt(eye, center, up);

@@ -10,7 +10,8 @@ namespace tankwars {
 		~Camera();
 		void update(glm::vec3 eye, glm::vec3 center, glm::vec3 up);
 		void move(int direction,float alpha);
-		void rotate(double angle);
+		void rotateXAxis(double angle);
+		void rotateYAxis(double angle);
 		glm::tmat4x4<float, glm::highp> get();
 		glm::vec3 Camera::getCenter();
 

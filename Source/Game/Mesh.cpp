@@ -40,6 +40,13 @@ namespace tankwars {
         elementCount = other.elementCount;
         return *this;
     }
+	Mesh& Mesh::operator+=(Mesh&& other) {
+		std::swap(vertexBuffer, other.vertexBuffer);
+		std::swap(elementBuffer, other.elementBuffer);
+		std::swap(vertexArray, other.vertexArray);
+		elementCount = other.elementCount;
+		return *this;
+	}
 
     void Mesh::render() const {
         glBindVertexArray(vertexArray);

@@ -34,6 +34,7 @@ constexpr bool UseVSync = true;
 constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
 tankwars::Camera camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
+tankwars::Camera camera2(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
 tankwars::Game game(&camera);
 void controller();
 void render(float alpha);
@@ -79,7 +80,7 @@ int main() {
     double accumulator = 0.0;
 	
     tankwars::Renderer renderer;
-	tankwars::Terrain terrain("Content/Animations/Penis.bmp", 4);
+	tankwars::Terrain terrain("Content/Animations/Penis.bmp", 2);
     renderer.setTerrain(&terrain);
 	//GAME SETUP
 	game.setupControllers();
@@ -117,9 +118,9 @@ int main() {
         notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, ResolutionX, ResolutionY / 2);
-        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera.get());
-        glViewport(0, ResolutionY / 2, ResolutionX, ResolutionY / 2);
+        glViewport(ResolutionX/5, 0, ResolutionX, ResolutionY / 2);
+        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera2.get());
+        glViewport(0, ResolutionY / 2, ResolutionX/2+ResolutionX/5, ResolutionY / 2);
         renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera.get());
 
 		game.render(static_cast<float>(accumulator / DeltaTime));

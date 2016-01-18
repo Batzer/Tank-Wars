@@ -15,8 +15,8 @@ namespace tankwars {
 		new btBoxShape(size);
 	}
 	void Physics::addObject(btVector3 startingPosition,btCollisionShape* shape,btScalar mass ,btVector3 fallInertia) {
-		Object obj(startingPosition, shape, mass, fallInertia);
-		objects.push_back(obj);
+		//Object obj(startingPosition, shape, mass, fallInertia);
+		objects.emplace_back(startingPosition, shape, mass, fallInertia);
 		dynamicsWorld->addRigidBody(objects.back().getRigidBody());//is back always the last added?
 		//return objects.back; to identify a certain object??
 	}
@@ -31,9 +31,9 @@ namespace tankwars {
         */
 	}
 	void Physics::removeFromWorld() {
-		for (auto &obj : objects) {
+		/*for (auto &obj : objects) {
 			dynamicsWorld->removeRigidBody(obj.getRigidBody());
-		}
+		}*/
 	}
 
 	Object::Object(btVector3 startingPosition, btCollisionShape* shape, btScalar mass, btVector3 fallInertia) 

@@ -27,7 +27,7 @@ namespace tankwars {
 
         Mesh& operator=(const Mesh&) = delete;
         Mesh& operator=(Mesh&& other);
-		Mesh& operator+=(Mesh&& other);
+
         void render() const;
 
     private:

@@ -1,25 +1,31 @@
 #include "Terrain.h"
 #include <vector>
 #include <iostream>
+#include <cmath>
+
 namespace tankwars {
-	Terrain::Terrain(char* mapfileName,float maxHeight) 
+	Terrain::Terrain(const std::string& mapfileName, float maxHeight) 
 		    : maxHeight(maxHeight), 
-				terrainMesh(createTerrainMesh(mapfileName)),
-				btTerrain(int(width),int(length),map,maxHeight,1,PHY_FLOAT,0){
+			  terrainMesh(createTerrainMesh(mapfileName)),
+			  btTerrain(static_cast<int>(width), static_cast<int>(length), map, maxHeight, 1, PHY_FLOAT, 0) {
+        // Do nothing
 	}
+
     Terrain::Terrain(const float* heightMap, size_t width, size_t height)
             : terrainMesh(createTerrainMesh(heightMap, width, height)),
-				btTerrain(int(width), int(length), map, maxHeight, 1, PHY_FLOAT, 0) {
+			  btTerrain(static_cast<int>(width), static_cast<int>(length), map, maxHeight, 1, PHY_FLOAT, 0) {
         // Do nothing
     }
 
     void Terrain::render() const {
         terrainMesh.render();
     }
-	Mesh Terrain::createTerrainMesh(char* mapfileName) {
+
+	Mesh Terrain::createTerrainMesh(const std::string& mapfileName) {
 		readBMP(mapfileName,&width,&length);						// when added to constructer compiler says sth about it being a non-static member
 		return createTerrainMesh(map, width, length);
 	}
+
     Mesh Terrain::createTerrainMesh(const float* heightMap, size_t width, size_t height) {
         std::vector<glm::vec3> positions;
         positions.reserve(width * height);
@@ -68,11 +74,11 @@ namespace tankwars {
         return Mesh(vertices.data(), vertices.size(), indices.data(), indices.size());
     }
 
-	void Terrain::readBMP(char* filename,size_t* width,size_t* height) // maybe gotta change this a bit since it's copy-pasted from the internet except for fopen_s part
+	void Terrain::readBMP(const std::string& filename,size_t* width,size_t* height) // maybe gotta change this a bit since it's copy-pasted from the internet except for fopen_s part
 	{
 		//int i;
 		FILE* f;// = fopen(filename, "rb");
-		fopen_s(&f, filename, "rb");
+		fopen_s(&f, filename.c_str(), "rb");
 		unsigned char info[54];
 		fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
 
@@ -111,26 +117,31 @@ namespace tankwars {
 		}
 	}
 
-	void Terrain::explosionAt(glm::vec3 location,float radius){
-		int size = int(radius) * 2+1;
-		size_t startX=location.x-int(radius)+1;
-		size_t startZ = location.z - int(radius) + 1;
-		for (size_t x = startX; x < startX+size; x++) {
-			for (size_t z = startZ; z < startZ+size; z++) {
-				float distanceSquared = glm::pow(x - location.x, 2) + glm::pow(z - location.z, 2);
-				if (glm::sqrt(distanceSquared)<=radius) {
-					float coordY = location.y - glm::sqrt(glm::pow(radius, 2) - distanceSquared);
+	void Terrain::explosionAt(glm::vec3 location, float radius){
+		auto size = static_cast<int>(radius) * 2 + 1;
+		auto startX = location.x - static_cast<int>(radius) + 1;
+		auto startZ = location.z - static_cast<int>(radius) + 1;
+
+		for (size_t x = startX; x < startX + size; x++) {
+			for (size_t z = startZ; z < startZ + size; z++) {
+				float distanceSquared = pow(x - location.x, 2) + pow(z - location.z, 2);
+
+				if (sqrt(distanceSquared) <= radius) {
+					float coordY = location.y - sqrt(pow(radius, 2) - distanceSquared);
+
 					//change the mesh according to the calculations
-					if(map[x + z*width]>coordY)
-						map[x + z*width] = coordY;
+					if(map[x + z * width] > coordY) {
+						map[x + z * width] = coordY;
+                    }
 				}
 			}
 		}
+
 		terrainMesh = createTerrainMesh(map, width, length);				// gotta be a more efficient way?!
 	}
 
 	float Terrain::getHeightAt(int x, int z) {
-		return map[x + z*width];
+		return map[x + z * width];
 	}
 
     /*

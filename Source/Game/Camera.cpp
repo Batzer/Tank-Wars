@@ -29,7 +29,7 @@ namespace tankwars {
 		// how to rotate around arbitary axis
 	}
 
-	glm::tmat4x4<float, glm::highp> Camera::get() {
+	glm::mat4 Camera::get() {
 		return glm::lookAt(eye, center, up);
 	}
 

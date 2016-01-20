@@ -3,17 +3,17 @@
 #include <cmath>
 
 namespace tankwars {
-	Camera::Camera(glm::vec3 eye,glm::vec3 center, glm::vec3 up)
+	Camera::Camera(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up)
             : eye(eye),
               center(center),
               up(up) {
         // Do nothing
     }
 
-	void Camera::update(glm::vec3 eye, glm::vec3 center, glm::vec3 up) {
-		this->eye		= eye;
-		this->center	= center;
-		this->up		= up;
+	void Camera::update(const glm::vec3& eye, const glm::vec3&center, const glm::vec3& up) {
+		this->eye = eye;
+		this->center = center;
+		this->up = up;
 	}
 
 	void Camera::rotateXAxis(double angle) {
@@ -29,17 +29,18 @@ namespace tankwars {
 		// how to rotate around arbitary axis
 	}
 
-	glm::mat4 Camera::get() {
+	glm::mat4 Camera::getViewMatrix() const {
 		return glm::lookAt(eye, center, up);
 	}
 
-	glm::vec3 Camera::getCenter() {				//For testing puposes
+	glm::vec3 Camera::getPosition() const {				//For testing puposes
 		return center;
 	}
 
-	void Camera::move(int direction,float alpha) {
-		glm::vec3 viewDirection = { eye.x - center.x , 0 , eye.z - center.z };
+	void Camera::move(int direction, float speed) {
+		glm::vec3 viewDirection(eye.x - center.x , 0, eye.z - center.z);
 		viewDirection = glm::normalize(viewDirection);
+
 		if (direction == 0) {			//FORWARD
 			viewDirection = -viewDirection;
 		}
@@ -50,9 +51,10 @@ namespace tankwars {
 			viewDirection = -glm::cross(viewDirection, up);
 		}
 		else {							//BACKWARD schouldn't do anything in this case
-			;
+			
 		}
-		eye			= eye + alpha*viewDirection;
-		center		= center + alpha*viewDirection;
+
+		eye			= eye + speed * viewDirection;
+		center		= center + speed * viewDirection;
 	}
 }

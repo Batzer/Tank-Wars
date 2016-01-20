@@ -110,7 +110,7 @@ namespace tankwars {
 		}
 	}
 
-	void Terrain::explosionAt(glm::vec3 location, float radius){
+	void Terrain::explosionAt(const glm::vec3& location, float radius){
 		auto size = static_cast<int>(radius) * 2 + 1;
 		auto startX = location.x - static_cast<int>(radius) + 1;
 		auto startZ = location.z - static_cast<int>(radius) + 1;

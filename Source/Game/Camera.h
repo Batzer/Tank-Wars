@@ -3,11 +3,11 @@
 #include <GL/gl3w.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
 namespace tankwars {
 	class Camera {
 	public:
 		Camera(glm::vec3 eye, glm::vec3 center, glm::vec3 up);
-		~Camera();
 
 		void update(glm::vec3 eye, glm::vec3 center, glm::vec3 up);
 		void move(int direction,float alpha);

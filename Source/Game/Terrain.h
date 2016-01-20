@@ -13,6 +13,7 @@ namespace tankwars {
     public:
 		Terrain(const std::string& mapfileName, float maxHeight);
         Terrain(const float* heightMap, size_t width, size_t height);
+
         void render() const;
 		void explosionAt(glm::vec3 location, float radius);
 		float getHeightAt(int x, int z);

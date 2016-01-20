@@ -8,7 +8,6 @@ namespace tankwars {
 	class Game {
 	public:
 		Game(Camera * camera);
-		~Game();
 
 		int setupControllers();
 		void addCamera(Camera * camera);

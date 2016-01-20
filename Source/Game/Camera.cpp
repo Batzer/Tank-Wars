@@ -55,8 +55,4 @@ namespace tankwars {
 		eye			= eye + alpha*viewDirection;
 		center		= center + alpha*viewDirection;
 	}
-
-	Camera::~Camera() {
-		//?
-	}
 }

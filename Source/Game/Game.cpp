@@ -185,8 +185,4 @@ namespace tankwars {
 	void Game::pew() {
 		terrain->explosionAt(glm::vec3(camera->getCenter().x, terrain->getHeightAt(camera->getCenter().x, camera->getCenter().z), camera->getCenter().z), explosion_radius);
 	}
-
-	Game::~Game() {
-
-	}
 }

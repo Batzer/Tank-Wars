@@ -1,24 +1,34 @@
 #include "Game.h"
 namespace tankwars {
-	Game::Game(Camera * camera) :camera(camera){}
-	int Game::setupControllers() {										//maybe map the functions to the keys, so that they are not hard-coded?
+	Game::Game(Camera * camera)
+            : camera(camera) {
+        // Do nothing
+    }
+
+	int Game::setupControllers() {
+        // NOTE: Maybe map the functions to the keys, so that they are not hard-coded?
 		joystickAvailable[0] = glfwJoystickPresent(GLFW_JOYSTICK_1);
 		joystickAvailable[1] = glfwJoystickPresent(GLFW_JOYSTICK_2);
 		std::cout << "Available joysticks: 1st-" << joystickAvailable[0] << " 2nd-" << joystickAvailable[1];
 		return joystickAvailable[0] + joystickAvailable[1];
 	}
-	void Game::addCamera(Camera * camera) {
+
+	void Game::addCamera(Camera* camera) {
 		this->camera = camera;
 	}
-	void Game::addTerrain(Terrain * terrain) {
+
+	void Game::addTerrain(Terrain* terrain) {
 		this->terrain = terrain;
 	}
+
 	void Game::update(float dt) {
 		controller();
 	}
+
 	void Game::render(float alpha) {
 
 	}
+
 	void Game::controller() {
 		float movement_alpha = 1;
 		float rotation_alpha = 0.1;
@@ -171,9 +181,11 @@ namespace tankwars {
 
 		}
 	}
+
 	void Game::pew() {
 		terrain->explosionAt(glm::vec3(camera->getCenter().x, terrain->getHeightAt(camera->getCenter().x, camera->getCenter().z), camera->getCenter().z), explosion_radius);
 	}
+
 	Game::~Game() {
 
 	}

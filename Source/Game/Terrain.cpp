@@ -67,6 +67,7 @@ namespace tankwars {
 
         return Mesh(vertices.data(), vertices.size(), indices.data(), indices.size());
     }
+
 	void Terrain::readBMP(char* filename,size_t* width,size_t* height) // maybe gotta change this a bit since it's copy-pasted from the internet except for fopen_s part
 	{
 		//int i;
@@ -101,6 +102,7 @@ namespace tankwars {
 		}
 
 	}
+
 	void Terrain::updateTerrain(glm::vec2 startingPoint, const float* newArea, size_t newAreaWidth, size_t newAreaHeight) { // is this function needed?
 		for (size_t y = 0; y < newAreaHeight; y++) {
 			for (size_t x = 0; x < newAreaWidth; x++) {
@@ -108,6 +110,7 @@ namespace tankwars {
 			}
 		}
 	}
+
 	void Terrain::explosionAt(glm::vec3 location,float radius){
 		int size = int(radius) * 2+1;
 		size_t startX=location.x-int(radius)+1;
@@ -125,9 +128,12 @@ namespace tankwars {
 		}
 		terrainMesh = createTerrainMesh(map, width, length);				// gotta be a more efficient way?!
 	}
+
 	float Terrain::getHeightAt(int x, int z) {
 		return map[x + z*width];
 	}
+
+    /*
 	void Terrain::readBMP2(char* filename, size_t* width, size_t*length) {
 		FILE* f;// = fopen(filename, "rb");
 		fopen_s(&f, filename, "rb");
@@ -178,6 +184,7 @@ namespace tankwars {
 			}
 		}
 	}
+    */
 	/*void Terrain::createCubeVector() {
 		for (size_t i = 0; i < width; i++) {
 			for (size_t j = 0; j < length; j++) {
@@ -189,6 +196,7 @@ namespace tankwars {
 			}
 		}
 	}*/
+    /*
 	Mesh Terrain::marchingCubesAlgorithm(glm::vec3 firstVoxel, glm::vec3 lastVoxel) { // implemented with the help of http://paulbourke.net/geometry/polygonise/ first link to a c++ code
 		std::vector<Vertex> vertices;
 		std::vector<uint16_t> indices;
@@ -249,17 +257,7 @@ namespace tankwars {
 			if (edgeFlag & (1 << i)) {
 
 				//magic happens here
-				/*ORIGINAL CODE*/
-					/* fOffset = fGetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], 
-                                                     afCubeValue[ a2iEdgeConnection[iEdge][1] ], fTargetValue);
-
-                        asEdgeVertex[iEdge].fX = fX + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][0]  +  fOffset * a2fEdgeDirection[iEdge][0]) * fScale;
-                        asEdgeVertex[iEdge].fY = fY + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][1]  +  fOffset * a2fEdgeDirection[iEdge][1]) * fScale;
-                        asEdgeVertex[iEdge].fZ = fZ + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][2]  +  fOffset * a2fEdgeDirection[iEdge][2]) * fScale;
-
-                        vGetNormal(asEdgeNorm[iEdge], asEdgeVertex[iEdge].fX, asEdgeVertex[iEdge].fY, asEdgeVertex[iEdge].fZ);
-					*/
-				/*END ORIGINAL CODE*/
+				
 			}
 		}
 		//Draw the triangles that were found. THere can be up to five per cube COPYPASTED
@@ -274,13 +272,10 @@ namespace tankwars {
 				//calculate edgevertecies
 				//calculate indices
 				//calculate positions
-				/*ORIGINAL CODE*/
-					/*glColor3f(sColor.fX, sColor.fY, sColor.fZ);
-					glNormal3f(asEdgeNorm[iVertex].fX, asEdgeNorm[iVertex].fY, asEdgeNorm[iVertex].fZ);
-					glVertex3f(asEdgeVertex[iVertex].fX, asEdgeVertex[iVertex].fY, asEdgeVertex[iVertex].fZ);*/
-				/*END ORIGINAL CODE*/
+				
 			}
 		}
 		(*vertices).push_back(Vertex{ glm::vec3(1,2,3),glm::vec3(1,2,3) });//well, the values should be changed
 	}
+    */
 }

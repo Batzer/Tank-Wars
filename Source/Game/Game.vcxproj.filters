@@ -4,14 +4,13 @@
     <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c" />
     <ClCompile Include="GLTools.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Physics.cpp" />
-    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -21,14 +20,19 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Map.h" />
     <ClInclude Include="physics.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Content\Shaders\Basic.vsh" />
-    <None Include="..\..\Content\Shaders\Basic.fsh" />
+    <None Include="..\..\Content\Shaders\Basic.vsh">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\..\Content\Shaders\Basic.fsh">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\numrech\130963799483028934\A16\camera.bmp" />
+    <Filter Include="Shader">
+      <UniqueIdentifier>{eb6801dc-0d12-45b0-963a-0c95820a2467}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

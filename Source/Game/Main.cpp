@@ -114,7 +114,7 @@ int main() {
 		//}
 
         // TEST
-        angle += frameTime;
+        angle += static_cast<float>(frameTime);
         notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

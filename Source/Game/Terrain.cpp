@@ -1,19 +1,22 @@
 #include "Terrain.h"
+
 #include <vector>
 #include <iostream>
 #include <cmath>
+
+#include "Image.h"
 
 namespace tankwars {
 	Terrain::Terrain(const std::string& mapfileName, float maxHeight) 
 		    : maxHeight(maxHeight), 
 			  terrainMesh(createTerrainMesh(mapfileName)),
-			  btTerrain(static_cast<int>(width), static_cast<int>(length), map, maxHeight, 1, PHY_FLOAT, 0) {
+			  btTerrain(static_cast<int>(width), static_cast<int>(length), map.data(), maxHeight, 1, PHY_FLOAT, 0) {
         // Do nothing
 	}
 
     Terrain::Terrain(const float* heightMap, size_t width, size_t height)
             : terrainMesh(createTerrainMesh(heightMap, width, height)),
-			  btTerrain(static_cast<int>(width), static_cast<int>(length), map, maxHeight, 1, PHY_FLOAT, 0) {
+			  btTerrain(static_cast<int>(width), static_cast<int>(length), map.data(), maxHeight, 1, PHY_FLOAT, 0) {
         // Do nothing
     }
 
@@ -22,8 +25,8 @@ namespace tankwars {
     }
 
 	Mesh Terrain::createTerrainMesh(const std::string& mapfileName) {
-		readBMP(mapfileName,&width,&length);						// when added to constructer compiler says sth about it being a non-static member
-		return createTerrainMesh(map, width, length);
+        readHeightMapFromFile(mapfileName, width, length);						// when added to constructer compiler says sth about it being a non-static member
+		return createTerrainMesh(map.data(), width, length);
 	}
 
     Mesh Terrain::createTerrainMesh(const float* heightMap, size_t width, size_t height) {
@@ -74,39 +77,29 @@ namespace tankwars {
         return Mesh(vertices.data(), vertices.size(), indices.data(), indices.size());
     }
 
-	void Terrain::readBMP(const std::string& filename,size_t* width,size_t* height) // maybe gotta change this a bit since it's copy-pasted from the internet except for fopen_s part
-	{
-		//int i;
-		FILE* f;// = fopen(filename, "rb");
-		fopen_s(&f, filename.c_str(), "rb");
-		unsigned char info[54];
-		fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
+	void Terrain::readHeightMapFromFile(const std::string& filename, size_t& width, size_t& height) {
+		Image heightMap(filename);
 
-												   // extract image height and width from header
-		*width = *(int*)&info[18];
-		*height = *(int*)&info[22];
+        width = heightMap.getWidth();
+        height = heightMap.getHeight();
+        map.resize(width * height);
 
-		size_t size = 3 * *width * *height;
-		unsigned char* data = new unsigned char[size];
-		fread(data, sizeof(unsigned char), size, f);
-		fclose(f);
-		/*
-		for (i = 0; i < size; i += 3)
-		{
-			unsigned char tmp = data[i];
-			data[i] = data[i + 2];
-			data[i + 2] = tmp;						// RGB instead of GRB
-		}
-		*/
-		map = new float[size/3];								
-		float scalingFactor = maxHeight / 255;
-		for (size_t i = 0; i < size/3; i++) {												
-			map[i] = scalingFactor-data[i*3]*scalingFactor;				//need to mirror this damn map to display the image right
-			if ((i % *width) == (*width-1) ||(i % *width)==0||i>(*width* *width-*width)||i<*width) {
-				map[i] = maxHeight+2;													// create borders
-			}
-		}
+        const auto pixels = heightMap.getImage();
+        const auto scalingFactor = maxHeight / 255.0f;
 
+        for (size_t y = 0; y < height; y++) {
+            for (size_t x = 0; x < width; x++) {
+                auto index = x + y * width;
+
+                if (x == 0 || y == 0 || x == width - 1 || y == height - 1) {
+                    map[index] = maxHeight + 2;
+                }
+                else {
+                    auto heightValue = pixels[index * heightMap.getNumChannels()];
+                    map[index] = scalingFactor - heightValue * scalingFactor;
+                }
+            }
+        }
 	}
 
 	void Terrain::updateTerrain(glm::vec2 startingPoint, const float* newArea, size_t newAreaWidth, size_t newAreaHeight) { // is this function needed?
@@ -137,7 +130,7 @@ namespace tankwars {
 			}
 		}
 
-		terrainMesh = createTerrainMesh(map, width, length);				// gotta be a more efficient way?!
+		terrainMesh = createTerrainMesh(map.data(), width, length);				// gotta be a more efficient way?!
 	}
 
 	float Terrain::getHeightAt(int x, int z) {

@@ -22,12 +22,12 @@ namespace tankwars {
     private:
 		std::vector<std::vector<std::vector<bool>>> voxelMap; // width, height, length 
 		float maxHeight;
-		float* map;				// is a variable needed or is it better to use a return value in "readBMP"
+		std::vector<float> map;				// is a variable needed or is it better to use a return value in "readBMP"
 		size_t width,length;
 		Mesh createTerrainMesh(const std::string& mapfileName);
         Mesh createTerrainMesh(const float* heightMap, size_t width, size_t height);
 		void updateTerrain(glm::vec2 startingPoint, const float* newArea, size_t newAreaWidth, size_t newAreaHeight); // not implemented/ needed?
-		void readBMP(const std::string& filename, size_t* width, size_t* height);		// move somewehere else later?!
+		void readHeightMapFromFile(const std::string& filename, size_t& width, size_t& height);		// move somewehere else later?!
         Mesh terrainMesh;
 		btHeightfieldTerrainShape btTerrain;
 

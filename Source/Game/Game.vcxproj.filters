@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c" />
     <ClCompile Include="GLTools.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MeshTools.cpp" />
@@ -11,6 +10,13 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -21,6 +27,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="physics.h" />
+    <ClInclude Include="Image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">
@@ -33,6 +40,9 @@
   <ItemGroup>
     <Filter Include="Shader">
       <UniqueIdentifier>{eb6801dc-0d12-45b0-963a-0c95820a2467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{2e58df93-0f4e-4a26-b3cc-eee11f0ca142}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

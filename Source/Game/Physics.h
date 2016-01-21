@@ -1,4 +1,5 @@
 #pragma once
+
 #include <btBulletDynamicsCommon.h>
 #include <memory>
 #include <vector>
@@ -8,16 +9,19 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Mesh.h"
+
 namespace tankwars {
     class Object;
 
 	class Physics {
 	public:
 		Physics();
+
 		void createShape(btVector3 size);
 		void addObject(btVector3 startingPosition, btCollisionShape* shape, btScalar mass, btVector3 fallInertia);
 		void transform();
 		void removeFromWorld();
+
 	private:
 		std::unique_ptr<btBroadphaseInterface> broadphase;
 		std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;
@@ -31,6 +35,7 @@ namespace tankwars {
 	public:
 		Object(btVector3 startingPosition, btCollisionShape* shape, btScalar mass, btVector3 fallInertia);
 		btRigidBody* getRigidBody();
+
 	private:
 		MeshInstance mesh;
 		std::unique_ptr<btCollisionShape> objShape;

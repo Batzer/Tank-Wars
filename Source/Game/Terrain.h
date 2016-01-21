@@ -6,27 +6,32 @@
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h>
 #include <vector>
+#include <string>
+
 namespace tankwars {
     class Terrain {
     public:
-		Terrain(char* mapfileName,float maxHeight);
+		Terrain(const std::string& mapfileName, float maxHeight);
         Terrain(const float* heightMap, size_t width, size_t height);
+
         void render() const;
-		void explosionAt(glm::vec3 location, float radius);
+		void explosionAt(const glm::vec3& location, float radius);
 		float getHeightAt(int x, int z);
-		void explosionAt2(glm::vec3 location, float radius);
+		//void explosionAt2(glm::vec3 location, float radius);
+
     private:
 		std::vector<std::vector<std::vector<bool>>> voxelMap; // width, height, length 
 		float maxHeight;
-		float* map;				// is a variable needed or is it better to use a return value in "readBMP"
+		std::vector<float> map;				// is a variable needed or is it better to use a return value in "readBMP"
 		size_t width,length;
-		Mesh createTerrainMesh(char* mapfileName);
+		Mesh createTerrainMesh(const std::string& mapfileName);
         Mesh createTerrainMesh(const float* heightMap, size_t width, size_t height);
 		void updateTerrain(glm::vec2 startingPoint, const float* newArea, size_t newAreaWidth, size_t newAreaHeight); // not implemented/ needed?
-		void readBMP(char* filename, size_t* width, size_t* height);		// move somewehere else later?!
+		void readHeightMapFromFile(const std::string& filename, size_t& width, size_t& height);		// move somewehere else later?!
         Mesh terrainMesh;
 		//btHeightfieldTerrainShape btTerrain;
 
+<<<<<<< HEAD
 		/*Mesh Terrain2;
 		void readBMP2(char* filename, size_t* width, size_t* height);
 		//void Terrain::createCubeVector();
@@ -43,14 +48,16 @@ namespace tankwars {
 		{ 0.0, 0.0, 0.0 },{ 1.0, 0.0, 0.0 },{ 1.0, 1.0, 0.0 },{ 0.0, 1.0, 0.0 },
 		{ 0.0, 0.0, 1.0 },{ 1.0, 0.0, 1.0 },{ 1.0, 1.0, 1.0 },{ 0.0, 1.0, 1.0 }
 	};
+=======
+		//Mesh Terrain2;
+		//void readBMP2(char* filename, size_t* width, size_t* height);
+		//void Terrain::createCubeVector();
+		//Mesh marchingCubesAlgorithm(glm::vec3 firstVoxel, glm::vec3 lastVoxel);
+		//void marchingCube(std::vector<Vertex>* vertices, int x, int y, int z);
+>>>>>>> fbe4901e87831b5cb768918db32ece4af68841a0
 
-	//a2iEdgeConnection lists the index of the endpoint vertices for each of the 12 edges of the cube
-	static const GLint marchingCubes_EdgeConnection[12][2] =
-	{
-		{ 0,1 },{ 1,2 },{ 2,3 },{ 3,0 },
-		{ 4,5 },{ 5,6 },{ 6,7 },{ 7,4 },
-		{ 0,4 },{ 1,5 },{ 2,6 },{ 3,7 }
 	};
+<<<<<<< HEAD
 
 	//a2fEdgeDirection lists the direction vector (vertex1-vertex0) for each edge in the cube
 	static const GLfloat marchingCubes_EdgeDirection[12][3] =
@@ -339,4 +346,6 @@ namespace tankwars {
 		{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
 	};*/
 
+=======
+>>>>>>> fbe4901e87831b5cb768918db32ece4af68841a0
 }

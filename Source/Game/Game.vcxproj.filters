@@ -17,7 +17,6 @@
     <ClCompile Include="stb_image.cpp">
       <Filter>Dependencies</Filter>
     </ClCompile>
-    <ClCompile Include="VoxelTerrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -29,7 +28,6 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="Image.h" />
-    <ClInclude Include="VoxelTerrain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">

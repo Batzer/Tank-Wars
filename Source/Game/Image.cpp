@@ -10,7 +10,7 @@ namespace tankwars {
         if (!file.is_open()) {
             throw std::runtime_error("Attempt to open non-existent image file");
         }
-
+		 
         file.seekg(0, std::ios::end);
         auto size = static_cast<std::size_t>(file.tellg());
         file.seekg(0, std::ios::beg);

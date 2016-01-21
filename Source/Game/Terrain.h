@@ -25,20 +25,20 @@ namespace tankwars {
 		void updateTerrain(glm::vec2 startingPoint, const float* newArea, size_t newAreaWidth, size_t newAreaHeight); // not implemented/ needed?
 		void readBMP(char* filename, size_t* width, size_t* height);		// move somewehere else later?!
         Mesh terrainMesh;
-		btHeightfieldTerrainShape btTerrain;
+		//btHeightfieldTerrainShape btTerrain;
 
-		Mesh Terrain2;
+		/*Mesh Terrain2;
 		void readBMP2(char* filename, size_t* width, size_t* height);
 		//void Terrain::createCubeVector();
 		Mesh marchingCubesAlgorithm(glm::vec3 firstVoxel, glm::vec3 lastVoxel);
-		void marchingCube(std::vector<Vertex>* vertices, int x, int y, int z);
+		void marchingCube(std::vector<Vertex>* vertices, int x, int y, int z);*/
 
 	};
 	//These tables are used so that everything can be done in little loops that you can look at all at once
 	// rather than in pages and pages of unrolled code.
 
 	//a2fVertexOffset lists the positions, relative to vertex0, of each of the 8 vertices of a cube
-	static const GLfloat marchingCubes_VertexOffset[8][3] =
+	/*static const GLfloat marchingCubes_VertexOffset[8][3] =
 	{
 		{ 0.0, 0.0, 0.0 },{ 1.0, 0.0, 0.0 },{ 1.0, 1.0, 0.0 },{ 0.0, 1.0, 0.0 },
 		{ 0.0, 0.0, 1.0 },{ 1.0, 0.0, 1.0 },{ 1.0, 1.0, 1.0 },{ 0.0, 1.0, 1.0 }
@@ -337,6 +337,6 @@ namespace tankwars {
 		{ 0, 9, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 		{ 0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 		{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
-	};
+	};*/
 
 }

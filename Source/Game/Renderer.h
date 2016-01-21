@@ -3,6 +3,7 @@
 #include <GL/gl3w.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include "VoxelTerrain.h"
 
 namespace tankwars {
     struct MeshInstance;
@@ -26,7 +27,7 @@ namespace tankwars {
         void setLight(const glm::vec3& color, const glm::vec3& direction);
         void addSceneObject(const MeshInstance& instance);
         void removeSceneObject(const MeshInstance& instance);
-        void setTerrain(const Terrain* terrain);
+        void setTerrain(const VoxelTerrain* terrain);
 
     private:
         // Shaders
@@ -49,6 +50,6 @@ namespace tankwars {
         glm::vec3 lightDirection = { 1, -1, -1 };
         glm::vec3 lightColor = { 1, 1, 1 };
         std::vector<const MeshInstance*> sceneObjects;
-        const Terrain* terrain = nullptr;
+        const VoxelTerrain* terrain = nullptr;
     };
 }

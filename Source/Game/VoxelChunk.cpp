@@ -64,8 +64,12 @@ namespace {
 }
 
 namespace tankwars {
-    VoxelChunk::VoxelChunk(size_t width, size_t height, size_t depth, const VoxelType* voxels)
-            : width(width),
+    VoxelChunk::VoxelChunk(size_t startX, size_t startY, size_t startZ, size_t width,
+        size_t height, size_t depth, const VoxelType* voxels)
+            : startX(startX),
+              startY(startY),
+              startZ(startZ),
+              width(width),
               height(height),
               depth(depth),
               voxels(width * height * depth, VoxelType::Empty) {
@@ -99,8 +103,10 @@ namespace tankwars {
 
     void VoxelChunk::setVoxel(size_t x, size_t y, size_t z, VoxelType voxel) {
         assert(x < width && y < height && z < depth);
-        voxels[x + y * width + z * width * height] = voxel;
-        isMeshDirty = true;
+
+        auto index = x + y * width + z * width * height;
+        isMeshDirty = (voxels[index] != voxel);
+        voxels[index] = voxel;
     }
 
     VoxelType VoxelChunk::getVoxel(size_t x, size_t y, size_t z) const {
@@ -183,7 +189,7 @@ namespace tankwars {
             numElements += 6;
         }
 
-        glm::vec3 offset(x, y, z);
+        glm::vec3 offset(startX + x, startY + y, startZ + z);
         for (int i = 0; i < 6; i++) {
             vertexCache[numVertices] = {CubePositions[i * 4] + offset, CubeNormals[i]};
             vertexCache[numVertices + 1] = {CubePositions[i * 4 + 1] + offset, CubeNormals[i]};

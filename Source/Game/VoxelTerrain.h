@@ -1,0 +1,27 @@
+#pragma once
+
+#include <vector>
+
+#include "VoxelChunk.h"
+
+namespace tankwars {
+    class VoxelTerrain {
+    public:
+        VoxelTerrain(size_t numChunksX, size_t numChunksY, size_t numChunksZ,
+            size_t chunkWidth, size_t chunkHeight, size_t chunkDepth);
+
+        void setVoxel(size_t x, size_t y, size_t z, VoxelType voxel);
+        VoxelType getVoxel(size_t x, size_t y, size_t z) const;
+        size_t getWidth() const;
+        size_t getHeight() const;
+        size_t getDepth() const;
+
+        void render() const;
+        void updateMesh();
+
+    private:
+        size_t numChunksX, numChunksY, numChunksZ;
+        size_t chunkWidth, chunkHeight, chunkDepth;
+        std::vector<VoxelChunk> chunks;
+    };
+}

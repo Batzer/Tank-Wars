@@ -103,7 +103,7 @@ namespace tankwars {
         sceneObjects.erase(std::remove(sceneObjects.begin(), end, &instance), end);
     }
 
-    void Renderer::setTerrain(const VoxelChunk* terrain) {
+    void Renderer::setTerrain(const VoxelTerrain* terrain) {
         this->terrain = terrain;
     }
 }

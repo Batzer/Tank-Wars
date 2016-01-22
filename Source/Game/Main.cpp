@@ -24,7 +24,7 @@ constexpr char* WindowTitle = "Tank Wars";
 constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
 constexpr bool GoFullscreen = false;
-constexpr bool UseVSync = false;
+constexpr bool UseVSync = true;
 constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
 
@@ -73,23 +73,12 @@ int main() {
     // The game loop
     auto lastTime = glfwGetTime();
     double accumulator = 0.0;
-	
-    std::vector<tankwars::VoxelType> voxels;
-    for (size_t z = 0; z < 10; z++)
-    for (size_t y = 0; y < 10; y++)
-    for (size_t x = 0; x < 10; x++) {
-        if (x == 0 || y == 0 || z == 0 || x == 9 || y == 9 || z == 9) {
-            voxels.push_back(rand() % 2 == 0 ? tankwars::VoxelType::Solid : tankwars::VoxelType::Empty);
-        }
-        else {
-            voxels.push_back(tankwars::VoxelType::Solid);
-        }
-    }
     
     tankwars::Renderer renderer;
 	tankwars::Terrain terrain("test.png", 20);
-    tankwars::VoxelChunk terrain2(10, 10, 10, voxels.data());
+    tankwars::VoxelTerrain terrain2(10, 4, 10, 12, 2, 12);
     renderer.setTerrain(&terrain2);
+
 	//GAME SETUP
 	game.setupControllers();
 	game.addTerrain(&terrain);
@@ -144,11 +133,12 @@ int main() {
 
         
         bla++;
-        if (bla % 10 == 0) {
-            for (size_t z = 0; z < 10; z++)
-            for (size_t y = 0; y < 10; y++)
-            for (size_t x = 0; x < 10; x++) {
-                if (x == 0 || y == 0 || z == 0 || x == 9 || y == 9 || z == 9) {
+        if (bla % 15 == 0) {
+            for (size_t z = 0; z < terrain2.getDepth(); z++)
+            for (size_t y = 0; y < terrain2.getHeight(); y++)
+            for (size_t x = 0; x < terrain2.getWidth(); x++) {
+                if (x == 0 || y == 0 || z == 0 || x == terrain2.getWidth() - 1
+                        || y == terrain2.getHeight() - 1 || z == terrain2.getDepth() - 1) {
                     terrain2.setVoxel(x, y, z, rand() % 2 == 0 ? tankwars::VoxelType::Solid : tankwars::VoxelType::Empty);
                 }
                 else {

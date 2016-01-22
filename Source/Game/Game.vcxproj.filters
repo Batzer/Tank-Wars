@@ -18,6 +18,7 @@
       <Filter>Dependencies</Filter>
     </ClCompile>
     <ClCompile Include="VoxelChunk.cpp" />
+    <ClCompile Include="VoxelTerrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -31,6 +32,7 @@
     <ClInclude Include="Image.h" />
     <ClInclude Include="VoxelChunk.h" />
     <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VoxelTerrain.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">

@@ -16,7 +16,8 @@ namespace tankwars {
     
     class VoxelChunk {
     public:
-        VoxelChunk(size_t width, size_t height, size_t depth, const VoxelType* voxels = nullptr);
+        VoxelChunk(size_t startX, size_t startY, size_t startZ, size_t width,
+            size_t height, size_t depth, const VoxelType* voxels = nullptr);
         ~VoxelChunk();
 
         void setVoxel(size_t x, size_t y, size_t z, VoxelType voxel);
@@ -28,6 +29,7 @@ namespace tankwars {
     private:
         void createCubeAt(size_t x, size_t y, size_t z, uint32_t faceMask);
 
+        size_t startX, startY, startZ;
         size_t width, height, depth;
         std::vector<VoxelType> voxels;
 

@@ -25,7 +25,7 @@ constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
 constexpr bool GoFullscreen = false;
 constexpr bool UseVSync = true;
-constexpr bool UseMsaa = true;
+constexpr bool UseMsaa = false;
 constexpr double DeltaTime = 1.0 / 60.0;
 
 tankwars::Camera camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
@@ -73,26 +73,16 @@ int main() {
     // The game loop
     auto lastTime = glfwGetTime();
     double accumulator = 0.0;
-	
-    std::unique_ptr<bool[]> voxelGrid(new bool[100 * 100 * 100]);
-    for (size_t z = 0; z < 100; z++)
-    for (size_t y = 0; y < 100; y++)
-    for (size_t x = 0; x < 100; x++) {
-        if (x == 0 || y == 0 || z == 0 || x == 99 || y == 99 || z == 99) {
-            voxelGrid[x + y * 100 + z * 100 * 100] = rand() % 3 == 0;
-        }
-        else {
-            voxelGrid[x + y * 100 + z * 100 * 100] = true;
-        }
-    }
     
     tankwars::Renderer renderer;
-	tankwars::Terrain terrain("test.png", 20);
-    tankwars::VoxelTerrain terrain2(voxelGrid.get(), 100, 100, 100);
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test.png", 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
+	tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
+
 	//GAME SETUP
 	game.setupControllers();
 	game.addTerrain(&terrain);
+
 	/*TRYING TO DRAW A CUTE SPHERE*/
 	auto boxMesh = tankwars::createBoxMesh(1, 1, 1);
 	tankwars::Material mat;
@@ -104,23 +94,18 @@ int main() {
 	//renderer.addSceneObject(notASphere);
 	/*END OF TRY*/
 
-    keyStates.fill(false);
-
     tankwars::Physics physics;
     float angle = 0.0f;
+    int bla = 0;
 
     glm::vec3 camPos(0, 0, 5);
     glm::vec3 camDir(0, 0, -1);
     glm::vec3 camRight(1, 0, 0);
     glm::vec3 camUp(0, 1, 0);
     float roll = 0.0f;
-    float pitch = 0.0f;
     float yaw = 0.0f;
+    float pitch = 0.0f;
     float camSpeed = 8.0f;
-
-
-    int bla = 1;
-    bool visible = false;
 
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
@@ -132,24 +117,34 @@ int main() {
 			game.update(static_cast<float>(DeltaTime));
             accumulator -= DeltaTime;
         }
-		
-        if (keyStates[GLFW_KEY_W]) camPos += camDir *  static_cast<float>(DeltaTime) * camSpeed;
-        if (keyStates[GLFW_KEY_S]) camPos -= camDir *  static_cast<float>(DeltaTime) * camSpeed;
-        if (keyStates[GLFW_KEY_A]) camPos -= camRight *  static_cast<float>(DeltaTime) * camSpeed;
-        if (keyStates[GLFW_KEY_D]) camPos += camRight *  static_cast<float>(DeltaTime) * camSpeed;
-        if (keyStates[GLFW_KEY_UP]) roll += glm::quarter_pi<float>() *  static_cast<float>(DeltaTime);
-        if (keyStates[GLFW_KEY_DOWN]) roll -= glm::quarter_pi<float>() *  static_cast<float>(DeltaTime);
-        if (keyStates[GLFW_KEY_LEFT]) yaw += glm::quarter_pi<float>() *  static_cast<float>(DeltaTime);
-        if (keyStates[GLFW_KEY_RIGHT]) yaw -= glm::quarter_pi<float>() *  static_cast<float>(DeltaTime);
+
+        if (keyStates[GLFW_KEY_W]) camPos += camDir *  static_cast<float>(frameTime) * camSpeed;
+        if (keyStates[GLFW_KEY_S]) camPos -= camDir *  static_cast<float>(frameTime) * camSpeed;
+        if (keyStates[GLFW_KEY_A]) camPos -= camRight *  static_cast<float>(frameTime) * camSpeed;
+        if (keyStates[GLFW_KEY_D]) camPos += camRight *  static_cast<float>(frameTime) * camSpeed;
+        if (keyStates[GLFW_KEY_UP]) roll += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (keyStates[GLFW_KEY_DOWN]) roll -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (keyStates[GLFW_KEY_LEFT]) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (keyStates[GLFW_KEY_RIGHT]) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
 
         /*
         bla++;
-        if (bla % 5 == 0) {
-            terrain2.setVoxel({1, 1, 0}, visible);
-            visible = !visible;
-            terrain2.updateMesh();
+        if (bla % 15 == 0) {
+            for (size_t z = 0; z < terrain2.getDepth(); z++)
+            for (size_t y = 0; y < terrain2.getHeight(); y++)
+            for (size_t x = 0; x < terrain2.getWidth(); x++) {
+                if (x == 0 || y == 0 || z == 0 || x == terrain2.getWidth() - 1
+                        || y == terrain2.getHeight() - 1 || z == terrain2.getDepth() - 1) {
+                    terrain2.setVoxel(x, y, z, rand() % 2 == 0 ? tankwars::VoxelType::Solid : tankwars::VoxelType::Empty);
+                }
+                else {
+                    terrain2.setVoxel(x, y, z, tankwars::VoxelType::Solid);
+                }
+            }
         }
         */
+        terrain2.updateMesh();
+        
         auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))
             * glm::angleAxis(roll, glm::vec3(1, 0, 0))
             * glm::angleAxis(pitch, glm::vec3(0, 0, 1));
@@ -163,14 +158,14 @@ int main() {
         notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //glViewport(ResolutionX/5, 0, ResolutionX, ResolutionY / 2);
-        auto ratio = ResolutionX / static_cast<float>(ResolutionY);
-        //glViewport(0, 0, ResolutionX / 2, ResolutionY);
-        //renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), ratio, 0.1f, 100.0f) * camera2.getViewMatrix());
-        //glViewport(0, ResolutionY / 2, ResolutionX/2+ResolutionX/5, ResolutionY / 2);
-        //glViewport(ResolutionX / 2, 0, ResolutionX / 2, ResolutionY);
+        /*
+        glViewport(ResolutionX/5, 0, ResolutionX, ResolutionY / 2);
+        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera2.getViewMatrix());
+        glViewport(0, ResolutionY / 2, ResolutionX/2+ResolutionX/5, ResolutionY / 2);
+        */
+
         glViewport(0, 0, ResolutionX, ResolutionY);
-        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), ratio, 1.0f, 300.0f) * viewMat);
+        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 1.0f, 500.0f) * viewMat);
 
 		game.render(static_cast<float>(accumulator / DeltaTime));
         glfwSwapBuffers(window);
@@ -220,7 +215,6 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	}
 	if (key == GLFW_KEY_SPACE) {
 		//terrain.explosionAt(glm::vec3(Camera.getCenter().x, 0, Camera.getCenter().z), 20);
-		
 	}
 
     keyStates[key] = (action != GLFW_RELEASE);

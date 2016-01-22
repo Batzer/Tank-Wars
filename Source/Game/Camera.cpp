@@ -15,18 +15,15 @@ namespace tankwars {
 		this->center = center;
 		this->up = up;
 	}
-
-	void Camera::rotateXAxis(double angle) {
-        // NOTE: Later the eye will have to rotate around the center ( center being the tank model)
-		glm::mat3x3 rot(cos(angle), 0,	-sin(angle) ,
-                        0,          1,	 0,
-						sin(angle), 0,   cos(angle));
-		center = (rot * (center - eye)) + eye;
+	void Camera::rotateXAxis(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
+		glm::mat3x3 rot = {	{ glm::cos(-angle),					   0,					-glm::sin(-angle) },
+							{				 0,					   1,								   0 },
+							{ glm::sin(-angle),					   0,					 glm::cos(-angle)}};
+		eye = (rot*(eye- center)) + center;
 	}
-
-	void Camera::rotateYAxis(double angle) {
-        // NOTE: Later the eye will have to rotate around the center ( center being the tank model)
-		// how to rotate around arbitary axis
+	void Camera::rotateYAxis(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
+		glm::vec3 rotationAxis = glm::cross(glm::vec3(eye.x - center.x, 0, eye.z - center.z), up);
+		glm::vec3 translatedEye = eye - center;
 	}
 
 	glm::mat4 Camera::getViewMatrix() const {

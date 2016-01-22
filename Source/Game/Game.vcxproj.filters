@@ -17,6 +17,7 @@
     <ClCompile Include="stb_image.cpp">
       <Filter>Dependencies</Filter>
     </ClCompile>
+    <ClCompile Include="VoxelChunk.cpp" />
     <ClCompile Include="VoxelTerrain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +30,8 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="VoxelChunk.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="VoxelTerrain.h" />
   </ItemGroup>
   <ItemGroup>

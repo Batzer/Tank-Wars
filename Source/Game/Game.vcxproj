@@ -274,6 +274,7 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="VoxelChunk.cpp" />
     <ClCompile Include="VoxelTerrain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -296,6 +297,8 @@
     <ClInclude Include="physics.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="VoxelChunk.h" />
     <ClInclude Include="VoxelTerrain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

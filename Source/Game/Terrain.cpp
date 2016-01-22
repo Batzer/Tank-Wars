@@ -9,14 +9,14 @@
 namespace tankwars {
 	Terrain::Terrain(const std::string& mapfileName, float maxHeight) 
 		    : maxHeight(maxHeight), 
-			  terrainMesh(createTerrainMesh(mapfileName)),
-			  btTerrain(static_cast<int>(width), static_cast<int>(length), map.data(), maxHeight, 1, PHY_FLOAT, 0) {
-        // Do nothing
+				terrainMesh(createTerrainMesh(mapfileName))/*,
+				btTerrain(int(width),int(length),map,maxHeight,1,PHY_FLOAT,0)*/{
+
 	}
 
     Terrain::Terrain(const float* heightMap, size_t width, size_t height)
-            : terrainMesh(createTerrainMesh(heightMap, width, height)),
-			  btTerrain(static_cast<int>(width), static_cast<int>(length), map.data(), maxHeight, 1, PHY_FLOAT, 0) {
+            : terrainMesh(createTerrainMesh(heightMap, width, height))/*,
+				btTerrain(int(width), int(length), map, maxHeight, 1, PHY_FLOAT, 0)*/ {
         // Do nothing
     }
 
@@ -136,9 +136,8 @@ namespace tankwars {
 	float Terrain::getHeightAt(int x, int z) {
 		return map[x + z * width];
 	}
+	/*void Terrain::readBMP2(char* filename, size_t* width, size_t*length) {
 
-    /*
-	void Terrain::readBMP2(char* filename, size_t* width, size_t*length) {
 		FILE* f;// = fopen(filename, "rb");
 		fopen_s(&f, filename, "rb");
 		unsigned char info[54];
@@ -188,8 +187,8 @@ namespace tankwars {
 			}
 		}
 	}
-    */
-	/*void Terrain::createCubeVector() {
+	void Terrain::createCubeVector() {
+    
 		for (size_t i = 0; i < width; i++) {
 			for (size_t j = 0; j < length; j++) {
 				for (size_t h = 0; h < maxHeight; h++) {
@@ -199,6 +198,7 @@ namespace tankwars {
 				}
 			}
 		}
+	}
 	}*/
     /*
 	Mesh Terrain::marchingCubesAlgorithm(glm::vec3 firstVoxel, glm::vec3 lastVoxel) { // implemented with the help of http://paulbourke.net/geometry/polygonise/ first link to a c++ code
@@ -261,6 +261,17 @@ namespace tankwars {
 			if (edgeFlag & (1 << i)) {
 
 				//magic happens here
+				/*ORIGINAL CODE*/
+					/* fOffset = fGetOffset(afCubeValue[ a2iEdgeConnection[iEdge][0] ], 
+                                                     afCubeValue[ a2iEdgeConnection[iEdge][1] ], fTargetValue);
+
+                        asEdgeVertex[iEdge].fX = fX + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][0]  +  fOffset * a2fEdgeDirection[iEdge][0]) * fScale;
+                        asEdgeVertex[iEdge].fY = fY + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][1]  +  fOffset * a2fEdgeDirection[iEdge][1]) * fScale;
+                        asEdgeVertex[iEdge].fZ = fZ + (a2fVertexOffset[ a2iEdgeConnection[iEdge][0] ][2]  +  fOffset * a2fEdgeDirection[iEdge][2]) * fScale;
+
+                        vGetNormal(asEdgeNorm[iEdge], asEdgeVertex[iEdge].fX, asEdgeVertex[iEdge].fY, asEdgeVertex[iEdge].fZ);
+					*/
+				/*END ORIGINAL CODE*//*
 				
 			}
 		}
@@ -276,6 +287,15 @@ namespace tankwars {
 				//calculate edgevertecies
 				//calculate indices
 				//calculate positions
+				/*ORIGINAL CODE*/
+					/*glColor3f(sColor.fX, sColor.fY, sColor.fZ);
+					glNormal3f(asEdgeNorm[iVertex].fX, asEdgeNorm[iVertex].fY, asEdgeNorm[iVertex].fZ);
+					glVertex3f(asEdgeVertex[iVertex].fX, asEdgeVertex[iVertex].fY, asEdgeVertex[iVertex].fZ);*/
+				/*END ORIGINAL CODE
+			}
+		}
+		(*vertices).push_back(Vertex{ glm::vec3(1,2,3),glm::vec3(1,2,3) });//well, the values should be changed
+	}
 				
 			}
 		}

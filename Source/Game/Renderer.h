@@ -7,7 +7,6 @@
 
 namespace tankwars {
     struct MeshInstance;
-    class Terrain;
 
     class Renderer {
     public:
@@ -47,7 +46,7 @@ namespace tankwars {
         // Scene managment
         // TODO: Refactor this into a seperate class
         glm::vec3 ambientColor = { 0.2f, 0.2f, 0.2f };
-        glm::vec3 lightDirection = { 1, -1, -1 };
+        glm::vec3 lightDirection = { 0, -1, -1 };
         glm::vec3 lightColor = { 1, 1, 1 };
         std::vector<const MeshInstance*> sceneObjects;
         const VoxelTerrain* terrain = nullptr;

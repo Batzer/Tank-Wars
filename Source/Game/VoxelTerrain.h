@@ -1,31 +1,31 @@
 #pragma once
 
-#include <string>
-#include <memory>
 #include <vector>
-#include "Mesh.h"
+#include <string>
+
+#include "VoxelChunk.h"
 
 namespace tankwars {
     class VoxelTerrain {
     public:
-        VoxelTerrain(const bool* voxelGrid, size_t width, size_t height, size_t depth);
-        ~VoxelTerrain();
+        VoxelTerrain(size_t numChunksX, size_t numChunksY, size_t numChunksZ,
+            size_t chunkWidth, size_t chunkHeight, size_t chunkDepth);
+
+        void setVoxel(size_t x, size_t y, size_t z, VoxelType voxel);
+        VoxelType getVoxel(size_t x, size_t y, size_t z) const;
+        size_t getWidth() const;
+        size_t getHeight() const;
+        size_t getDepth() const;
 
         void render() const;
-
-        void setVoxel(const glm::vec3& pos, bool active);
         void updateMesh();
 
+        static VoxelTerrain fromHeightMap(const std::string& path, size_t chunkWidth,
+            size_t chunkHeight, size_t chunkDepth, size_t invHeightScale);
 
     private:
-        void createTerrainMesh(const bool* voxelGrid, size_t width, size_t height, size_t depth);
-        void createCubeMesh(const glm::vec3& pos, int visibilityMask, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices);
-
-        GLuint vertexArray = 0;
-        GLuint vertexBuffer = 0;
-        GLuint elementBuffer = 0;
-        GLsizei elementCount;
-        std::unique_ptr<bool[]> voxelGrid;
-        size_t width, height, depth;
+        size_t numChunksX, numChunksY, numChunksZ;
+        size_t chunkWidth, chunkHeight, chunkDepth;
+        std::vector<VoxelChunk> chunks;
     };
 }

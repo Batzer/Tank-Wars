@@ -18,7 +18,12 @@ namespace tankwars {
     public:
         VoxelChunk(size_t startX, size_t startY, size_t startZ, size_t width,
             size_t height, size_t depth, const VoxelType* voxels = nullptr);
+        VoxelChunk(const VoxelChunk&) = delete;
+        VoxelChunk(VoxelChunk&& other);
         ~VoxelChunk();
+
+        VoxelChunk& operator=(const VoxelChunk&) = delete;
+        VoxelChunk& operator=(VoxelChunk&& other);
 
         void setVoxel(size_t x, size_t y, size_t z, VoxelType voxel);
         VoxelType getVoxel(size_t x, size_t y, size_t z) const;

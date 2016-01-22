@@ -2,6 +2,8 @@
 
 #include <cassert>
 #include <cstring> // memcpy
+#include <utility>
+#include <algorithm>
 
 #include "GLTools.h"
 
@@ -95,10 +97,33 @@ namespace tankwars {
         updateMesh();
     }
 
+    VoxelChunk::VoxelChunk(VoxelChunk&& other) {
+        *this = std::move(other);
+    }
+
     VoxelChunk::~VoxelChunk() {
         glDeleteBuffers(1, &vertexArrayBuffer);
         glDeleteBuffers(1, &elementArrayBuffer);
         glDeleteVertexArrays(1, &vertexArray);
+    }
+
+    VoxelChunk& VoxelChunk::operator=(VoxelChunk&& other) {
+        startX = other.startX;
+        startY = other.startY;
+        startZ = other.startZ;
+        width = other.width;
+        height = other.height;
+        depth = other.depth;
+        voxels = std::move(other.voxels);
+        std::swap(vertexArray, other.vertexArray);
+        std::swap(vertexArrayBuffer, other.vertexArrayBuffer);
+        std::swap(elementArrayBuffer, other.elementArrayBuffer);
+        isMeshDirty = other.isMeshDirty;
+        vertexCache = std::move(other.vertexCache);
+        elementCache = std::move(other.elementCache);
+        numVertices = other.numVertices;
+        numElements = other.numElements;
+        return *this;
     }
 
     void VoxelChunk::setVoxel(size_t x, size_t y, size_t z, VoxelType voxel) {
@@ -189,7 +214,7 @@ namespace tankwars {
             numElements += 6;
         }
 
-        glm::vec3 offset(startX + x, startY + y, startZ + z);
+        glm::vec3 offset(startX + x, startY + y, -static_cast<float>(startZ + z));
         for (int i = 0; i < 6; i++) {
             vertexCache[numVertices] = {CubePositions[i * 4] + offset, CubeNormals[i]};
             vertexCache[numVertices + 1] = {CubePositions[i * 4 + 1] + offset, CubeNormals[i]};

@@ -1,5 +1,9 @@
 #include "VoxelTerrain.h"
 
+#include <algorithm>
+
+#include "Image.h"
+
 namespace tankwars {
     VoxelTerrain::VoxelTerrain(size_t numChunksX, size_t numChunksY, size_t numChunksZ,
         size_t chunkWidth, size_t chunkHeight, size_t chunkDepth)
@@ -60,5 +64,49 @@ namespace tankwars {
         for (auto& chunk : chunks) {
             chunk.updateMesh();
         }
+    }
+
+    VoxelTerrain VoxelTerrain::fromHeightMap(const std::string& path, size_t chunkWidth,
+            size_t chunkHeight, size_t chunkDepth, size_t invHeightScale) {
+        Image heightMap(path);
+
+        size_t maxHeight = 1;
+        for (int i = 0; i < heightMap.getWidth() * heightMap.getHeight(); i++) {
+            auto heightValue = heightMap.getImage()[i * heightMap.getNumChannels()];
+            maxHeight = std::max(maxHeight, static_cast<size_t>(heightValue));
+        }
+        maxHeight = std::max(static_cast<size_t>(1), maxHeight / invHeightScale);
+
+        auto numChunksX = heightMap.getWidth() / chunkWidth;
+        if (heightMap.getWidth() % chunkWidth != 0) {
+            numChunksX++;
+        }
+
+        auto numChunksY = maxHeight / chunkHeight;
+        if (maxHeight % chunkHeight != 0) {
+            numChunksY++;
+        }
+
+        auto numChunksZ = heightMap.getHeight() / chunkDepth;
+        if (heightMap.getHeight() % chunkDepth != 0) {
+            numChunksZ++;
+        }
+
+        VoxelTerrain terrain(numChunksX, numChunksY, numChunksZ,
+            chunkWidth, chunkHeight, chunkDepth);
+
+        for (int z = 0; z < heightMap.getHeight(); z++)
+        for (int x = 0; x < heightMap.getWidth(); x++) {
+            auto index = (heightMap.getWidth() - x) + (heightMap.getHeight() - z) * heightMap.getWidth();
+            auto heightValue = static_cast<int>(heightMap.getImage()[index * heightMap.getNumChannels()]);
+            heightValue /= invHeightScale;
+
+            for (int y = 0; y <= heightValue; y++) {
+                terrain.setVoxel(x, y, z, VoxelType::Solid);
+            }
+        }
+
+        terrain.updateMesh();
+        return terrain;
     }
 }

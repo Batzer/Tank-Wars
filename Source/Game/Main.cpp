@@ -25,7 +25,7 @@ constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
 constexpr bool GoFullscreen = false;
 constexpr bool UseVSync = true;
-constexpr bool UseMsaa = true;
+constexpr bool UseMsaa = false;
 constexpr double DeltaTime = 1.0 / 60.0;
 
 tankwars::Camera camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
@@ -75,9 +75,9 @@ int main() {
     double accumulator = 0.0;
     
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2(10, 4, 10, 12, 2, 12);
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test.png", 12, 4, 12, 16);
     renderer.setTerrain(&terrain2);
-	tankwars::Terrain terrain("Content/Animations/Penis.bmp", 2);
+	tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 
 	//GAME SETUP
 	game.setupControllers();
@@ -127,7 +127,7 @@ int main() {
         if (keyStates[GLFW_KEY_LEFT]) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (keyStates[GLFW_KEY_RIGHT]) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
 
-        
+        /*
         bla++;
         if (bla % 15 == 0) {
             for (size_t z = 0; z < terrain2.getDepth(); z++)
@@ -142,7 +142,7 @@ int main() {
                 }
             }
         }
-
+        */
         terrain2.updateMesh();
         
         auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))

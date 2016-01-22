@@ -76,7 +76,7 @@ int main() {
     double accumulator = 0.0;
     
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test.png", 16, 8, 16, 16);
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_big.png", 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
 	tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 
@@ -145,7 +145,7 @@ int main() {
             }
         }
         */
-        terrain2.updateMesh();
+        //terrain2.updateMesh();
         
         auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))
             * glm::angleAxis(roll, glm::vec3(1, 0, 0))

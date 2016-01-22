@@ -19,6 +19,7 @@
     </ClCompile>
     <ClCompile Include="VoxelChunk.cpp" />
     <ClCompile Include="VoxelTerrain.cpp" />
+    <ClCompile Include="Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -33,6 +34,7 @@
     <ClInclude Include="VoxelChunk.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VoxelTerrain.h" />
+    <ClInclude Include="Tank.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">

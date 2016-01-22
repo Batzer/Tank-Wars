@@ -162,27 +162,45 @@ namespace tankwars {
 
             uint32_t faceMask = 0;
             if (x > 0) {
-                faceMask |= getVoxel(x - 1, y, z) == VoxelType::Empty ? FaceLeft : 0;
+                faceMask |= (getVoxel(x - 1, y, z) == VoxelType::Empty) ? FaceLeft : 0;
+            }
+            else {
+                faceMask |= FaceLeft;
             }
 
             if (y > 0) {
-                faceMask |= getVoxel(x, y - 1, z) == VoxelType::Empty ? FaceBottom : 0;
+                faceMask |= (getVoxel(x, y - 1, z) == VoxelType::Empty) ? FaceBottom : 0;
+            }
+            else {
+                faceMask |= FaceBottom;
             }
 
             if (z > 0) {
-                faceMask |= getVoxel(x, y, z - 1) == VoxelType::Empty ? FaceFront : 0;
+                faceMask |= (getVoxel(x, y, z - 1) == VoxelType::Empty) ? FaceFront : 0;
+            }
+            else {
+                faceMask |= FaceFront;
             }
 
             if (x < width - 1) {
-                faceMask |= getVoxel(x + 1, y, z) == VoxelType::Empty ? FaceRight : 0;
+                faceMask |= (getVoxel(x + 1, y, z) == VoxelType::Empty) ? FaceRight : 0;
+            }
+            else {
+                faceMask |= FaceRight;
             }
 
             if (y < height - 1) {
-                faceMask |= getVoxel(x, y + 1, z) == VoxelType::Empty ? FaceTop : 0;
+                faceMask |= (getVoxel(x, y + 1, z) == VoxelType::Empty) ? FaceTop : 0;
+            }
+            else {
+                faceMask |= FaceTop;
             }
 
             if (z < depth - 1) {
-                faceMask |= getVoxel(x, y, z + 1) == VoxelType::Empty ? FaceBack : 0;
+                faceMask |= (getVoxel(x, y, z + 1) == VoxelType::Empty) ? FaceBack : 0;
+            }
+            else {
+                faceMask |= FaceBack;
             }
 
             createCubeAt(x, y, z, faceMask);
@@ -203,24 +221,30 @@ namespace tankwars {
     }
 
     void VoxelChunk::createCubeAt(size_t x, size_t y, size_t z, uint32_t faceMask) {
+        static const uint32_t FaceBitmasks[] = { FaceFront, FaceLeft, FaceRight, FaceBack, FaceTop, FaceBottom };    
         auto baseElement = static_cast<uint16_t>(numVertices);
-        for (uint16_t i = 0; i < 24; i += 4) {
-            elementCache[numElements] = baseElement + i;
-            elementCache[numElements + 1] = baseElement + i + 1;
-            elementCache[numElements + 2] = baseElement + i + 2;
-            elementCache[numElements + 3] = baseElement + i;
-            elementCache[numElements + 4] = baseElement + i + 2;
-            elementCache[numElements + 5] = baseElement + i + 3;
-            numElements += 6;
-        }
-
         glm::vec3 offset(startX + x, startY + y, -static_cast<float>(startZ + z));
+
         for (int i = 0; i < 6; i++) {
+            if ((FaceBitmasks[i] & faceMask) == 0) {
+                continue;
+            }
+
             vertexCache[numVertices] = {CubePositions[i * 4] + offset, CubeNormals[i]};
             vertexCache[numVertices + 1] = {CubePositions[i * 4 + 1] + offset, CubeNormals[i]};
             vertexCache[numVertices + 2] = {CubePositions[i * 4 + 2] + offset, CubeNormals[i]};
             vertexCache[numVertices + 3] = {CubePositions[i * 4 + 3] + offset, CubeNormals[i]};
+
+            elementCache[numElements] = baseElement;
+            elementCache[numElements + 1] = baseElement + 1;
+            elementCache[numElements + 2] = baseElement + 2;
+            elementCache[numElements + 3] = baseElement;
+            elementCache[numElements + 4] = baseElement + 2;
+            elementCache[numElements + 5] = baseElement + 3;
+
+            baseElement += 4;
             numVertices += 4;
+            numElements += 6;
         }
     }
 }

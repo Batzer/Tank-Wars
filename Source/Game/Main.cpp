@@ -24,7 +24,7 @@ constexpr char* WindowTitle = "Tank Wars";
 constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
 constexpr bool GoFullscreen = false;
-constexpr bool UseVSync = true;
+constexpr bool UseVSync = false;
 constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
 
@@ -74,21 +74,21 @@ int main() {
     auto lastTime = glfwGetTime();
     double accumulator = 0.0;
 	
-    std::unique_ptr<bool[]> voxelGrid(new bool[100 * 100 * 100]);
-    for (size_t z = 0; z < 100; z++)
-    for (size_t y = 0; y < 100; y++)
-    for (size_t x = 0; x < 100; x++) {
-        if (x == 0 || y == 0 || z == 0 || x == 99 || y == 99 || z == 99) {
-            voxelGrid[x + y * 100 + z * 100 * 100] = rand() % 3 == 0;
+    std::vector<tankwars::VoxelType> voxels;
+    for (size_t z = 0; z < 10; z++)
+    for (size_t y = 0; y < 10; y++)
+    for (size_t x = 0; x < 10; x++) {
+        if (x == 0 || y == 0 || z == 0 || x == 9 || y == 9 || z == 9) {
+            voxels.push_back(rand() % 2 == 0 ? tankwars::VoxelType::Solid : tankwars::VoxelType::Empty);
         }
         else {
-            voxelGrid[x + y * 100 + z * 100 * 100] = true;
+            voxels.push_back(tankwars::VoxelType::Solid);
         }
     }
     
     tankwars::Renderer renderer;
 	tankwars::Terrain terrain("test.png", 20);
-    tankwars::VoxelTerrain terrain2(voxelGrid.get(), 100, 100, 100);
+    tankwars::VoxelChunk terrain2(10, 10, 10, voxels.data());
     renderer.setTerrain(&terrain2);
 	//GAME SETUP
 	game.setupControllers();
@@ -133,23 +133,32 @@ int main() {
             accumulator -= DeltaTime;
         }
 		
-        if (keyStates[GLFW_KEY_W]) camPos += camDir *  static_cast<float>(DeltaTime) * camSpeed;
-        if (keyStates[GLFW_KEY_S]) camPos -= camDir *  static_cast<float>(DeltaTime) * camSpeed;
-        if (keyStates[GLFW_KEY_A]) camPos -= camRight *  static_cast<float>(DeltaTime) * camSpeed;
-        if (keyStates[GLFW_KEY_D]) camPos += camRight *  static_cast<float>(DeltaTime) * camSpeed;
-        if (keyStates[GLFW_KEY_UP]) roll += glm::quarter_pi<float>() *  static_cast<float>(DeltaTime);
-        if (keyStates[GLFW_KEY_DOWN]) roll -= glm::quarter_pi<float>() *  static_cast<float>(DeltaTime);
-        if (keyStates[GLFW_KEY_LEFT]) yaw += glm::quarter_pi<float>() *  static_cast<float>(DeltaTime);
-        if (keyStates[GLFW_KEY_RIGHT]) yaw -= glm::quarter_pi<float>() *  static_cast<float>(DeltaTime);
+        if (keyStates[GLFW_KEY_W]) camPos += camDir *  static_cast<float>(frameTime) * camSpeed;
+        if (keyStates[GLFW_KEY_S]) camPos -= camDir *  static_cast<float>(frameTime) * camSpeed;
+        if (keyStates[GLFW_KEY_A]) camPos -= camRight *  static_cast<float>(frameTime) * camSpeed;
+        if (keyStates[GLFW_KEY_D]) camPos += camRight *  static_cast<float>(frameTime) * camSpeed;
+        if (keyStates[GLFW_KEY_UP]) roll += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (keyStates[GLFW_KEY_DOWN]) roll -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (keyStates[GLFW_KEY_LEFT]) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (keyStates[GLFW_KEY_RIGHT]) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
 
-        /*
+        
         bla++;
-        if (bla % 5 == 0) {
-            terrain2.setVoxel({1, 1, 0}, visible);
-            visible = !visible;
-            terrain2.updateMesh();
+        if (bla % 10 == 0) {
+            for (size_t z = 0; z < 10; z++)
+            for (size_t y = 0; y < 10; y++)
+            for (size_t x = 0; x < 10; x++) {
+                if (x == 0 || y == 0 || z == 0 || x == 9 || y == 9 || z == 9) {
+                    terrain2.setVoxel(x, y, z, rand() % 2 == 0 ? tankwars::VoxelType::Solid : tankwars::VoxelType::Empty);
+                }
+                else {
+                    terrain2.setVoxel(x, y, z, tankwars::VoxelType::Solid);
+                }
+            }
         }
-        */
+
+        terrain2.updateMesh();
+        
         auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))
             * glm::angleAxis(roll, glm::vec3(1, 0, 0))
             * glm::angleAxis(pitch, glm::vec3(0, 0, 1));

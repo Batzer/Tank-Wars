@@ -2,16 +2,14 @@
 
 #include <cstddef>
 #include <cstdint>
+
 #include <GL/gl3w.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
-namespace tankwars {
-    struct Vertex {
-        glm::vec3 position;
-        glm::vec3 normal;
-    };
+#include "Vertex.h"
 
+namespace tankwars {
     struct Material {
         glm::vec3 diffuseColor = { 1, 1, 1 };
         glm::vec3 specularColor = { 1, 1, 1 };

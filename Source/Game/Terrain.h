@@ -31,7 +31,6 @@ namespace tankwars {
         Mesh terrainMesh;
 		//btHeightfieldTerrainShape btTerrain;
 
-<<<<<<< HEAD
 		/*Mesh Terrain2;
 		void readBMP2(char* filename, size_t* width, size_t* height);
 		//void Terrain::createCubeVector();
@@ -48,16 +47,9 @@ namespace tankwars {
 		{ 0.0, 0.0, 0.0 },{ 1.0, 0.0, 0.0 },{ 1.0, 1.0, 0.0 },{ 0.0, 1.0, 0.0 },
 		{ 0.0, 0.0, 1.0 },{ 1.0, 0.0, 1.0 },{ 1.0, 1.0, 1.0 },{ 0.0, 1.0, 1.0 }
 	};
-=======
-		//Mesh Terrain2;
-		//void readBMP2(char* filename, size_t* width, size_t* height);
-		//void Terrain::createCubeVector();
-		//Mesh marchingCubesAlgorithm(glm::vec3 firstVoxel, glm::vec3 lastVoxel);
-		//void marchingCube(std::vector<Vertex>* vertices, int x, int y, int z);
->>>>>>> fbe4901e87831b5cb768918db32ece4af68841a0
+
 
 	};
-<<<<<<< HEAD
 
 	//a2fEdgeDirection lists the direction vector (vertex1-vertex0) for each edge in the cube
 	static const GLfloat marchingCubes_EdgeDirection[12][3] =
@@ -345,7 +337,4 @@ namespace tankwars {
 		{ 0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 		{ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }
 	};*/
-
-=======
->>>>>>> fbe4901e87831b5cb768918db32ece4af68841a0
 }

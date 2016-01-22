@@ -75,7 +75,7 @@ int main() {
     double accumulator = 0.0;
     
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test.png", 16, 8, 16, 16);
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_big.png", 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
 	tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 

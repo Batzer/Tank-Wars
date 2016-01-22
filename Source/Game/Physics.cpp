@@ -11,6 +11,9 @@ namespace tankwars {
 		dynamicsWorld->setGravity(btVector3(0, -10, 0));
 		dynamicsWorld->stepSimulation(1 / 60.f, 10);		// or does it have to be called every time?
 	}
+	btDiscreteDynamicsWorld* Physics::getDynamicsWorld(){
+		return dynamicsWorld.get();
+	}
 	void Physics::createShape(btVector3 size) {
 		new btBoxShape(size);
 	}

@@ -19,6 +19,7 @@
 #include "Camera.h"
 #include "Game.h"
 #include "Physics.h"
+#include "Tank.h"
 
 constexpr char* WindowTitle = "Tank Wars";
 constexpr int ResolutionX = 1280;
@@ -95,10 +96,11 @@ int main() {
 	/*END OF TRY*/
 
     tankwars::Physics physics;
+	tankwars::Tank tank1(physics.getDynamicsWorld(), btVector3(20, 100, 20));
     float angle = 0.0f;
     int bla = 0;
 
-    glm::vec3 camPos(0, 0, 5);
+    glm::vec3 camPos(10, 40, 10);
     glm::vec3 camDir(0, 0, -1);
     glm::vec3 camRight(1, 0, 0);
     glm::vec3 camUp(0, 1, 0);
@@ -151,7 +153,14 @@ int main() {
         camDir = glm::rotate(rotation, glm::vec3(0, 0, -1));
         camRight = glm::rotate(rotation, glm::vec3(1, 0, 0));
         camUp = glm::rotate(rotation, glm::vec3(0, 1, 0));
-        auto viewMat = glm::lookAt(camPos, camPos + camDir, camUp);
+		glm::tmat4x4<float> viewMat;
+		if (keyStates[GLFW_KEY_R]) {
+			glm::vec3 pos= tank1.getPosition();
+			viewMat = glm::lookAt(camPos, pos, camUp);
+		}
+		else {
+			viewMat = glm::lookAt(camPos, camPos + camDir, camUp);
+		}
 
         // TEST
         angle += static_cast<float>(frameTime);

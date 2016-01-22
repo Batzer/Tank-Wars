@@ -21,7 +21,7 @@ namespace tankwars {
 		void addObject(btVector3 startingPosition, btCollisionShape* shape, btScalar mass, btVector3 fallInertia);
 		void transform();
 		void removeFromWorld();
-
+		btDiscreteDynamicsWorld* getDynamicsWorld();
 	private:
 		std::unique_ptr<btBroadphaseInterface> broadphase;
 		std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration;

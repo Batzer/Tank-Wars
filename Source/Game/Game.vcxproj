@@ -282,6 +282,7 @@
     <None Include="..\..\Content\Shaders\Basic.vsh">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\..\Content\Shaders\ToonLighting.fsh" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.fsh">
@@ -302,6 +303,11 @@
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VoxelChunk.h" />
     <ClInclude Include="VoxelTerrain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\ToonLighting.vsh">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

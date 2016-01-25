@@ -18,7 +18,7 @@ namespace tankwars {
         Renderer& operator=(const Renderer&) = delete;
         Renderer& operator=(Renderer&& other);
 
-        void renderScene(const glm::mat4& viewProjMatrix);
+        void renderScene(const glm::mat4& viewProjMatrix, const glm::vec3& cameraPos);
 
         // Scene managment
         // TODO: Refactor this into a seperate class
@@ -40,8 +40,11 @@ namespace tankwars {
         GLint viewProjMatrixLocation;
         GLint ambientColorLocation;
         GLint dirToLightLocation;
+        GLint eyePosLocation;
         GLint lightColorLocation;
         GLint materialDiffuseLocation;
+        GLint materialSpecularLocation;
+        GLint specularExponentLocation;
 
         // Scene managment
         // TODO: Refactor this into a seperate class

@@ -43,6 +43,9 @@
     <None Include="..\..\Content\Shaders\Basic.fsh">
       <Filter>Shader</Filter>
     </None>
+    <None Include="..\..\Content\Shaders\ToonLighting.fsh">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shader">
@@ -51,5 +54,10 @@
     <Filter Include="Dependencies">
       <UniqueIdentifier>{2e58df93-0f4e-4a26-b3cc-eee11f0ca142}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Content\Shaders\ToonLighting.vsh">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

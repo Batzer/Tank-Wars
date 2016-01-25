@@ -97,6 +97,9 @@ int main() {
 
     tankwars::Physics physics;
 	tankwars::Tank tank1(physics.getDynamicsWorld(), btVector3(20, 20, -20));
+	for (int i = 0; i < 7; i++) {
+		renderer.addSceneObject(tank1.getTankMeshInstance(i));
+	}
     float angle = 0.0f;
     int bla = 0;
 
@@ -129,8 +132,8 @@ int main() {
         if (keyStates[GLFW_KEY_LEFT]) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (keyStates[GLFW_KEY_RIGHT]) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
 
-        /*
-        bla++;
+        
+       /* bla++;
         if (bla % 15 == 0) {
             for (size_t z = 0; z < terrain2.getDepth(); z++)
             for (size_t y = 0; y < terrain2.getHeight(); y++)
@@ -143,9 +146,9 @@ int main() {
                     terrain2.setVoxel(x, y, z, tankwars::VoxelType::Solid);
                 }
             }
-        }
-        */
-        //terrain2.updateMesh();
+        }*/
+        
+        terrain2.updateMesh();
         
         auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))
             * glm::angleAxis(roll, glm::vec3(1, 0, 0))
@@ -174,7 +177,7 @@ int main() {
         */
 
         glViewport(0, 0, ResolutionX, ResolutionY);
-        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 1.0f, 500.0f) * viewMat);
+        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 1.0f, 500.0f) * viewMat, camPos);
 
 		game.render(static_cast<float>(accumulator / DeltaTime));
         glfwSwapBuffers(window);

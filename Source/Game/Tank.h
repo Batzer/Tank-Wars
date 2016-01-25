@@ -32,7 +32,7 @@ namespace tankwars {
 		btMotionState *tankMotionState;
 		btVehicleTuning tankTuning;
 		btRigidBody tankChassis;
-		btVehicleRaycaster* vehicleRaycaster;
+		//btVehicleRaycaster* vehicleRaycaster;
 		btCollisionShape* tankBoxShape;
 		//btCollisionShape* frontWheel;
 		//btCollisionShape* backWheel;
@@ -56,7 +56,7 @@ namespace tankwars {
 		//END FORCES
 	};
 
-	static btScalar mass = 1;
+	static btScalar mass = 200;
 	static btScalar frontWheelRadius = 0.838f;
 	static btScalar backWheelRadius = 1.f;
 	static btScalar suspensionRestLength = 20;

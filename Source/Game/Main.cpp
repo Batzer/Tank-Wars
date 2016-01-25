@@ -34,6 +34,8 @@ tankwars::Camera camera2(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec
 tankwars::Game game(&camera);
 std::array<bool, GLFW_KEY_LAST> keyStates;
 
+tankwars::Tank *tank;
+
 void errorCallback(int error, const char* description);
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
@@ -100,6 +102,7 @@ int main() {
 	for (int i = 0; i < 7; i++) {
 		renderer.addSceneObject(tank1.getTankMeshInstance(i));
 	}
+	tank = &tank1;
     float angle = 0.0f;
     int bla = 0;
 
@@ -147,7 +150,7 @@ int main() {
                 }
             }
         }*/
-        
+		tank1.render(DeltaTime);
         terrain2.updateMesh();
         
         auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))
@@ -227,6 +230,18 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	}
 	if (key == GLFW_KEY_SPACE) {
 		//terrain.explosionAt(glm::vec3(Camera.getCenter().x, 0, Camera.getCenter().z), 20);
+	}
+	if (key == GLFW_KEY_J) {
+		tank->turn(true);
+	}
+	if (key == GLFW_KEY_L) {
+		tank->turn(false);
+	}
+	if (key == GLFW_KEY_I) {
+		tank->drive(true);
+	}
+	if (key == GLFW_KEY_K) {
+		tank->drive(false);
 	}
 
     keyStates[key] = (action != GLFW_RELEASE);

@@ -1,13 +1,23 @@
 #include "Tank.h"
 namespace tankwars {
 
-	Tank::Tank( btDiscreteDynamicsWorld *dynamicsWorld, btVector3 startingPosition) :boxMesh(createBoxMesh(2, 1, 1)), dnmcWorld(dynamicsWorld), startingPosition(startingPosition), tr(btQuaternion(0, 0, 0, 1), startingPosition), tankMotionState(new btDefaultMotionState(tr)), tankTuning(), vehicleRaycaster(new btDefaultVehicleRaycaster(dynamicsWorld)), tankBoxShape(new btBoxShape(btVector3(2, 1, 1))), btRaycastVehicle(tankTuning, &tankChassis, vehicleRaycaster), tankChassis(mass, tankMotionState, tankBoxShape) {
+	Tank::Tank( btDiscreteDynamicsWorld *dynamicsWorld, btVector3 startingPosition) 
+			:boxMesh(createBoxMesh(2, 1, 1)), 
+			dnmcWorld(dynamicsWorld), 
+			startingPosition(startingPosition), 
+			tr(btQuaternion(0, 0, 0, 1), startingPosition), 
+			tankMotionState(new btDefaultMotionState(tr)), 
+			tankTuning(), 
+			//vehicleRaycaster(new btDefaultVehicleRaycaster(dynamicsWorld)), 
+			tankBoxShape(new btBoxShape(btVector3(2, 1, 1))), 
+			btRaycastVehicle(tankTuning, &tankChassis, new btDefaultVehicleRaycaster(dynamicsWorld)),
+			tankChassis(mass, tankMotionState, tankBoxShape) {
         setTankTuning();
         tankChassis.setActivationState(DISABLE_DEACTIVATION);
         tankBoxShape->calculateLocalInertia(mass, btVector3(0, 0, 0));
 		mat.diffuseColor = { 1,0,0 };
 		initializeTankMeshInstances();
-
+		addWheels();
 		addRigidBodiesToWorld();
 		addToWorld();
 		reset();

@@ -18,8 +18,8 @@ namespace tankwars {
 		btVector3 startingPosition;
 		btDiscreteDynamicsWorld* dnmcWorld;
 		void setTankTuning();
-		btMotionState *tankMotionState;
 		btTransform tr;
+		btMotionState *tankMotionState;
 		btVehicleTuning tankTuning;
 		btRigidBody tankChassis;
 		btVehicleRaycaster* vehicleRaycaster;

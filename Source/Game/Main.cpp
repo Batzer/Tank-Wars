@@ -96,7 +96,7 @@ int main() {
 	/*END OF TRY*/
 
     tankwars::Physics physics;
-	tankwars::Tank tank1(physics.getDynamicsWorld(), btVector3(20, 100, 20));
+	tankwars::Tank tank1(physics.getDynamicsWorld(), btVector3(20, 20, -20));
     float angle = 0.0f;
     int bla = 0;
 
@@ -107,7 +107,7 @@ int main() {
     float roll = 0.0f;
     float yaw = 0.0f;
     float pitch = 0.0f;
-    float camSpeed = 8.0f;
+    float camSpeed = 20.0f;
 
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();

@@ -4,7 +4,7 @@ namespace tankwars {
 		setTankTuning();
 		tankChassis.setActivationState(DISABLE_DEACTIVATION);
 		tankBoxShape->calculateLocalInertia(mass, btVector3(0, 0, 0));
-		tr.setIdentity();
+		addWheels();
 	}
 	void Tank::setTankTuning() {
 		tankTuning.m_frictionSlip = 0;
@@ -29,7 +29,6 @@ namespace tankwars {
 			m_wheelInfo[i].m_frictionSlip = 0;
 			m_wheelInfo[i].m_rollInfluence = 0;
 		}
-		
 	}
 	glm::vec3 Tank::getPosition() {
 		btTransform trans;

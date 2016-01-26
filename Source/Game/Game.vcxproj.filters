@@ -20,6 +20,7 @@
     <ClCompile Include="VoxelChunk.cpp" />
     <ClCompile Include="VoxelTerrain.cpp" />
     <ClCompile Include="Tank.cpp" />
+    <ClCompile Include="Wavefront.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -35,29 +36,28 @@
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VoxelTerrain.h" />
     <ClInclude Include="Tank.h" />
+    <ClInclude Include="Wavefront.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">
-      <Filter>Shader</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\..\Content\Shaders\Basic.fsh">
-      <Filter>Shader</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="..\..\Content\Shaders\ToonLighting.fsh">
-      <Filter>Shader</Filter>
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Content\Shaders\ToonLighting.vsh">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Shader">
-      <UniqueIdentifier>{eb6801dc-0d12-45b0-963a-0c95820a2467}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Dependencies">
       <UniqueIdentifier>{2e58df93-0f4e-4a26-b3cc-eee11f0ca142}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Content\Shaders\ToonLighting.vsh">
-      <Filter>Shader</Filter>
-    </FxCompile>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{eb6801dc-0d12-45b0-963a-0c95820a2467}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -25,7 +25,7 @@ namespace tankwars {
 		controller();
 	}
 
-	void Game::render(float alpha) {
+	void Game::render() {
 
 	}
 

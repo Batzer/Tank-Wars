@@ -1,9 +1,13 @@
 #include "Renderer.h"
 
 #include <algorithm>
+#include <cassert>
+
 #include <glm/gtc/type_ptr.hpp>
+
 #include "GLTools.h"
 #include "Mesh.h"
+#include "MeshInstance.h"
 #include "Terrain.h"
 
 namespace tankwars {
@@ -84,8 +88,12 @@ namespace tankwars {
         terrain->render();
 
         for (auto sceneObject : sceneObjects) {
-            auto modelMat = buildMatrixFromTransform(sceneObject->transform);
+            assert(sceneObject->getMesh());
+            assert(sceneObject->getMaterial());
+
+            const auto& modelMat = sceneObject->modelMatrix;
             auto invTrModelMat = glm::transpose(glm::inverse(modelMat));
+
             glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMat));
             glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(invTrModelMat));
             glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(sceneObject->material->diffuseColor));

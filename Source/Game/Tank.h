@@ -1,12 +1,16 @@
 #pragma once
+
+#include <vector>
+
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
-#include <vector>
 #include <BulletCollision\CollisionShapes\btBoxShape.h>
-#include "Mesh.h"
-#include "MeshTools.h"										//won't be needed in the final version
-#include "Renderer.h"
 #include <glm/glm.hpp>
+
+#include "Mesh.h"
+#include "MeshInstance.h"
+#include "MeshTools.h" // Won't be needed in the final version
+#include "Renderer.h"
 
 namespace tankwars {
 	class Tank {

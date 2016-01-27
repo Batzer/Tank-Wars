@@ -46,12 +46,4 @@ namespace tankwars {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
         glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_SHORT, 0);
     }
-
-    glm::mat4 buildMatrixFromTransform(const Transform& transform) {
-        glm::mat4 result(1.0f);
-        result = glm::translate(result, transform.translation);
-        result *= glm::mat4_cast(transform.rotation);
-        result = glm::scale(result, transform.scale);
-        return result;
-    }
 }

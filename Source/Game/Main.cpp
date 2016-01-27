@@ -13,6 +13,7 @@
 #include <btBulletDynamicsCommon.h>
 
 #include "Mesh.h"
+#include "MeshInstance.h"
 #include "MeshTools.h"
 #include "Renderer.h"
 #include "Terrain.h"
@@ -20,6 +21,7 @@
 #include "Game.h"
 #include "Physics.h"
 #include "Tank.h"
+#include "Wavefront.h"
 
 constexpr char* WindowTitle = "Tank Wars";
 constexpr int ResolutionX = 1280;
@@ -46,6 +48,7 @@ int main() {
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW3.\n";
     }
+
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -73,9 +76,17 @@ int main() {
     if (!gl3wIsSupported(3, 3)) {
         std::cerr << "OpenGL 3.3 Core is not supported on this device.\n";
     }
+
+    // Init bullet physics
+    std::unique_ptr<btBroadphaseInterface> broadphase = std::make_unique<btDbvtBroadphase>();
+    auto collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
+    auto dispatcher = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
+    auto solver = std::make_unique<btSequentialImpulseConstraintSolver>();
+    auto dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(
+        dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
+
     // The game loop
     auto lastTime = glfwGetTime();
-    double accumulator = 0.0;
     
     tankwars::Renderer renderer;
     tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_big.png", 16, 8, 16, 16);
@@ -91,18 +102,46 @@ int main() {
 	tankwars::Material mat;
 	mat.diffuseColor = { 1,0,0 };
 	// tankwars::Transform trans;
-	tankwars::MeshInstance notASphere;
-    notASphere.mesh = &boxMesh;
-    notASphere.material = &mat;
+	tankwars::MeshInstance notASphere(boxMesh, mat);
 	//renderer.addSceneObject(notASphere);
-	/*END OF TRY*/
 
+    auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
+    auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
+    auto tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
+
+    auto tankBodyMesh = tankwars::createMeshFromWavefront(tankBodyModel);
+    auto tankHeadMesh = tankwars::createMeshFromWavefront(tankHeadModel);
+    auto tankCanonMesh = tankwars::createMeshFromWavefront(tankCanonModel);
+
+    tankwars::Material tankMaterial;
+    tankMaterial.diffuseColor = { 0.6f, 0.6f, 0 };
+    tankMaterial.specularColor = { 1, 1, 0 };
+    tankMaterial.specularExponent = 16;
+
+    auto tankModelMat = glm::translate(glm::mat4(1), glm::vec3(50, 50, -50));
+    tankModelMat = glm::scale(tankModelMat, glm::vec3(20, 20, 20));
+
+    tankwars::MeshInstance tankBodyInstance(tankBodyMesh, tankMaterial);
+    tankBodyInstance.modelMatrix = tankModelMat;
+
+    tankwars::MeshInstance tankHeadInstance(tankHeadMesh, tankMaterial);
+    tankHeadInstance.modelMatrix = tankModelMat;
+
+    tankwars::MeshInstance tankCanonInstance(tankCanonMesh, tankMaterial);
+    tankCanonInstance.modelMatrix = tankModelMat;
+
+    renderer.addSceneObject(tankBodyInstance);
+    renderer.addSceneObject(tankHeadInstance);
+    renderer.addSceneObject(tankCanonInstance);
+
+	/*END OF TRY*/
+    /*
     tankwars::Physics physics;
 	tankwars::Tank tank1(physics.getDynamicsWorld(), btVector3(20, 20, -20));
 	for (int i = 0; i < 7; i++) {
 		renderer.addSceneObject(tank1.getTankMeshInstance(i));
-	}
-	tank = &tank1;
+	}*/
+	//tank = &tank1;
     float angle = 0.0f;
     int bla = 0;
 
@@ -117,8 +156,9 @@ int main() {
 
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
-        auto frameTime = currentTime - lastTime;
+        auto frameTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
+<<<<<<< HEAD
         accumulator += frameTime;
 		tank1.update();
         while (accumulator >= DeltaTime) {
@@ -127,6 +167,12 @@ int main() {
             accumulator -= DeltaTime;
         }
 		tank1.renderme();
+=======
+        
+		game.update(frameTime);
+        dynamicsWorld->stepSimulation(frameTime, 7);
+
+>>>>>>> 1b021b1c687880c42d9416dee4fe06a097c3632c
         if (keyStates[GLFW_KEY_W]) camPos += camDir *  static_cast<float>(frameTime) * camSpeed;
         if (keyStates[GLFW_KEY_S]) camPos -= camDir *  static_cast<float>(frameTime) * camSpeed;
         if (keyStates[GLFW_KEY_A]) camPos -= camRight *  static_cast<float>(frameTime) * camSpeed;
@@ -136,7 +182,6 @@ int main() {
         if (keyStates[GLFW_KEY_LEFT]) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (keyStates[GLFW_KEY_RIGHT]) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
 
-        
        /* bla++;
         if (bla % 15 == 0) {
             for (size_t z = 0; z < terrain2.getDepth(); z++)
@@ -151,7 +196,11 @@ int main() {
                 }
             }
         }*/
+<<<<<<< HEAD
 		
+=======
+		//tank1.render(DeltaTime);
+>>>>>>> 1b021b1c687880c42d9416dee4fe06a097c3632c
         terrain2.updateMesh();
 
 		
@@ -163,8 +212,8 @@ int main() {
         camUp = glm::rotate(rotation, glm::vec3(0, 1, 0));
 		glm::tmat4x4<float> viewMat;
 		if (keyStates[GLFW_KEY_R]) {
-			glm::vec3 pos= tank1.getPosition();
-			viewMat = glm::lookAt(camPos, pos, camUp);
+			//glm::vec3 pos= tank1.getPosition();
+			//viewMat = glm::lookAt(camPos, pos, camUp);
 		}
 		else {
 			viewMat = glm::lookAt(camPos, camPos + camDir, camUp);
@@ -172,7 +221,7 @@ int main() {
 
         // TEST
         angle += static_cast<float>(frameTime);
-        notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
+        notASphere.modelMatrix = glm::mat4_cast(glm::angleAxis(angle, glm::vec3(1, 0, 0)));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         /*
@@ -184,7 +233,7 @@ int main() {
         glViewport(0, 0, ResolutionX, ResolutionY);
         renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 1.0f, 500.0f) * viewMat, camPos);
 
-		game.render(static_cast<float>(accumulator / DeltaTime));
+		game.render();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -234,16 +283,16 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		//terrain.explosionAt(glm::vec3(Camera.getCenter().x, 0, Camera.getCenter().z), 20);
 	}
 	if (key == GLFW_KEY_J) {
-		tank->turn(true);
+		//tank->turn(true);
 	}
 	if (key == GLFW_KEY_L) {
-		tank->turn(false);
+		//tank->turn(false);
 	}
 	if (key == GLFW_KEY_I) {
-		tank->drive(true);
+		//tank->drive(true);
 	}
 	if (key == GLFW_KEY_K) {
-		tank->drive(false);
+		//tank->drive(false);
 	}
 
     keyStates[key] = (action != GLFW_RELEASE);

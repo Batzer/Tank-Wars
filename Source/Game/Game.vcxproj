@@ -269,6 +269,7 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshInstance.cpp" />
     <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -277,6 +278,7 @@
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="VoxelChunk.cpp" />
     <ClCompile Include="VoxelTerrain.cpp" />
+    <ClCompile Include="Wavefront.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">
@@ -295,6 +297,7 @@
     <ClInclude Include="GLTools.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshInstance.h" />
     <ClInclude Include="MeshTools.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="Renderer.h" />
@@ -303,6 +306,7 @@
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VoxelChunk.h" />
     <ClInclude Include="VoxelTerrain.h" />
+    <ClInclude Include="Wavefront.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\ToonLighting.vsh">

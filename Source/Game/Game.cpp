@@ -31,7 +31,7 @@ namespace tankwars {
 
 	void Game::controller() {
 		float movement_alpha = 1;
-		float rotation_alpha = 0.1;
+		float rotation_alpha = 0.1f;
 		//name
 		//const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
 		if (joystickAvailable[1]) {

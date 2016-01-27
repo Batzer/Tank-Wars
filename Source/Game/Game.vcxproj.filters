@@ -21,6 +21,7 @@
     <ClCompile Include="VoxelTerrain.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="Wavefront.cpp" />
+    <ClCompile Include="MeshInstance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="VoxelTerrain.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="Wavefront.h" />
+    <ClInclude Include="MeshInstance.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">

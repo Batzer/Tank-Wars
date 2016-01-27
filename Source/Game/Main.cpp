@@ -13,6 +13,7 @@
 #include <btBulletDynamicsCommon.h>
 
 #include "Mesh.h"
+#include "MeshInstance.h"
 #include "MeshTools.h"
 #include "Renderer.h"
 #include "Terrain.h"
@@ -101,9 +102,7 @@ int main() {
 	tankwars::Material mat;
 	mat.diffuseColor = { 1,0,0 };
 	// tankwars::Transform trans;
-	tankwars::MeshInstance notASphere;
-    notASphere.mesh = &boxMesh;
-    notASphere.material = &mat;
+	tankwars::MeshInstance notASphere(boxMesh, mat);
 	//renderer.addSceneObject(notASphere);
 
     auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
@@ -119,34 +118,30 @@ int main() {
     tankMaterial.specularColor = { 1, 1, 0 };
     tankMaterial.specularExponent = 16;
 
-    tankwars::MeshInstance tankBodyInstance;
-    tankBodyInstance.mesh = &tankBodyMesh;
-    tankBodyInstance.material = &tankMaterial;
-    tankBodyInstance.transform.translation = { 50, 50, -50 };
-    tankBodyInstance.transform.scale = { 10, 10, 10};
+    auto tankModelMat = glm::translate(glm::mat4(1), glm::vec3(50, 50, -50));
+    tankModelMat = glm::scale(tankModelMat, glm::vec3(20, 20, 20));
 
-    tankwars::MeshInstance tankHeadInstance;
-    tankHeadInstance.mesh = &tankHeadMesh;
-    tankHeadInstance.material = &tankMaterial;
-    tankHeadInstance.transform = tankBodyInstance.transform;
+    tankwars::MeshInstance tankBodyInstance(tankBodyMesh, tankMaterial);
+    tankBodyInstance.modelMatrix = tankModelMat;
 
-    tankwars::MeshInstance tankCanonInstance;
-    tankCanonInstance.mesh = &tankCanonMesh;
-    tankCanonInstance.material = &tankMaterial;
-    tankCanonInstance.transform = tankBodyInstance.transform;
+    tankwars::MeshInstance tankHeadInstance(tankHeadMesh, tankMaterial);
+    tankHeadInstance.modelMatrix = tankModelMat;
+
+    tankwars::MeshInstance tankCanonInstance(tankCanonMesh, tankMaterial);
+    tankCanonInstance.modelMatrix = tankModelMat;
 
     renderer.addSceneObject(tankBodyInstance);
     renderer.addSceneObject(tankHeadInstance);
     renderer.addSceneObject(tankCanonInstance);
 
 	/*END OF TRY*/
-
+    /*
     tankwars::Physics physics;
 	tankwars::Tank tank1(physics.getDynamicsWorld(), btVector3(20, 20, -20));
 	for (int i = 0; i < 7; i++) {
 		renderer.addSceneObject(tank1.getTankMeshInstance(i));
-	}
-	tank = &tank1;
+	}*/
+	//tank = &tank1;
     float angle = 0.0f;
     int bla = 0;
 
@@ -190,7 +185,7 @@ int main() {
                 }
             }
         }*/
-		tank1.render(DeltaTime);
+		//tank1.render(DeltaTime);
         terrain2.updateMesh();
         
         auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))
@@ -201,8 +196,8 @@ int main() {
         camUp = glm::rotate(rotation, glm::vec3(0, 1, 0));
 		glm::tmat4x4<float> viewMat;
 		if (keyStates[GLFW_KEY_R]) {
-			glm::vec3 pos= tank1.getPosition();
-			viewMat = glm::lookAt(camPos, pos, camUp);
+			//glm::vec3 pos= tank1.getPosition();
+			//viewMat = glm::lookAt(camPos, pos, camUp);
 		}
 		else {
 			viewMat = glm::lookAt(camPos, camPos + camDir, camUp);
@@ -210,7 +205,7 @@ int main() {
 
         // TEST
         angle += static_cast<float>(frameTime);
-        notASphere.transform.rotation = glm::angleAxis(angle, glm::vec3(1, 0, 0));
+        notASphere.modelMatrix = glm::mat4_cast(glm::angleAxis(angle, glm::vec3(1, 0, 0)));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         /*
@@ -272,16 +267,16 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		//terrain.explosionAt(glm::vec3(Camera.getCenter().x, 0, Camera.getCenter().z), 20);
 	}
 	if (key == GLFW_KEY_J) {
-		tank->turn(true);
+		//tank->turn(true);
 	}
 	if (key == GLFW_KEY_L) {
-		tank->turn(false);
+		//tank->turn(false);
 	}
 	if (key == GLFW_KEY_I) {
-		tank->drive(true);
+		//tank->drive(true);
 	}
 	if (key == GLFW_KEY_K) {
-		tank->drive(false);
+		//tank->drive(false);
 	}
 
     keyStates[key] = (action != GLFW_RELEASE);

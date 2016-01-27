@@ -16,8 +16,6 @@ namespace tankwars {
 	class Physics {
 	public:
 		Physics();
-
-		void createShape(btVector3 size);
 		void addObject(btVector3 startingPosition, btCollisionShape* shape, btScalar mass, btVector3 fallInertia);
 		void transform();
 		void removeFromWorld();

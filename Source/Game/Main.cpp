@@ -120,12 +120,13 @@ int main() {
         auto frameTime = currentTime - lastTime;
         lastTime = currentTime;
         accumulator += frameTime;
-        
+		tank1.update();
         while (accumulator >= DeltaTime) {
+			physics.getDynamicsWorld()->stepSimulation(DeltaTime);
 			game.update(static_cast<float>(DeltaTime));
             accumulator -= DeltaTime;
         }
-
+		tank1.renderme();
         if (keyStates[GLFW_KEY_W]) camPos += camDir *  static_cast<float>(frameTime) * camSpeed;
         if (keyStates[GLFW_KEY_S]) camPos -= camDir *  static_cast<float>(frameTime) * camSpeed;
         if (keyStates[GLFW_KEY_A]) camPos -= camRight *  static_cast<float>(frameTime) * camSpeed;
@@ -150,9 +151,10 @@ int main() {
                 }
             }
         }*/
-		tank1.render(DeltaTime);
+		
         terrain2.updateMesh();
-        
+
+		
         auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))
             * glm::angleAxis(roll, glm::vec3(1, 0, 0))
             * glm::angleAxis(pitch, glm::vec3(0, 0, 1));

@@ -158,21 +158,10 @@ int main() {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
-<<<<<<< HEAD
-        accumulator += frameTime;
-		tank1.update();
-        while (accumulator >= DeltaTime) {
-			physics.getDynamicsWorld()->stepSimulation(DeltaTime);
-			game.update(static_cast<float>(DeltaTime));
-            accumulator -= DeltaTime;
-        }
-		tank1.renderme();
-=======
+
         
 		game.update(frameTime);
         dynamicsWorld->stepSimulation(frameTime, 7);
-
->>>>>>> 1b021b1c687880c42d9416dee4fe06a097c3632c
         if (keyStates[GLFW_KEY_W]) camPos += camDir *  static_cast<float>(frameTime) * camSpeed;
         if (keyStates[GLFW_KEY_S]) camPos -= camDir *  static_cast<float>(frameTime) * camSpeed;
         if (keyStates[GLFW_KEY_A]) camPos -= camRight *  static_cast<float>(frameTime) * camSpeed;
@@ -196,11 +185,6 @@ int main() {
                 }
             }
         }*/
-<<<<<<< HEAD
-		
-=======
-		//tank1.render(DeltaTime);
->>>>>>> 1b021b1c687880c42d9416dee4fe06a097c3632c
         terrain2.updateMesh();
 
 		

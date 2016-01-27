@@ -1,15 +1,13 @@
+#include <iostream>
+#include <memory>
+
 #include <GL/gl3w.h>
-#include <GL/GLU.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/quaternion.hpp>
-#include <iostream>
-#include <memory>
-#include <array>
-
 #include <btBulletDynamicsCommon.h>
 
 #include "Mesh.h"
@@ -22,6 +20,7 @@
 #include "Physics.h"
 #include "Tank.h"
 #include "Wavefront.h"
+#include "Keyboard.h"
 
 constexpr char* WindowTitle = "Tank Wars";
 constexpr int ResolutionX = 1280;
@@ -31,16 +30,11 @@ constexpr bool UseVSync = true;
 constexpr bool UseMsaa = false;
 constexpr double DeltaTime = 1.0 / 60.0;
 
-tankwars::Camera camera(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
-tankwars::Camera camera2(glm::vec3{ -5, 85, 0 }, glm::vec3{ 5, 29, 5 }, glm::vec3{ 0, 1, 0 });
-tankwars::Game game(&camera);
-std::array<bool, GLFW_KEY_LAST> keyStates;
-
 tankwars::Tank *tank;
 
-void errorCallback(int error, const char* description);
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+void errorCallback(int error, const char* description) {
+    std::cerr << description;
+}
 
 int main() {
     // Init glfw
@@ -63,8 +57,6 @@ int main() {
         std::cerr << "Failed to create a window and context.\n";
     }
 
-    glfwSetKeyCallback(window, &keyCallback);
-    glfwSetFramebufferSizeCallback(window, &framebufferSizeCallback);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(UseVSync ? 1 : 0); // Turn on VSync
 
@@ -85,25 +77,19 @@ int main() {
     auto dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(
         dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
 
+    // Init input systems
+    tankwars::Keyboard::init();
+    glfwSetKeyCallback(window, &tankwars::Keyboard::keyCallback);
+    glfwSetWindowFocusCallback(window, &tankwars::Keyboard::windowFocusCallback);
+
     // The game loop
     auto lastTime = glfwGetTime();
     
+    // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_big.png", 16, 8, 16, 16);
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png", 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
 	tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
-
-	//GAME SETUP
-	game.setupControllers();
-	game.addTerrain(&terrain);
-
-	/*TRYING TO DRAW A CUTE SPHERE*/
-	auto boxMesh = tankwars::createBoxMesh(1, 1, 1);
-	tankwars::Material mat;
-	mat.diffuseColor = { 1,0,0 };
-	// tankwars::Transform trans;
-	tankwars::MeshInstance notASphere(boxMesh, mat);
-	//renderer.addSceneObject(notASphere);
 
     auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
     auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
@@ -119,7 +105,7 @@ int main() {
     tankMaterial.specularExponent = 16;
 
     auto tankModelMat = glm::translate(glm::mat4(1), glm::vec3(50, 50, -50));
-    tankModelMat = glm::scale(tankModelMat, glm::vec3(20, 20, 20));
+    tankModelMat = glm::scale(tankModelMat, glm::vec3(8, 8, 8));
 
     tankwars::MeshInstance tankBodyInstance(tankBodyMesh, tankMaterial);
     tankBodyInstance.modelMatrix = tankModelMat;
@@ -134,154 +120,52 @@ int main() {
     renderer.addSceneObject(tankHeadInstance);
     renderer.addSceneObject(tankCanonInstance);
 
-	/*END OF TRY*/
-    /*
-    tankwars::Physics physics;
-	tankwars::Tank tank1(physics.getDynamicsWorld(), btVector3(20, 20, -20));
-	for (int i = 0; i < 7; i++) {
-		renderer.addSceneObject(tank1.getTankMeshInstance(i));
-	}*/
-	//tank = &tank1;
-    float angle = 0.0f;
-    int bla = 0;
-
-    glm::vec3 camPos(10, 40, 10);
-    glm::vec3 camDir(0, 0, -1);
-    glm::vec3 camRight(1, 0, 0);
-    glm::vec3 camUp(0, 1, 0);
     float roll = 0.0f;
     float yaw = 0.0f;
     float pitch = 0.0f;
     float camSpeed = 20.0f;
+    tankwars::Camera freeCam;
+    freeCam.position = { 10, 40, 10 };
+    // END TEST
 
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
         
-		game.update(frameTime);
+        // Update simulation
         dynamicsWorld->stepSimulation(frameTime, 7);
-
-        if (keyStates[GLFW_KEY_W]) camPos += camDir *  static_cast<float>(frameTime) * camSpeed;
-        if (keyStates[GLFW_KEY_S]) camPos -= camDir *  static_cast<float>(frameTime) * camSpeed;
-        if (keyStates[GLFW_KEY_A]) camPos -= camRight *  static_cast<float>(frameTime) * camSpeed;
-        if (keyStates[GLFW_KEY_D]) camPos += camRight *  static_cast<float>(frameTime) * camSpeed;
-        if (keyStates[GLFW_KEY_UP]) roll += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
-        if (keyStates[GLFW_KEY_DOWN]) roll -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
-        if (keyStates[GLFW_KEY_LEFT]) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
-        if (keyStates[GLFW_KEY_RIGHT]) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
-
-       /* bla++;
-        if (bla % 15 == 0) {
-            for (size_t z = 0; z < terrain2.getDepth(); z++)
-            for (size_t y = 0; y < terrain2.getHeight(); y++)
-            for (size_t x = 0; x < terrain2.getWidth(); x++) {
-                if (x == 0 || y == 0 || z == 0 || x == terrain2.getWidth() - 1
-                        || y == terrain2.getHeight() - 1 || z == terrain2.getDepth() - 1) {
-                    terrain2.setVoxel(x, y, z, rand() % 2 == 0 ? tankwars::VoxelType::Solid : tankwars::VoxelType::Empty);
-                }
-                else {
-                    terrain2.setVoxel(x, y, z, tankwars::VoxelType::Solid);
-                }
-            }
-        }*/
-		//tank1.render(DeltaTime);
-        terrain2.updateMesh();
         
-        auto rotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0))
-            * glm::angleAxis(roll, glm::vec3(1, 0, 0))
-            * glm::angleAxis(pitch, glm::vec3(0, 0, 1));
-        camDir = glm::rotate(rotation, glm::vec3(0, 0, -1));
-        camRight = glm::rotate(rotation, glm::vec3(1, 0, 0));
-        camUp = glm::rotate(rotation, glm::vec3(0, 1, 0));
-		glm::tmat4x4<float> viewMat;
-		if (keyStates[GLFW_KEY_R]) {
-			//glm::vec3 pos= tank1.getPosition();
-			//viewMat = glm::lookAt(camPos, pos, camUp);
-		}
-		else {
-			viewMat = glm::lookAt(camPos, camPos + camDir, camUp);
-		}
+        // Update game here
 
-        // TEST
-        angle += static_cast<float>(frameTime);
-        notASphere.modelMatrix = glm::mat4_cast(glm::angleAxis(angle, glm::vec3(1, 0, 0)));
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_A)) freeCam.position -= freeCam.getRight() *  static_cast<float>(frameTime) * camSpeed;
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_D)) freeCam.position += freeCam.getRight() *  static_cast<float>(frameTime) * camSpeed;
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_UP)) roll += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_DOWN)) roll -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_LEFT)) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_RIGHT)) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
+        freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
+        freeCam.update();
 
+        terrain2.updateMesh();
+
+        // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        /*
-        glViewport(ResolutionX/5, 0, ResolutionX, ResolutionY / 2);
-        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 0.1f, 100.0f) * camera2.getViewMatrix());
-        glViewport(0, ResolutionY / 2, ResolutionX/2+ResolutionX/5, ResolutionY / 2);
-        */
-
         glViewport(0, 0, ResolutionX, ResolutionY);
-        renderer.renderScene(glm::perspective(glm::quarter_pi<float>(), 16.0f / 9, 1.0f, 500.0f) * viewMat, camPos);
+        renderer.renderScene(freeCam.getViewProjMatrix(), freeCam.position);
 
-		game.render();
         glfwSwapBuffers(window);
+
+        // Update events and input
         glfwPollEvents();
+        tankwars::Keyboard::update();
     }
 
     // Clean up
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
-}
-
-
-
-void errorCallback(int error, const char* description) {
-    std::cerr << description;
-}
-
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
-	if (key == GLFW_KEY_Q) {
-		camera.rotateXAxis(0.2);//0.05
-	}
-	if (key == GLFW_KEY_E) {
-		camera.rotateXAxis(-0.2);
-	}
-	float alpha = 1;
-	if (key == GLFW_KEY_W) {
-		camera.move(0,alpha);
-	}
-	if (key == GLFW_KEY_S) {
-		camera.move(1,alpha);
-	}
-	if (key == GLFW_KEY_A) {
-		camera.move(2,alpha);
-	}
-	if (key == GLFW_KEY_D) {
-		camera.move(3,alpha);
-	}
-	if (key == GLFW_KEY_Y) {	//move up
-
-	}
-	if (key == GLFW_KEY_X) {	//move down
-
-	}
-	if (key == GLFW_KEY_SPACE) {
-		//terrain.explosionAt(glm::vec3(Camera.getCenter().x, 0, Camera.getCenter().z), 20);
-	}
-	if (key == GLFW_KEY_J) {
-		//tank->turn(true);
-	}
-	if (key == GLFW_KEY_L) {
-		//tank->turn(false);
-	}
-	if (key == GLFW_KEY_I) {
-		//tank->drive(true);
-	}
-	if (key == GLFW_KEY_K) {
-		//tank->drive(false);
-	}
-
-    keyStates[key] = (action != GLFW_RELEASE);
-}
-
-void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
 }

@@ -1,57 +1,66 @@
 #include "Camera.h"
-#include <iostream>
-#include <cmath>
+
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/constants.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace tankwars {
-	Camera::Camera(const glm::vec3& eye, const glm::vec3& center, const glm::vec3& up)
-            : eye(eye),
-              center(center),
-              up(up) {
+    Camera::Camera()
+            : Camera(glm::quarter_pi<float>(), 16.0f / 9.0f, 1.0f, 1000.0f) {
         // Do nothing
     }
 
-	void Camera::update(const glm::vec3& eye, const glm::vec3&center, const glm::vec3& up) {
-		this->eye = eye;
-		this->center = center;
-		this->up = up;
-	}
-	void Camera::rotateXAxis(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
-		glm::mat3x3 rot = {	{ glm::cos(-angle),					   0,					-glm::sin(-angle) },
-							{				 0,					   1,								   0 },
-							{ glm::sin(-angle),					   0,					 glm::cos(-angle)}};
-		eye = (rot*(eye- center)) + center;
-	}
-	void Camera::rotateYAxis(double angle) {					// later the eye will have to rotate around the center ( center being the tank model)
-		glm::vec3 rotationAxis = glm::cross(glm::vec3(eye.x - center.x, 0, eye.z - center.z), up);
-		glm::vec3 translatedEye = eye - center;
-	}
+    Camera::Camera(float fovY, float aspectRatio, float nearZ, float farZ)
+            : fovY(fovY),
+              aspectRatio(aspectRatio),
+              nearZ(nearZ),
+              farZ(farZ) {
+        update();
+    }
 
-	glm::mat4 Camera::getViewMatrix() const {
-		return glm::lookAt(eye, center, up);
-	}
+    void Camera::update() {
+        right = glm::cross(direction, up);
+        viewMatrix = glm::lookAt(position, position + direction, up);
+        projMatrix = glm::perspective(fovY, aspectRatio, nearZ, farZ);
+        viewProjMatrix = projMatrix * viewMatrix;
+    }
 
-	glm::vec3 Camera::getPosition() const {				//For testing puposes
-		return center;
-	}
+    void Camera::lookAt(const glm::vec3& target, const glm::vec3& up) {
+        direction = glm::normalize(target - position);
+        this->up = up;
+    }
 
-	void Camera::move(int direction, float speed) {
-		glm::vec3 viewDirection(eye.x - center.x , 0, eye.z - center.z);
-		viewDirection = glm::normalize(viewDirection);
+    void Camera::rotate(const glm::quat& rotation) {
+        direction = rotation * direction;
+        up = rotation * up;
+        right = rotation * right;
+    }
 
-		if (direction == 0) {			//FORWARD
-			viewDirection = -viewDirection;
-		}
-		else if (direction == 2) {		//LEFT
-			viewDirection = glm::cross(viewDirection, up);
-		}
-		else if (direction == 3) {		//RIGHT
-			viewDirection = -glm::cross(viewDirection, up);
-		}
-		else {							//BACKWARD schouldn't do anything in this case
-			
-		}
+    void Camera::setAxes(const glm::vec3& forward, const glm::vec3& up, const glm::vec3& right) {
+        this->right = right;
+        this->up = up;
+        direction = forward;
+    }
 
-		eye			= eye + speed * viewDirection;
-		center		= center + speed * viewDirection;
-	}
+    void Camera::setAxes(const glm::quat& axesRotation) {
+        right = axesRotation * glm::vec3(1, 0, 0);
+        up = axesRotation * glm::vec3(0, 1, 0);
+        direction = axesRotation * glm::vec3(0, 0, -1);
+    }
+
+    const glm::vec3& Camera::getRight() const {
+        return right;
+    }
+
+    const glm::mat4& Camera::getViewMatrix() const {
+        return viewMatrix;
+    }
+
+    const glm::mat4& Camera::getProjMatrix() const {
+        return projMatrix;
+    }
+
+    const glm::mat4& Camera::getViewProjMatrix() const {
+        return viewProjMatrix;
+    }
 }

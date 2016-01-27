@@ -267,6 +267,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GLTools.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshInstance.cpp" />
@@ -296,6 +297,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GLTools.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshInstance.h" />
     <ClInclude Include="MeshTools.h" />

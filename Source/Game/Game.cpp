@@ -42,28 +42,28 @@ namespace tankwars {
 				switch (i) {
 				case 0:		//L-stick x-Axis
 					if (axis[i]>0.001) {
-						camera->move(3, glm::abs(axis[i])*movement_alpha);
+                        camera->position += glm::vec3(1, 0, 0) * glm::abs(axis[i]) * movement_alpha;
 					}
 					else if (axis[i]<-0.001) {
-						camera->move(2, glm::abs(axis[i])*movement_alpha);
+                        camera->position -= glm::vec3(1, 0, 0) * glm::abs(axis[i]) * movement_alpha;
 					}
 					break;
 				case 1:		//L-stick y-Axis
 					if (axis[i]>0.001) {
-						camera->move(1, glm::abs(axis[i])*movement_alpha);
+                        camera->position += glm::vec3(0, 0, 1) * glm::abs(axis[i]) * movement_alpha;
 					}
 					else if (axis[i]<-0.001) {
-						camera->move(0, glm::abs(axis[i])*movement_alpha);
+                        camera->position -= glm::vec3(0, 0, 1) * glm::abs(axis[i]) * movement_alpha;
 					}
 					break;
 				case 2:		//R-stick x-Axis
 					if (axis[i]>0.001 || axis[i]<-0.001) {
-						camera->rotateXAxis(-rotation_alpha*axis[i]);
+                        camera->rotate(glm::quat({-rotation_alpha * axis[i], 0, 0}));
 					}
 					break;
 				case 3:		//R-stick y-Axis
 					if (axis[i]>0.001 || axis[i]<-0.001) {
-						camera->rotateYAxis(-rotation_alpha*axis[i]);
+                        camera->rotate(glm::quat({0, -rotation_alpha * axis[i], 0}));
 					}
 					break;
 				}
@@ -98,13 +98,13 @@ namespace tankwars {
 				case 4:
 					if (axes[i]) {
 						std::cout << "L1" << "\n";
-						camera->rotateXAxis(rotation_alpha);
+                        camera->rotate(glm::quat({rotation_alpha, 0, 0}));
 					}
 					break;
 				case 5:
 					if (axes[i]) {
 						std::cout << "R1" << "\n";
-						camera->rotateXAxis(-rotation_alpha);
+                        camera->rotate(glm::quat({-rotation_alpha, 0, 0}));
 					}
 					break;
 				case 6:
@@ -150,25 +150,25 @@ namespace tankwars {
 				case 12:
 					if (axes[i]) {
 						std::cout << "pad_up" << "\n";
-						camera->move(0, movement_alpha);
+                        camera->position += glm::vec3(0, 0, 1) * movement_alpha;
 					}
 					break;
 				case 13:
 					if (axes[i]) {
 						std::cout << "pad_right" << "\n";
-						camera->move(3, movement_alpha);
+                        camera->position += glm::vec3(1, 0, 0) * movement_alpha;
 					}
 					break;
 				case 14:
 					if (axes[i]) {
 						std::cout << "pad_down" << "\n";
-						camera->move(1, movement_alpha);
+                        camera->position -= glm::vec3(0, 0, 1) * movement_alpha;
 					}
 					break;
 				case 15:
 					if (axes[i]) {
 						std::cout << "pad_left" << "\n";
-						camera->move(2, movement_alpha);
+                        camera->position -= glm::vec3(1, 0, 0) * movement_alpha;
 					}
 					break;
 				default:
@@ -183,7 +183,7 @@ namespace tankwars {
 	}
 
 	void Game::pew() {
-        const auto& camPos = camera->getPosition();
+        const auto& camPos = camera->position;
         glm::vec3 location(camPos.x, terrain->getHeightAt(camPos.x, camPos.z), camPos.z);
 		terrain->explosionAt(location, explosion_radius);
 	}

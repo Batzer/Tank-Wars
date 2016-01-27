@@ -14,9 +14,6 @@ namespace tankwars {
 	btDiscreteDynamicsWorld* Physics::getDynamicsWorld(){
 		return dynamicsWorld.get();
 	}
-	void Physics::createShape(btVector3 size) {
-		new btBoxShape(size);
-	}
 	void Physics::addObject(btVector3 startingPosition,btCollisionShape* shape,btScalar mass ,btVector3 fallInertia) {
 		//Object obj(startingPosition, shape, mass, fallInertia);
 		objects.emplace_back(startingPosition, shape, mass, fallInertia);

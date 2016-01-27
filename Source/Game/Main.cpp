@@ -132,10 +132,10 @@ int main() {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
-        
+ 
         // Update simulation
         dynamicsWorld->stepSimulation(frameTime, 7);
-        
+
         // Update game here
 
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);

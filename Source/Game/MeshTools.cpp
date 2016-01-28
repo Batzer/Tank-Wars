@@ -100,19 +100,22 @@ namespace tankwars {
         std::vector<uint16_t> indices;
         for (uint16_t i = 0; i < numSlices; i++) {
             indices.push_back(0); // North pole
-            indices.push_back(1 + i);
             indices.push_back(1 + (i + 1) % numSlices);
+            indices.push_back(1 + i);
+            
         }
 
         for (size_t y = 0; y < numStacks - 2; y++) {
             for (size_t x = 0; x < numSlices; x++) {
                 indices.push_back(static_cast<uint16_t>(1 + y * numSlices + x));
-                indices.push_back(static_cast<uint16_t>(1 + (y + 1) * numSlices + x));
                 indices.push_back(static_cast<uint16_t>(1 + (y + 1) * numSlices + (x + 1) % numSlices));
+                indices.push_back(static_cast<uint16_t>(1 + (y + 1) * numSlices + x));
+                
 
                 indices.push_back(static_cast<uint16_t>(1 + y * numSlices + x));
-                indices.push_back(static_cast<uint16_t>(1 + (y + 1) * numSlices + (x + 1) % numSlices));
                 indices.push_back(static_cast<uint16_t>(1 + y * numSlices + (x + 1) % numSlices));
+                indices.push_back(static_cast<uint16_t>(1 + (y + 1) * numSlices + (x + 1) % numSlices));
+                
             }
         }
 
@@ -120,8 +123,9 @@ namespace tankwars {
         auto baseIndex = static_cast<uint16_t>(southPoleIndex - numSlices);
         for (uint16_t i = 0; i < numSlices; i++) {
             indices.push_back(baseIndex + i);
-            indices.push_back(southPoleIndex);
             indices.push_back(baseIndex + (i + 1) % numSlices);
+            indices.push_back(southPoleIndex);
+            
         }
 
         return Mesh(vertices.data(), vertices.size(), indices.data(), indices.size());

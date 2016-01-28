@@ -88,8 +88,8 @@ namespace tankwars {
         terrain->render();
 
         for (auto sceneObject : sceneObjects) {
-            assert(sceneObject->getMesh());
-            assert(sceneObject->getMaterial());
+            assert(sceneObject->mesh);
+            assert(sceneObject->material);
 
             const auto& modelMat = sceneObject->modelMatrix;
             auto invTrModelMat = glm::transpose(glm::inverse(modelMat));

@@ -4,6 +4,9 @@
 #include <cstddef>
 #include <cstdint>
 
+#include <BulletCollision\CollisionShapes\btBvhTriangleMeshShape.h>
+#include <BulletCollision\CollisionShapes\btTriangleIndexVertexArray.h>
+
 #include <GL/gl3w.h>
 
 #include "Vertex.h"
@@ -33,7 +36,7 @@ namespace tankwars {
 
     private:
         void createCubeAt(size_t x, size_t y, size_t z, uint32_t faceMask);
-
+		btBvhTriangleMeshShape *chunckMesh;
         size_t startX, startY, startZ;
         size_t width, height, depth;
         std::vector<VoxelType> voxels;

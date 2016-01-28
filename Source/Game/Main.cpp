@@ -84,12 +84,12 @@ int main() {
 
     // The game loop
     auto lastTime = glfwGetTime();
-    
+
     // TEST
     tankwars::Renderer renderer;
     tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png", 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
-	tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
+    tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 
     auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
     auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
@@ -132,7 +132,7 @@ int main() {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
         lastTime = currentTime;
- 
+
         // Update simulation
         dynamicsWorld->stepSimulation(frameTime, 7);
 

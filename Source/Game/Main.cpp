@@ -92,8 +92,8 @@ int main() {
     renderer.setTerrain(&terrain2);
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
-	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(20, 40, -20));
-	dynamicsWorld->addAction(tank1.getAction());
+	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(20, 60, -20));
+	//dynamicsWorld->addAction(tank1.getAction());
 	dynamicsWorld->addRigidBody(tank1.getRigidBody());
 
    /* auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
@@ -128,7 +128,7 @@ int main() {
     btCollisionShape* fallShape = new btSphereShape(2);
 
     btDefaultMotionState* fallMotionState =
-        new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(60, 60, -60)));
+        new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(20, 50, -20)));
     btScalar mass = 50;
     btVector3 fallInertia(0, 0, 0);
     fallShape->calculateLocalInertia(mass, fallInertia);

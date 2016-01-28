@@ -1,4 +1,5 @@
 #include "Tank.h"
+#include <glm/gtc/type_ptr.hpp>
 namespace tankwars {
 
 	Tank::Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition)
@@ -15,11 +16,20 @@ namespace tankwars {
 		tr.setOrigin(startingPosition);
 		tankMotionState  = new btDefaultMotionState(tr);
 		tankChassis = new btRigidBody(mass, tankMotionState, tankBoxShape);
-		tank = new btRaycastVehicle(tankTuning, tankChassis, new btDefaultVehicleRaycaster(dnmcWorld));
+		//tank = new btRaycastVehicle(tankTuning, tankChassis, new btDefaultVehicleRaycaster(dnmcWorld));
 
-		tankChassis->setActivationState(DISABLE_DEACTIVATION);
+        btDefaultMotionState* fallMotionState =
+            new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), startingPosition));
+        btScalar mass = 50;
+        btVector3 fallInertia(0, 0, 0);
+        tankBoxShape->calculateLocalInertia(mass, fallInertia);
+        btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass, fallMotionState, tankBoxShape, fallInertia);
+        tankChassis = new btRigidBody(fallRigidBodyCI);
+        //dynamicsWorld->addRigidBody(fallRigidBody);
+
+		//tankChassis->setActivationState(DISABLE_DEACTIVATION);
 		//dnmcWorld->addAction(tank);
-		addWheels();
+		//addWheels();
         //tankBoxShape->calculateLocalInertia(mass, btVector3(0, 0, 0));
 		
 		//mat.diffuseColor = { 1,0,0 };
@@ -119,7 +129,7 @@ namespace tankwars {
 		}
 	}
 	void Tank::update() {
-		for (int i = 0; i < 4; i++) {
+		/*for (int i = 0; i < 4; i++) {
 			tank->updateWheelTransform(i, true);
 		}
 		tank->applyEngineForce(tankEngineForce, 2);
@@ -128,12 +138,13 @@ namespace tankwars {
 		tank->setBrake(tankBreakingForce, 3);
 		tank->setSteeringValue(tankSteering, 0);
 		tank->setSteeringValue(tankSteering, 1);
-
+        */
 		btScalar m[16];
 		btTransform trans;
 		tankChassis->getMotionState()->getWorldTransform(trans);
 		trans.getOpenGLMatrix(m);
 		tankModelMat = *((glm::mat4*) m);
+        trans.getOpenGLMatrix(glm::value_ptr(tankModelMat));
 
 		
 		/*tankModelMat[0][0] = m[0];
@@ -165,8 +176,8 @@ namespace tankwars {
 		std::cout << "\n";
 		glm::vec3 forwardVec(m[0], m[1], m[2]);
 		glm::vec3 upVec(m[4], m[5], m[6]);
-		tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec);//HeadAndCanonRotationAngle 
-		tankMeshInstances[2].modelMatrix += glm::rotate(glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec),canonRotationAngle,forwardVec);//HeadAndCanonRotationAngle & CanonRotationAngle / 
+		//tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec);//HeadAndCanonRotationAngle 
+		//tankMeshInstances[2].modelMatrix += glm::rotate(glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec),canonRotationAngle,forwardVec);//HeadAndCanonRotationAngle & CanonRotationAngle / 
 		//test rotations
 		//setHeadAndCanonRotation(0.01f);
 		setCanonRotation(0.01f);

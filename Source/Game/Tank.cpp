@@ -133,7 +133,8 @@ namespace tankwars {
 		btTransform trans;
 		tankChassis->getMotionState()->getWorldTransform(trans);
 		trans.getOpenGLMatrix(m);
-		
+		tankModelMat = *((glm::mat4*) m);
+
 		
 		/*tankModelMat[0][0] = m[0];
 		tankModelMat[1][0] = m[1];
@@ -155,16 +156,19 @@ namespace tankwars {
 		for (MeshInstance& mI: tankMeshInstances) {
 			mI.modelMatrix = tankModelMat;
 		}
-		btMatrix3x3 rotMat = tank->getChassisWorldTransform().getBasis();
+		/*btMatrix3x3 rotMat = tank->getChassisWorldTransform().getBasis();
 		int forwardAxis = tank->getForwardAxis();														// this is the Y Axis for some reason
 		glm::vec3 forwardVec(rotMat[0][forwardAxis], rotMat[1][forwardAxis], rotMat[2][forwardAxis]);
 		int upAxis = tank->getUpAxis();																	// this is the Z Axis for some reason
 		glm::vec3 upVec(rotMat[0][upAxis], rotMat[1][upAxis], rotMat[2][upAxis]);
-		
+		*/
+		std::cout << "\n";
+		glm::vec3 forwardVec(m[0], m[1], m[2]);
+		glm::vec3 upVec(m[4], m[5], m[6]);
 		tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec);//HeadAndCanonRotationAngle 
-		tankMeshInstances[2].modelMatrix += glm::rotate(glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec),canonRotationAngle,forwardVec);//HeadAndCanonRotationAngle & CanonRotationAngle
+		tankMeshInstances[2].modelMatrix += glm::rotate(glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec),canonRotationAngle,forwardVec);//HeadAndCanonRotationAngle & CanonRotationAngle / 
 		//test rotations
-		setHeadAndCanonRotation(0.01f);
+		//setHeadAndCanonRotation(0.01f);
 		setCanonRotation(0.01f);
 	}
 	void Tank::setHeadAndCanonRotation(btScalar angle) {

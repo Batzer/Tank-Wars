@@ -87,7 +87,8 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png", 16, 8, 16, 16);
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test.png",
+        dynamicsWorld.get(), 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);

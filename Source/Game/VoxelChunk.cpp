@@ -56,7 +56,7 @@ namespace {
         glm::vec3(0, 1, 0),
         glm::vec3(0, -1, 0)
     };
-
+    
     constexpr uint32_t FaceFront = 1;
     constexpr uint32_t FaceLeft = 2;
     constexpr uint32_t FaceRight = 4;
@@ -66,7 +66,8 @@ namespace {
 }
 
 namespace tankwars {
-    VoxelChunk::VoxelChunk(size_t startX, size_t startY, size_t startZ, size_t width,
+    VoxelChunk::VoxelChunk(btDiscreteDynamicsWorld* dynamicsWorld,
+        size_t startX, size_t startY, size_t startZ, size_t width,
         size_t height, size_t depth, const VoxelType* voxels)
             : startX(startX),
               startY(startY),
@@ -74,7 +75,8 @@ namespace tankwars {
               width(width),
               height(height),
               depth(depth),
-              voxels(width * height * depth, VoxelType::Empty) {
+              voxels(width * height * depth, VoxelType::Empty),
+              dynamicsWorld(dynamicsWorld) {
         if (voxels) {
             memcpy(this->voxels.data(), voxels, width * height * depth * sizeof(VoxelType));
         }
@@ -93,7 +95,7 @@ namespace tankwars {
         
         vertexCache.resize(width * height * depth * 24);
         elementCache.resize(width * height * depth * 36);
-		//chunckMesh = new btBvhTriangleMeshShape(nullptr, false); // replace nullptr with new btTriangleIndexVertexArray()
+
         updateMesh();
     }
 
@@ -102,6 +104,7 @@ namespace tankwars {
     }
 
     VoxelChunk::~VoxelChunk() {
+        dynamicsWorld->removeCollisionObject(collisionObject.get());
         glDeleteBuffers(1, &vertexArrayBuffer);
         glDeleteBuffers(1, &elementArrayBuffer);
         glDeleteVertexArrays(1, &vertexArray);
@@ -115,6 +118,8 @@ namespace tankwars {
         height = other.height;
         depth = other.depth;
         voxels = std::move(other.voxels);
+        triangleMesh = std::move(other.triangleMesh);
+        collisionMesh = std::move(other.collisionMesh);
         std::swap(vertexArray, other.vertexArray);
         std::swap(vertexArrayBuffer, other.vertexArrayBuffer);
         std::swap(elementArrayBuffer, other.elementArrayBuffer);
@@ -123,8 +128,6 @@ namespace tankwars {
         elementCache = std::move(other.elementCache);
         numVertices = other.numVertices;
         numElements = other.numElements;
-
-		chunckMesh = other.chunckMesh;
         return *this;
     }
 
@@ -219,6 +222,8 @@ namespace tankwars {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferSize, nullptr, GL_STREAM_DRAW);
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, numElements * sizeof(uint16_t), elementCache.data());
 
+        createCollisionMesh();
+
         isMeshDirty = false;
     }
 
@@ -248,5 +253,30 @@ namespace tankwars {
             numVertices += 4;
             numElements += 6;
         }
+    }
+
+    void VoxelChunk::createCollisionMesh() {
+        triangleMesh.reset(new btTriangleMesh());
+
+        for (size_t i = 0; i < elementCache.size() / 3; i++) {
+            auto index1 = elementCache[i * 3];
+            auto index2 = elementCache[i * 3 + 1];
+            auto index3 = elementCache[i * 3 + 2];
+
+            const auto& pos1 = vertexCache[index1].position;
+            const auto& pos2 = vertexCache[index2].position;
+            const auto& pos3 = vertexCache[index3].position;
+
+            triangleMesh->addTriangle(
+                btVector3(pos1.x, pos1.y, pos1.z),
+                btVector3(pos2.x, pos2.y, pos2.z),
+                btVector3(pos3.x, pos3.y, pos3.z));
+        }
+
+        collisionMesh.reset(new btBvhTriangleMeshShape(triangleMesh.get(), true));
+        if (collisionObject) dynamicsWorld->removeCollisionObject(collisionObject.get());
+        collisionObject.reset(new btCollisionObject());
+        collisionObject->setCollisionShape(collisionMesh.get());
+        dynamicsWorld->addCollisionObject(collisionObject.get());
     }
 }

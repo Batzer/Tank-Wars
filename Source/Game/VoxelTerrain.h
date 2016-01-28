@@ -2,12 +2,16 @@
 
 #include <vector>
 #include <string>
+
+#include <btBulletDynamicsCommon.h>
+
 #include "VoxelChunk.h"
 
 namespace tankwars {
     class VoxelTerrain {
     public:
-        VoxelTerrain(size_t numChunksX, size_t numChunksY, size_t numChunksZ,
+        VoxelTerrain(btDiscreteDynamicsWorld* dynamicsWorld,
+            size_t numChunksX, size_t numChunksY, size_t numChunksZ,
             size_t chunkWidth, size_t chunkHeight, size_t chunkDepth);
 
         void setVoxel(size_t x, size_t y, size_t z, VoxelType voxel);
@@ -19,8 +23,8 @@ namespace tankwars {
         void render() const;
         void updateMesh();
 
-        static VoxelTerrain fromHeightMap(const std::string& path, size_t chunkWidth,
-            size_t chunkHeight, size_t chunkDepth, size_t invHeightScale);
+        static VoxelTerrain fromHeightMap(const std::string& path, btDiscreteDynamicsWorld* dynamicsWorld,
+            size_t chunkWidth, size_t chunkHeight, size_t chunkDepth, size_t invHeightScale);
 		
     private:
         size_t numChunksX, numChunksY, numChunksZ;

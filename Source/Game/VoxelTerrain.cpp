@@ -5,7 +5,8 @@
 #include "Image.h"
 
 namespace tankwars {
-    VoxelTerrain::VoxelTerrain(size_t numChunksX, size_t numChunksY, size_t numChunksZ,
+    VoxelTerrain::VoxelTerrain(btDiscreteDynamicsWorld* dynamicsWorld,
+        size_t numChunksX, size_t numChunksY, size_t numChunksZ,
         size_t chunkWidth, size_t chunkHeight, size_t chunkDepth)
             : numChunksX(numChunksX),
               numChunksY(numChunksY),
@@ -17,7 +18,7 @@ namespace tankwars {
         for (size_t z = 0; z < numChunksZ; z++)
         for (size_t y = 0; y < numChunksY; y++)
         for (size_t x = 0; x < numChunksX; x++) {
-            chunks.emplace_back(x * chunkWidth, y * chunkHeight, z * chunkDepth,
+            chunks.emplace_back(dynamicsWorld, x * chunkWidth, y * chunkHeight, z * chunkDepth,
                 chunkWidth, chunkHeight, chunkDepth);
         }
     }
@@ -66,8 +67,8 @@ namespace tankwars {
         }
     }
 
-    VoxelTerrain VoxelTerrain::fromHeightMap(const std::string& path, size_t chunkWidth,
-            size_t chunkHeight, size_t chunkDepth, size_t invHeightScale) {
+    VoxelTerrain VoxelTerrain::fromHeightMap(const std::string& path, btDiscreteDynamicsWorld* dynamicsWorld,
+            size_t chunkWidth, size_t chunkHeight, size_t chunkDepth, size_t invHeightScale) {
         Image heightMap(path);
 
         size_t maxHeight = 1;
@@ -92,7 +93,7 @@ namespace tankwars {
             numChunksZ++;
         }
 
-        VoxelTerrain terrain(numChunksX, numChunksY, numChunksZ,
+        VoxelTerrain terrain(dynamicsWorld, numChunksX, numChunksY, numChunksZ,
             chunkWidth, chunkHeight, chunkDepth);
 
         for (int z = 0; z < heightMap.getHeight(); z++)

@@ -3,10 +3,11 @@
 #include <vector>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
+#include <btBulletDynamicsCommon.h>
 #include <BulletCollision\CollisionShapes\btBvhTriangleMeshShape.h>
-#include <BulletCollision\CollisionShapes\btTriangleIndexVertexArray.h>
-
+#include <BulletCollision\CollisionShapes\btTriangleMesh.h>
 #include <GL/gl3w.h>
 
 #include "Vertex.h"
@@ -19,7 +20,8 @@ namespace tankwars {
     
     class VoxelChunk {
     public:
-        VoxelChunk(size_t startX, size_t startY, size_t startZ, size_t width,
+        VoxelChunk(btDiscreteDynamicsWorld* dynamicsWorld,
+            size_t startX, size_t startY, size_t startZ, size_t width,
             size_t height, size_t depth, const VoxelType* voxels = nullptr);
         VoxelChunk(const VoxelChunk&) = delete;
         VoxelChunk(VoxelChunk&& other);
@@ -36,10 +38,16 @@ namespace tankwars {
 
     private:
         void createCubeAt(size_t x, size_t y, size_t z, uint32_t faceMask);
-		btBvhTriangleMeshShape *chunckMesh;
+        void createCollisionMesh();
+
         size_t startX, startY, startZ;
         size_t width, height, depth;
         std::vector<VoxelType> voxels;
+
+        btDiscreteDynamicsWorld* dynamicsWorld;
+        std::unique_ptr<btTriangleMesh> triangleMesh;
+        std::unique_ptr<btBvhTriangleMeshShape> collisionMesh;
+        std::unique_ptr<btCollisionObject> collisionObject;
 
         GLuint vertexArray;
         GLuint vertexArrayBuffer;

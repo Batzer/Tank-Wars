@@ -89,9 +89,12 @@ int main() {
     tankwars::Renderer renderer;
     tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png", 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
-	tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
+	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
+	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(20, 40, -20));
+	dynamicsWorld->addAction(tank1.getAction());
+	dynamicsWorld->addRigidBody(tank1.getRigidBody());
 
-    auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
+   /* auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
     auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
     auto tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
 
@@ -114,11 +117,11 @@ int main() {
     tankHeadInstance.modelMatrix = tankModelMat;
 
     tankwars::MeshInstance tankCanonInstance(tankCanonMesh, tankMaterial);
-    tankCanonInstance.modelMatrix = tankModelMat;
+    tankCanonInstance.modelMatrix = tankModelMat;*/
 
-    renderer.addSceneObject(tankBodyInstance);
+    /*renderer.addSceneObject(tankBodyInstance);
     renderer.addSceneObject(tankHeadInstance);
-    renderer.addSceneObject(tankCanonInstance);
+    renderer.addSceneObject(tankCanonInstance);*/
 
     float roll = 0.0f;
     float yaw = 0.0f;
@@ -134,6 +137,7 @@ int main() {
         lastTime = currentTime;
  
         // Update simulation
+		
         dynamicsWorld->stepSimulation(frameTime, 7);
 
         // Update game here
@@ -148,7 +152,10 @@ int main() {
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_LEFT)) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_RIGHT)) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
+		freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
         freeCam.update();
+		
+		tank1.update();
 
         terrain2.updateMesh();
 

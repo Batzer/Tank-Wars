@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-
 #include "VoxelChunk.h"
 
 namespace tankwars {
@@ -22,7 +21,7 @@ namespace tankwars {
 
         static VoxelTerrain fromHeightMap(const std::string& path, size_t chunkWidth,
             size_t chunkHeight, size_t chunkDepth, size_t invHeightScale);
-
+		
     private:
         size_t numChunksX, numChunksY, numChunksZ;
         size_t chunkWidth, chunkHeight, chunkDepth;

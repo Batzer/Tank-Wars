@@ -6,7 +6,9 @@
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision\CollisionShapes\btBoxShape.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
+#include "Wavefront.h"
 #include "Mesh.h"
 #include "MeshInstance.h"
 #include "MeshTools.h" // Won't be needed in the final version
@@ -15,18 +17,22 @@
 namespace tankwars {
 	class Tank {
 	public:
-		Tank(btDiscreteDynamicsWorld *dynamicsWorld, btVector3 startingPosition);
+		Tank(btDiscreteDynamicsWorld *dynamicsWorld,Renderer& renderer, btVector3 startingPosition);
 		void addWheels();
-		void renderme();
 		void update();
 		void turn(bool left);
 		void drive(bool forward);
+		btRaycastVehicle* getAction();
 		MeshInstance getTankMeshInstance(int i);
 		glm::vec3 getPosition();
+		btRigidBody* getRigidBody();
+		void setHeadAndCanonRotation(btScalar angle);
+		void setCanonRotation(btScalar angle);
 	private:
+		Renderer& renderer;
 		btCollisionShape* tankBoxShape;
-		void initializeTankMeshInstances();
-		btVector3 startingPosition;
+		void initializeTankMeshInstances(btVector3 startPos);
+		//btVector3 startingPosition;
 		btDiscreteDynamicsWorld* dnmcWorld;
 		void setTankTuning();
 		btTransform tr;
@@ -38,11 +44,19 @@ namespace tankwars {
 		//btCollisionShape* backWheel;
 
 		//MESHES AND MESHINSTANCES
-		Mesh boxMesh;
-		Material mat;
-		//use objloader to load the meshes
+		btScalar headAndCanonRotationAngle;
+		btScalar canonRotationAngle;
+
+		glm::mat4x4 tankModelMat;
+		Material tankMaterial;
+		WavefrontModel tankBodyModel;
+		WavefrontModel tankHeadModel;
+		WavefrontModel tankCanonModel;
+		Mesh* tankBodyMesh;
+		Mesh* tankHeadMesh;
+		Mesh* tankCanonMesh;
 		// 0 = tankBody / 1 = tankHead / 2 = turret / 3-6 = wheels
-		std::vector<MeshInstance> TankMeshInstances;					// how to add this shit to the renderer?
+		std::vector<MeshInstance> tankMeshInstances;					// how to add this shit to the renderer?
 		//END MESHES AND MESHINSTANCES
 
 		//FORCES

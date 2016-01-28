@@ -93,7 +93,7 @@ namespace tankwars {
         
         vertexCache.resize(width * height * depth * 24);
         elementCache.resize(width * height * depth * 36);
-
+		//chunckMesh = new btBvhTriangleMeshShape(nullptr, false); // replace nullptr with new btTriangleIndexVertexArray()
         updateMesh();
     }
 
@@ -123,6 +123,8 @@ namespace tankwars {
         elementCache = std::move(other.elementCache);
         numVertices = other.numVertices;
         numElements = other.numElements;
+
+		chunckMesh = other.chunckMesh;
         return *this;
     }
 

@@ -62,7 +62,7 @@ namespace tankwars {
 		//FORCES
 		float maxEngineForce = 1000.f;
 		float defaultBreakingForce = 100.f;
-		float tankEngineForce = 10.f;
+		float tankEngineForce = 1000.f;
 		float tankBreakingForce = 0.f;// defaultBreakingForce;
 
 		float	steeringIncrement = 0.04f;

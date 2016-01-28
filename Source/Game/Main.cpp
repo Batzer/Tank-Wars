@@ -125,6 +125,22 @@ int main() {
     renderer.addSceneObject(tankHeadInstance);
     renderer.addSceneObject(tankCanonInstance);*/
 
+    btCollisionShape* fallShape = new btSphereShape(2);
+
+    btDefaultMotionState* fallMotionState =
+        new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(60, 60, -60)));
+    btScalar mass = 50;
+    btVector3 fallInertia(0, 0, 0);
+    fallShape->calculateLocalInertia(mass, fallInertia);
+    btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass, fallMotionState, fallShape, fallInertia);
+    btRigidBody* fallRigidBody = new btRigidBody(fallRigidBodyCI);
+    dynamicsWorld->addRigidBody(fallRigidBody);
+
+    tankwars::Mesh sphereMesh = tankwars::createSphereMesh(2, 16, 16);
+    tankwars::Material mat;
+    tankwars::MeshInstance sphere(sphereMesh, mat);
+    renderer.addSceneObject(sphere);
+
     float roll = 0.0f;
     float yaw = 0.0f;
     float pitch = 0.0f;
@@ -154,12 +170,18 @@ int main() {
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_LEFT)) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_RIGHT)) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
-		freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
+		//freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
         freeCam.update();
 		
 		tank1.update();
 
         terrain2.updateMesh();
+
+        // TEST
+        btTransform tr;
+        fallRigidBody->getMotionState()->getWorldTransform(tr);
+        tr.getOpenGLMatrix(glm::value_ptr(sphere.modelMatrix));
+        // END
 
         // Render
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

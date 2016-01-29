@@ -61,18 +61,19 @@ namespace tankwars {
 
 		//FORCES
 		float maxEngineForce = 1000.f;
-		float defaultBreakingForce = 100.f;
+		float defaultBreakingForce = 10.f;
+		float maxBreakingForce = 100.f;
 		float tankEngineForce = 1000.f;
-		float tankBreakingForce = 0.f;// defaultBreakingForce;
+		float tankBreakingForce = 100.f;// defaultBreakingForce;
 
 		float	steeringIncrement = 0.04f;
 		float	steeringClamp = 0.3f;
-		float	tankSteering = 10;
+		float	tankSteering = 0;
 
-		btScalar mass = 200;
+		btScalar mass = 10;
 		btScalar frontWheelRadius = 0.838f;
 		btScalar backWheelRadius = 1.f;
-		btScalar suspensionRestLength = 20;
+		btScalar suspensionRestLength = 0.6;
 		btVector3 wheelDirection;
 		btVector3 wheelAxle;
 		//END FORCES

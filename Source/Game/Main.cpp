@@ -93,8 +93,8 @@ int main() {
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(20, 60, -20));
-	dynamicsWorld->addAction(tank1.getAction());
-	dynamicsWorld->addRigidBody(tank1.getRigidBody());
+	//dynamicsWorld->addAction(tank1.getAction());
+	//dynamicsWorld->addRigidBody(tank1.getRigidBody());
 
    /* auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
     auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");

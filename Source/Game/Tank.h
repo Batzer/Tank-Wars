@@ -37,6 +37,7 @@ namespace tankwars {
 		void setTankTuning();
 		btTransform tr;
 		btMotionState *tankMotionState;
+		btDefaultVehicleRaycaster* tankVehicleRaycaster;
 		btRaycastVehicle::btVehicleTuning tankTuning;
 		btRigidBody* tankChassis;
 		btRaycastVehicle* tank;
@@ -60,19 +61,20 @@ namespace tankwars {
 		//END MESHES AND MESHINSTANCES
 
 		//FORCES
-		float maxEngineForce = 1000.f;
+		float maxEngineForce = 100.f;
 		float defaultBreakingForce = 10.f;
 		float maxBreakingForce = 100.f;
-		float tankEngineForce = 1000.f;
-		float tankBreakingForce = 100.f;// defaultBreakingForce;
+		float tankEngineForce = 0.f;
+		float tankBreakingForce = 0.f;// defaultBreakingForce;
 
 		float	steeringIncrement = 0.04f;
 		float	steeringClamp = 0.3f;
-		float	tankSteering = 0;
+		float	tankSteering = 0.f;
 
 		btScalar mass = 10;
-		btScalar frontWheelRadius = 0.838f;
-		btScalar backWheelRadius = 1.f;
+		btScalar wheelWidth = 0.4f;
+		btScalar frontWheelRadius = 0.5f;//0.838f;
+		btScalar backWheelRadius = 0.5f;//1.f;
 		btScalar suspensionRestLength = 0.6;
 		btVector3 wheelDirection;
 		btVector3 wheelAxle;

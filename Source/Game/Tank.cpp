@@ -10,31 +10,34 @@ namespace tankwars {
 			dnmcWorld(dynamicsWorld), 
 			//startingPosition(startingPosition), 
 			tankTuning(), 
-			tankBoxShape(new btBoxShape(btVector3(0.5, 0.5, 1))) {
+			tankBoxShape(new btBoxShape(btVector3(1.f, 0.5f, 2.f))) {
 		//setTankTuning();
+		//tr.setIdentity();
+		//tr.setOrigin(startingPosition);
+		//tankMotionState  = new btDefaultMotionState(tr);
+		//tankChassis = new btRigidBody(mass, tankMotionState, tankBoxShape);
 		tr.setIdentity();
 		tr.setOrigin(startingPosition);
-		tankMotionState  = new btDefaultMotionState(tr);
-		tankChassis = new btRigidBody(mass, tankMotionState, tankBoxShape);
-		tank = new btRaycastVehicle(tankTuning, tankChassis, new btDefaultVehicleRaycaster(dnmcWorld));
+        tankMotionState =
+            new btDefaultMotionState(tr);
+        btVector3 localInertia(0, 0, 0);
+		tankBoxShape->calculateLocalInertia(mass, localInertia);
+        btRigidBody::btRigidBodyConstructionInfo tankRigidBodyCI(mass, tankMotionState, tankBoxShape, localInertia);
+		
+		tankChassis = new btRigidBody(tankRigidBodyCI);
+        dynamicsWorld->addRigidBody(tankChassis);
+		tankVehicleRaycaster = new btDefaultVehicleRaycaster(dnmcWorld);
+		tank = new btRaycastVehicle(tankTuning, tankChassis, tankVehicleRaycaster);
 		tank->setCoordinateSystem(0, 1, 2);
-        btDefaultMotionState* fallMotionState =
-            new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), startingPosition));
-        btScalar mass = 50;
-        btVector3 fallInertia(0, 0, 0);
-        tankBoxShape->calculateLocalInertia(mass, fallInertia);
-        btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass, fallMotionState, tankBoxShape, fallInertia);
-        tankChassis = new btRigidBody(fallRigidBodyCI);
-        //dynamicsWorld->addRigidBody(fallRigidBody);
-
 		tankChassis->setActivationState(DISABLE_DEACTIVATION);
-		//dnmcWorld->addAction(tank);
+		dnmcWorld->addVehicle(tank);
 		addWheels();
-        tankBoxShape->calculateLocalInertia(mass, btVector3(0, 0, 0));
 		
 		//mat.diffuseColor = { 1,0,0 };
 		initializeTankMeshInstances(startingPosition);
     }
+
+
 	void Tank::initializeTankMeshInstances(btVector3 startPos) {
 		//Material
 		tankMaterial.diffuseColor = { 0.6f, 0.6f, 0 };
@@ -82,10 +85,17 @@ namespace tankwars {
     }
    
     void Tank::addWheels() {
-        tank->addWheel(btVector3(2, -1, -2), wheelDirection, wheelAxle,suspensionRestLength,frontWheelRadius, tankTuning, true);
-		tank->addWheel(btVector3(2, -1, 2), wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, true);
-		tank->addWheel(btVector3(-2, -1, 2), wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, false);
-		tank->addWheel(btVector3(-2, -1, -2), wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, false);
+		btVector3 connectionPointCSO(1 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+        tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle,suspensionRestLength,frontWheelRadius, tankTuning, true);
+		
+		connectionPointCSO = btVector3(-1 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, true);
+		
+		connectionPointCSO = btVector3(-1 + (0.3*wheelWidth), 1.2f, 2 * 1 - backWheelRadius);
+		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, false);
+		
+		connectionPointCSO = btVector3(1 - (0.3*wheelWidth), 1.2f, 2 * 1 - backWheelRadius);
+		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, false);
         for (int i = 0; i < 4;i++) { 
             tank->getWheelInfo(i).m_suspensionStiffness = 20.f;
 			tank->getWheelInfo(i).m_wheelsDampingRelaxation = 2.3f;
@@ -130,15 +140,17 @@ namespace tankwars {
 	}
 	void Tank::update() {
 		//std::cout << tank->getForwardVector().getX()<<" "<< tank->getForwardVector().getY() << " "<< tank->getForwardVector().getZ() << "\n";
-		tank->updateAction(dnmcWorld, 7);
+		//tank->updateAction(dnmcWorld, 7);
+		tank->resetSuspension();
 		for (int i = 0; i < 4; i++) {
+			tank->updateWheelTransform(i, true);
 			if (tank->getWheelInfo(i).m_raycastInfo.m_groundObject)
 				std::cout << i << " ";								//Doesn't touch the fucking ground!
 		}
 		std::cout << "\n";
 		//std::cout << tank->getCurrentSpeedKmHour();
 		//tank->debugDraw();
-		drive(true);
+		//drive(true);
 		/*for (int i = 0; i < 4; i++) {
 			tank->updateWheelTransform(i, true);
 		}*/
@@ -189,7 +201,7 @@ namespace tankwars {
 		//tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec);//HeadAndCanonRotationAngle 
 		//tankMeshInstances[2].modelMatrix += glm::rotate(glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec),canonRotationAngle,forwardVec);//HeadAndCanonRotationAngle & CanonRotationAngle / 
 		//test rotations
-		//setHeadAndCanonRotation(0.01f);
+		setHeadAndCanonRotation(0.01f);
 		setCanonRotation(0.01f);
 	}
 	void Tank::setHeadAndCanonRotation(btScalar angle) {

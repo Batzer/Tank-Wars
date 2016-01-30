@@ -4,13 +4,14 @@ namespace tankwars {
 
 	Tank::Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition)
 			:wheelDirection(0, -1, 0),
-			wheelAxle(-1, 0, 0),
+			wheelAxle(1, 0, 0),
 			renderer(renderer),
 			//boxMesh(createBoxMesh(2, 1, 1)),
 			dnmcWorld(dynamicsWorld), 
 			//startingPosition(startingPosition), 
 			tankTuning(), 
-			tankBoxShape(new btBoxShape(btVector3(1.f, 0.5f, 2.f))) {
+			tankBoxShape(new btBoxShape(btVector3(1.f, .5f, 2.f))),
+			tankBodyMesh(createBoxMesh(2,1,4)){
 		//setTankTuning();
 		//tr.setIdentity();
 		//tr.setOrigin(startingPosition);
@@ -44,22 +45,22 @@ namespace tankwars {
 		tankMaterial.specularColor = { 1, 1, 0 };
 		tankMaterial.specularExponent = 16;
 		//Wavefronts
-		tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
-		tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
-		tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
+		//tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
+		//tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
+		//tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
 		//Meshes
-		tankBodyMesh = new Mesh(tankwars::createMeshFromWavefront(tankBodyModel));
-		tankHeadMesh = new Mesh(tankwars::createMeshFromWavefront(tankHeadModel));
-		tankCanonMesh = new Mesh(tankwars::createMeshFromWavefront(tankCanonModel));
+		//tankBodyMesh = new Mesh(tankwars::createMeshFromWavefront(tankBodyModel));
+		//tankHeadMesh = new Mesh(tankwars::createMeshFromWavefront(tankHeadModel));
+		//tankCanonMesh = new Mesh(tankwars::createMeshFromWavefront(tankCanonModel));
 		//Transform
 		tankModelMat = glm::translate(glm::mat4(1), glm::vec3(startPos.getX(), startPos.getY(), startPos.getZ()));
-		tankModelMat = glm::scale(tankModelMat, glm::vec3(8, 8, 8));
+		//tankModelMat = glm::scale(tankModelMat, glm::vec3(8, 8, 8));
 		//MeshInstances
-		tankMeshInstances.push_back(MeshInstance(*tankBodyMesh, tankMaterial));
-		tankMeshInstances.push_back(MeshInstance(*tankHeadMesh, tankMaterial));
-		tankMeshInstances.push_back(MeshInstance(*tankCanonMesh, tankMaterial));
+		tankMeshInstances.push_back(MeshInstance(tankBodyMesh, tankMaterial));
+		//tankMeshInstances.push_back(MeshInstance(*tankHeadMesh, tankMaterial));
+		//tankMeshInstances.push_back(MeshInstance(*tankCanonMesh, tankMaterial));
 		//tankMeshInstances.resize(7);
-		for (int i = 0; i < 3; i++) {//wheels not there yet
+		for (int i = 0; i < 1; i++) {//wheels not there yet
 			tankMeshInstances[i].modelMatrix = tankModelMat;
 			renderer.addSceneObject(tankMeshInstances[i]);
 		}
@@ -76,25 +77,25 @@ namespace tankwars {
 	}
 
     void Tank::setTankTuning() {
-        tankTuning.m_frictionSlip = 100;
+        tankTuning.m_frictionSlip = 10.5f;
         tankTuning.m_maxSuspensionForce = 100;
         tankTuning.m_maxSuspensionTravelCm = 100;
         tankTuning.m_suspensionCompression = 100;
         tankTuning.m_suspensionDamping = 100;
-        tankTuning.m_suspensionStiffness = 200;
+        tankTuning.m_suspensionStiffness = 5.88f;
     }
    
     void Tank::addWheels() {
-		btVector3 connectionPointCSO(1 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		btVector3 connectionPointCSO(0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
         tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle,suspensionRestLength,frontWheelRadius, tankTuning, true);
 		
-		connectionPointCSO = btVector3(-1 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		connectionPointCSO = btVector3(-0.5 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, true);
 		
-		connectionPointCSO = btVector3(-1 + (0.3*wheelWidth), 1.2f, 2 * 1 - backWheelRadius);
+		connectionPointCSO = btVector3(-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, false);
 		
-		connectionPointCSO = btVector3(1 - (0.3*wheelWidth), 1.2f, 2 * 1 - backWheelRadius);
+		connectionPointCSO = btVector3(0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, false);
         for (int i = 0; i < 4;i++) { 
             tank->getWheelInfo(i).m_suspensionStiffness = 20.f;
@@ -115,7 +116,7 @@ namespace tankwars {
 			//tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(m);
 			
 	void Tank::turn(bool left) {
-		if (left) {
+		if (!left) {
 			tankSteering += steeringIncrement;
 			if (tankSteering > steeringClamp) {
 				tankSteering = steeringClamp;
@@ -138,6 +139,16 @@ namespace tankwars {
 			tankBreakingForce = defaultBreakingForce;
 		}
 	}
+	void Tank::driveBack(bool backward) {
+		if (backward) {
+			tankEngineForce = -maxEngineForce/2;
+			tankBreakingForce = 0.f;
+		}
+		else {
+			tankEngineForce = 0.f;
+			tankBreakingForce = defaultBreakingForce;
+		}
+	}
 	void Tank::update() {
 		//std::cout << tank->getForwardVector().getX()<<" "<< tank->getForwardVector().getY() << " "<< tank->getForwardVector().getZ() << "\n";
 		//tank->updateAction(dnmcWorld, 7);
@@ -145,7 +156,7 @@ namespace tankwars {
 		for (int i = 0; i < 4; i++) {
 			tank->updateWheelTransform(i, true);
 			if (tank->getWheelInfo(i).m_raycastInfo.m_groundObject)
-				std::cout << i << " ";								//Doesn't touch the fucking ground!
+				std::cout << tank->getWheelInfo(i).m_raycastInfo.m_groundObject << " ";								//Doesn't touch the fucking ground!
 		}
 		std::cout << "\n";
 		//std::cout << tank->getCurrentSpeedKmHour();
@@ -195,7 +206,7 @@ namespace tankwars {
 		int upAxis = tank->getUpAxis();																	// this is the Z Axis for some reason
 		glm::vec3 upVec(rotMat[0][upAxis], rotMat[1][upAxis], rotMat[2][upAxis]);
 		*/
-		std::cout << "\n";
+		//std::cout << "\n";
 		glm::vec3 forwardVec(m[0], m[1], m[2]);
 		glm::vec3 upVec(m[4], m[5], m[6]);
 		//tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndCanonRotationAngle, upVec);//HeadAndCanonRotationAngle 

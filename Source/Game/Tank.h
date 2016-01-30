@@ -22,6 +22,7 @@ namespace tankwars {
 		void update();
 		void turn(bool left);
 		void drive(bool forward);
+		void driveBack(bool backward);
 		btRaycastVehicle* getAction();
 		MeshInstance getTankMeshInstance(int i);
 		glm::vec3 getPosition();
@@ -53,7 +54,7 @@ namespace tankwars {
 		WavefrontModel tankBodyModel;
 		WavefrontModel tankHeadModel;
 		WavefrontModel tankCanonModel;
-		Mesh* tankBodyMesh;
+		Mesh tankBodyMesh;
 		Mesh* tankHeadMesh;
 		Mesh* tankCanonMesh;
 		// 0 = tankBody / 1 = tankHead / 2 = turret / 3-6 = wheels

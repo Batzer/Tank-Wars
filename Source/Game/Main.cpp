@@ -76,7 +76,15 @@ int main() {
     auto solver = std::make_unique<btSequentialImpulseConstraintSolver>();
     auto dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(
         dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
-
+	//TESTINGQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
+	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
+	btDefaultMotionState* groundMotionState =
+		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 50, 0)));
+	btRigidBody::btRigidBodyConstructionInfo
+		groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
+	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
+	dynamicsWorld->addRigidBody(groundRigidBody);
+	
     // Init input systems
     tankwars::Keyboard::init();
     glfwSetKeyCallback(window, &tankwars::Keyboard::keyCallback);
@@ -92,7 +100,7 @@ int main() {
     renderer.setTerrain(&terrain2);
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
-	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(20, 60, -20));
+	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 52, -30));
 	//dynamicsWorld->addAction(tank1.getAction());
 	//dynamicsWorld->addRigidBody(tank1.getRigidBody());
 
@@ -169,7 +177,14 @@ int main() {
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_DOWN)) roll -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_LEFT)) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_RIGHT)) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
-        freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_I))tank1.drive(true);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_K)) { tank1.drive(false); tank1.driveBack(false); }
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_O)) tank1.driveBack(true);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_J))tank1.turn(true);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
+
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))dynamicsWorld->removeRigidBody(groundRigidBody);
+		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
 		//freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
         freeCam.update();
 		

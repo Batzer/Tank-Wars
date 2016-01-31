@@ -2,6 +2,7 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 #include "Terrain.h"
+#include "Tank.h"
 #include "Camera.h"
 
 namespace tankwars {
@@ -14,8 +15,10 @@ namespace tankwars {
 		void addTerrain(Terrain * terrain);
 		void update(float dt);
 		void render();
+		void bindControllerToTank(int controllerID, Tank* tank);
 
 	private:
+		Tank* tanks[2];
 		void pew();
 		void controller();
 

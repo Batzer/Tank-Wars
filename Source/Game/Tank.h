@@ -27,8 +27,15 @@ namespace tankwars {
 		MeshInstance getTankMeshInstance(int i);
 		glm::vec3 getPosition();
 		btRigidBody* getRigidBody();
-		void setHeadAndCanonRotation(btScalar angle);
-		void setCanonRotation(btScalar angle);
+
+		//Controller Functions
+		void breakController();
+		void driveController(float val);
+		void turnController(float val);
+		void turnTurretController(float val);
+		void turnHeadAndTurretController(float val);
+		void shoot();
+		void adjustPower(bool increase);
 	private:
 		Renderer& renderer;
 		btCollisionShape* tankBoxShape;
@@ -42,44 +49,81 @@ namespace tankwars {
 		btRaycastVehicle::btVehicleTuning tankTuning;
 		btRigidBody* tankChassis;
 		btRaycastVehicle* tank;
+
+		
 		//btCollisionShape* frontWheel;
 		//btCollisionShape* backWheel;
 
-		//MESHES AND MESHINSTANCES
-		btScalar headAndCanonRotationAngle;
-		btScalar canonRotationAngle;
+		//Tank Meshes and MeshInstances
 
 		glm::mat4x4 tankModelMat;
 		Material tankMaterial;
 		WavefrontModel tankBodyModel;
 		WavefrontModel tankHeadModel;
 		WavefrontModel tankCanonModel;
-		Mesh tankBodyMesh;
+		Mesh* tankBodyMesh;
 		Mesh* tankHeadMesh;
 		Mesh* tankCanonMesh;
+
+		
 		// 0 = tankBody / 1 = tankHead / 2 = turret / 3-6 = wheels
 		std::vector<MeshInstance> tankMeshInstances;					// how to add this shit to the renderer?
-		//END MESHES AND MESHINSTANCES
+		//End Tank Meshes and MeshInstances
 
-		//FORCES
-		float maxEngineForce = 100.f;
+		//Tank Physics Variables
+
+		float maxEngineForce = 1000.f;
 		float defaultBreakingForce = 10.f;
-		float maxBreakingForce = 100.f;
+		float maxBreakingForce = 100.f;					// what is this for?0.o
 		float tankEngineForce = 0.f;
 		float tankBreakingForce = 0.f;// defaultBreakingForce;
 
 		float	steeringIncrement = 0.04f;
-		float	steeringClamp = 0.3f;
+		float	steeringClamp = 0.2f;
 		float	tankSteering = 0.f;
 
-		btScalar mass = 10;
+		btScalar mass = 800;
 		btScalar wheelWidth = 0.4f;
 		btScalar frontWheelRadius = 0.5f;//0.838f;
 		btScalar backWheelRadius = 0.5f;//1.f;
 		btScalar suspensionRestLength = 0.6;
 		btVector3 wheelDirection;
 		btVector3 wheelAxle;
-		//END FORCES
+
+		//End Tank Physics Variables
+
+		//Tank Movement Variables
+		btScalar shootingPower = 20;				//not adjusted
+		btScalar shootingPowerIncrease = 10;		//not adjusted
+		btScalar shootingPowerMax = 100;			//not adjusted
+
+		btScalar turretMinAngle = 0;
+		btScalar turretMaxAngle = 0.76f;				//not adjusted
+		btScalar turretRotationAlpha = 0.01;		//not adjusted
+		btScalar turretAngle = 0;
+		btScalar headAndTurretRotationAlpha = 0.01;	//not adjusted
+		btScalar headAndTurretAngle = 0;
+
+		//End Tank Movement Variables
+		class BulletHandler {
+		public:
+			BulletHandler(btDynamicsWorld* dnmcWorld, Renderer& renderer);
+			void createNewBullet(btTransform& tr, btScalar headAngle, btScalar turretAngle, btScalar power);
+			void updateBullets();
+		private:
+			btDynamicsWorld* dnmcWorld;
+			Renderer& renderer;
+			btSphereShape bulletShape;
+			Mesh bulletMesh;
+			size_t bulletMax = 10000;
+			size_t bulletCounter = 0;
+			btRigidBody* bulletRigidBodies[10000];
+			MeshInstance* bulletInstances[10000];
+			//std::vector<btRigidBody> bulletRigidBodies;
+			//std::vector<MeshInstance> bulletInstances;
+			Material bulletMat;
+		};
+		BulletHandler bulletHandler;
 	};
 
 	

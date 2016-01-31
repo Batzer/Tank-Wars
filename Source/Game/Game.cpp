@@ -20,8 +20,11 @@ namespace tankwars {
 	void Game::addTerrain(Terrain* terrain) {
 		this->terrain = terrain;
 	}
-
+	void Game::bindControllerToTank(int controllerID, Tank* tank) {
+		tanks[controllerID] = tank;
+	}
 	void Game::update(float dt) {
+		(void)dt;
 		controller();
 	}
 
@@ -41,30 +44,16 @@ namespace tankwars {
 			for (char i = 0; i < count; i++) {
 				switch (i) {
 				case 0:		//L-stick x-Axis
-					if (axis[i]>0.001) {
-                        camera->position += glm::vec3(1, 0, 0) * glm::abs(axis[i]) * movement_alpha;
-					}
-					else if (axis[i]<-0.001) {
-                        camera->position -= glm::vec3(1, 0, 0) * glm::abs(axis[i]) * movement_alpha;
-					}
+					tanks[1]->turnController(axis[i]);
 					break;
 				case 1:		//L-stick y-Axis
-					if (axis[i]>0.001) {
-                        camera->position += glm::vec3(0, 0, 1) * glm::abs(axis[i]) * movement_alpha;
-					}
-					else if (axis[i]<-0.001) {
-                        camera->position -= glm::vec3(0, 0, 1) * glm::abs(axis[i]) * movement_alpha;
-					}
+					tanks[1]->driveController(axis[i]);
 					break;
 				case 2:		//R-stick x-Axis
-					if (axis[i]>0.001 || axis[i]<-0.001) {
-                        camera->rotate(glm::quat({-rotation_alpha * axis[i], 0, 0}));
-					}
+					tanks[1]->turnHeadAndTurretController(axis[i]);
 					break;
 				case 3:		//R-stick y-Axis
-					if (axis[i]>0.001 || axis[i]<-0.001) {
-                        camera->rotate(glm::quat({0, -rotation_alpha * axis[i], 0}));
-					}
+					tanks[1]->turnTurretController(axis[i]);
 					break;
 				}
 			}
@@ -86,25 +75,26 @@ namespace tankwars {
 					break;
 				case 2:
 					if (axes[i]) {
-						std::cout << "X" << "\n";
-						pew();
+						//std::cout << "X" << "\n";
+						tanks[1]->shoot();
 					}
 					break;
 				case 3:
 					if (axes[i]) {
-						std::cout << "|_|" << "\n";
+						//std::cout << "|_|" << "\n";
+						tanks[1]->breakController();
 					}
 					break;
 				case 4:
 					if (axes[i]) {
 						std::cout << "L1" << "\n";
-                        camera->rotate(glm::quat({rotation_alpha, 0, 0}));
+                        //camera->rotate(glm::quat({rotation_alpha, 0, 0}));
 					}
 					break;
 				case 5:
 					if (axes[i]) {
 						std::cout << "R1" << "\n";
-                        camera->rotate(glm::quat({-rotation_alpha, 0, 0}));
+                        //camera->rotate(glm::quat({-rotation_alpha, 0, 0}));
 					}
 					break;
 				case 6:

@@ -155,8 +155,10 @@ int main() {
     float camSpeed = 20.0f;
     tankwars::Camera freeCam;
     freeCam.position = { 10, 40, 10 };
-    // END TEST
-
+	tankwars::Game game(&freeCam);
+	game.setupControllers();
+	game.bindControllerToTank(0, &tank1);
+	game.bindControllerToTank(1, &tank1);
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
@@ -167,7 +169,7 @@ int main() {
         dynamicsWorld->stepSimulation(frameTime, 7);
 
         // Update game here
-
+		game.update(DeltaTime);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;

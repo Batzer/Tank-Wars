@@ -119,18 +119,22 @@ namespace tankwars {
 
 	//-------------------------------------------Controller-Functions----------------------------
 	void Tank::turnTurretController(float val) {
-		if (val >= 0) {
-			//if (turretAngle<turretMaxAngle)
+		if (val > 0) {
+			if (turretAngle<turretMaxAngle)
 				turretAngle += val*turretRotationAlpha;
 		}
 		else {
-			//if (turretAngle > turretMinAngle)
+			if (turretAngle > turretMinAngle)
 				turretAngle += val*turretRotationAlpha;
 		}
 	}
 
 	void Tank::turnHeadAndTurretController(float val) {
 		headAndTurretAngle -= val*headAndTurretRotationAlpha;
+		if (headAndTurretAngle > glm::pi<float>())
+			headAndTurretAngle -= 2 * glm::pi<float>();
+		if (headAndTurretAngle < -glm::pi<float>())
+			headAndTurretAngle += 2 * glm::pi<float>();
 	}
 
 	void Tank::breakController() {
@@ -168,7 +172,6 @@ namespace tankwars {
 		}
 	}
 	//---------------------------------------End-Controller-Functions----------------------------
-
 	void Tank::turn(bool left) {
 		if (!left) {
 			tankSteering += steeringIncrement;
@@ -205,12 +208,12 @@ namespace tankwars {
 	}
 	void Tank::update() {
 		tank->resetSuspension();
-		for (int i = 0; i < 4; i++) {
+		/*for (int i = 0; i < 4; i++) {
 			tank->updateWheelTransform(i, true);
 			if (tank->getWheelInfo(i).m_raycastInfo.m_groundObject)
 				std::cout << tank->getWheelInfo(i).m_raycastInfo.m_groundObject << " ";								//Doesn't touch the fucking ground!
 		}
-		std::cout << "\n";
+		std::cout << "\n";*/
 		tank->applyEngineForce(tankEngineForce, 2);
 		tank->setBrake(tankBreakingForce, 2);
 		tank->applyEngineForce(tankEngineForce, 3);
@@ -226,10 +229,10 @@ namespace tankwars {
 			mI.modelMatrix = tankModelMat;
 		}
 
-		glm::vec3 forwardVec(tankModelMat[0][0], tankModelMat[0][1], tankModelMat[0][2]);
+		glm::vec3 forwardVec(tankModelMat[0][0], tankModelMat[0][1], tankModelMat[0][1]);
 		glm::vec3 upVec(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]);
 		tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndTurretAngle, upVec);//HeadAndCanonRotationAngle 
-		tankMeshInstances[2].modelMatrix += glm::rotate(glm::rotate(tankModelMat, headAndTurretAngle, upVec), turretAngle, forwardVec);
+		tankMeshInstances[2].modelMatrix = glm::rotate(glm::rotate(tankModelMat, headAndTurretAngle, upVec), turretAngle, forwardVec);
 		bulletHandler.updateBullets();
 	}
 
@@ -243,6 +246,7 @@ namespace tankwars {
 		bulletMat.specularExponent = 16;
 	}
 	void Tank::BulletHandler::createNewBullet(btTransform& tr, btScalar headAngle,btScalar turretAngle, btScalar power) {
+		std::cout << turretAngle<<" ";
 		if (bulletCounter >= bulletMax) return;
 		glm::mat4 bulletMatrix;
 		tr.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
@@ -257,10 +261,12 @@ namespace tankwars {
 		bulletMatrix = glm::rotate(bulletMatrix, 1.57f+headAngle, glm::vec3(0, 1, 0));
 		glm::vec3 forwardVec(bulletMatrix[0][0], bulletMatrix[0][1], bulletMatrix[0][1]); // there is a 1 instead of the 2 in the z-Parameter
 		bulletMatrix = glm::rotate(bulletMatrix, turretAngle, glm::cross(forwardVec,glm::vec3(0,1,0)));
-		direction = bulletMatrix*direction;													//is *-1 if shooting to the left half 
-		
+		direction = bulletMatrix*direction;
+		if(headAngle>0)
+			direction = glm::vec4(direction.x, -direction.y, direction.z,0);
 		direction = glm::normalize(direction);
 		bulletRigidBodies[bulletCounter]->setLinearVelocity(btVector3(direction.x*power,direction.y*power,direction.z*power));
+		
 		dnmcWorld->addRigidBody(bulletRigidBodies[bulletCounter]);
 		bulletInstances[bulletCounter] = new MeshInstance(bulletMesh, bulletMat);
 		renderer.addSceneObject(*bulletInstances[bulletCounter]);

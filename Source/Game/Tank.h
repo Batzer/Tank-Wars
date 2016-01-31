@@ -97,8 +97,8 @@ namespace tankwars {
 		btScalar shootingPowerIncrease = 10;		//not adjusted
 		btScalar shootingPowerMax = 100;			//not adjusted
 
-		btScalar turretMinAngle = 0;
-		btScalar turretMaxAngle = 0.76f;				//not adjusted
+		btScalar turretMinAngle = -0.06;
+		btScalar turretMaxAngle = 0.5f;				//not adjusted
 		btScalar turretRotationAlpha = 0.01;		//not adjusted
 		btScalar turretAngle = 0;
 		btScalar headAndTurretRotationAlpha = 0.01;	//not adjusted
@@ -115,10 +115,10 @@ namespace tankwars {
 			Renderer& renderer;
 			btSphereShape bulletShape;
 			Mesh bulletMesh;
-			size_t bulletMax = 10000;
+			size_t bulletMax = 5000;
 			size_t bulletCounter = 0;
-			btRigidBody* bulletRigidBodies[10000];
-			MeshInstance* bulletInstances[10000];
+			btRigidBody* bulletRigidBodies[5000];
+			MeshInstance* bulletInstances[5000];
 			//std::vector<btRigidBody> bulletRigidBodies;
 			//std::vector<MeshInstance> bulletInstances;
 			Material bulletMat;

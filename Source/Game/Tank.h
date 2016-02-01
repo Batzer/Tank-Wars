@@ -95,7 +95,7 @@ namespace tankwars {
 		float	steeringClamp = 0.2f;
 		float	tankSteering = 0.f;
 
-		btScalar mass = 80;
+		btScalar mass = 400;
 		btScalar wheelWidth = 0.4f;
 		btScalar frontWheelRadius = .838f;//0.838f;
 		btScalar backWheelRadius = .838f; //1.f;

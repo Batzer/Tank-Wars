@@ -103,7 +103,7 @@ int main() {
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 17, -30));
 	gContactAddedCallback = tankwars::customCallback;
-	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer);
+	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2);
 	//dynamicsWorld->addAction(tank1.getAction());
 	//dynamicsWorld->addRigidBody(tank1.getRigidBody());
 
@@ -199,6 +199,7 @@ int main() {
 
         terrain2.updateMesh();
 
+		tankwars::explosionHandler->update();
         // TEST
         btTransform tr;
         fallRigidBody->getMotionState()->getWorldTransform(tr);

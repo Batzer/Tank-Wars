@@ -21,11 +21,18 @@ namespace tankwars {
 		//tankChassis = new btRigidBody(mass, tankMotionState, tankBoxShape);
 		tr.setIdentity();
 		tr.setOrigin(startingPosition);
-		tankMotionState =
-			new btDefaultMotionState(tr);
+		tankMotionState = new btDefaultMotionState(tr);
+
+        // Use a compound shape so we can set a different center of mass.
+        // (0, 1, 0) means that the center of mass is at (0, -1, 0) which makes the tank more stable.
+        compoundShape = new btCompoundShape();
+        compoundShape->addChildShape(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 1, 0)), tankBoxShape);
+
 		btVector3 localInertia(0, 0, 0);
-		tankBoxShape->calculateLocalInertia(mass, localInertia);
-		btRigidBody::btRigidBodyConstructionInfo tankRigidBodyCI(mass, tankMotionState, tankBoxShape, localInertia);
+		//tankBoxShape->calculateLocalInertia(mass, localInertia);
+        //btRigidBody::btRigidBodyConstructionInfo tankRigidBodyCI(mass, tankMotionState, tankBoxShape, localInertia);
+        compoundShape->calculateLocalInertia(mass, localInertia);
+        btRigidBody::btRigidBodyConstructionInfo tankRigidBodyCI(mass, tankMotionState, compoundShape, localInertia);
 
 		tankChassis = new btRigidBody(tankRigidBodyCI);
 		dynamicsWorld->addRigidBody(tankChassis);
@@ -105,16 +112,16 @@ namespace tankwars {
 	}
 
 	void Tank::addWheels() {
-		btVector3 connectionPointCSO(-0.5f, .2f, -1.0f);//-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
+		btVector3 connectionPointCSO(-0.5f, .2f, -1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, true);
 
-		connectionPointCSO = btVector3(0.5f, .2f, -1.0f);//0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
+		connectionPointCSO = btVector3(0.5f, .2f, -1.8f);//0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, true);
 
-		connectionPointCSO = btVector3(-0.5f, .2f, 1.0f);//0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		connectionPointCSO = btVector3(-0.5f, .2f, 1.8f);//0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
-		connectionPointCSO = btVector3(0.5f, .2f, 1.f);//-0.5 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		connectionPointCSO = btVector3(0.5f, .2f, 1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
 

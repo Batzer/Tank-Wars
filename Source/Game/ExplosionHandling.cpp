@@ -1,7 +1,9 @@
 #include "ExplosionHandling.h"
 
 namespace tankwars {
-	void ExplosionHandler::update() {
+    ExplosionHandler* explosionHandler;
+    
+    void ExplosionHandler::update() {
 		handleExplosions();
 		//do sth...								update explosion Animations
 	}

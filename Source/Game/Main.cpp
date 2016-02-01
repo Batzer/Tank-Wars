@@ -96,7 +96,7 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/testWhite.png",
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test.png",
         dynamicsWorld.get(), 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
 
@@ -187,9 +187,10 @@ int main() {
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_K)) { tank1.drive(false); tank1.driveBack(false); }
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_O)) tank1.driveBack(true);
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_J))tank1.turn(true);
-		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
-
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))dynamicsWorld->removeRigidBody(groundRigidBody);
+        if (tankwars::Keyboard::isKeyPressed(GLFW_KEY_SPACE)) fallRigidBody->applyForce(btVector3(0, 0, -20), btVector3(0, 0, 0));
+
 		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
 		//freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
         freeCam.update();

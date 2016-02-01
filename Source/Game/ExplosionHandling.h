@@ -20,5 +20,5 @@ namespace tankwars {
 		btDiscreteDynamicsWorld* dnmcWrld;
 		Renderer& renderer;
 	};
-	ExplosionHandler* explosionHandler;
+	extern ExplosionHandler* explosionHandler;
 }

@@ -47,6 +47,7 @@ namespace tankwars {
 
 		Renderer& renderer;
 		btCollisionShape* tankBoxShape;
+        btCompoundShape* compoundShape;
 		void initializeTankMeshInstances(btVector3 startPos);
 		//btVector3 startingPosition;
 		btDiscreteDynamicsWorld* dnmcWorld;
@@ -96,8 +97,8 @@ namespace tankwars {
 
 		btScalar mass = 80;
 		btScalar wheelWidth = 0.4f;
-		btScalar frontWheelRadius = .5f;//0.838f;
-		btScalar backWheelRadius = .5f; //1.f;
+		btScalar frontWheelRadius = .838f;//0.838f;
+		btScalar backWheelRadius = .838f; //1.f;
 		btScalar suspensionRestLength = 0.6f;
 		btVector3 wheelDirection;
 		btVector3 wheelAxle;

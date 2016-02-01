@@ -47,7 +47,8 @@ namespace tankwars {
         btDiscreteDynamicsWorld* dynamicsWorld;
         std::unique_ptr<btTriangleMesh> triangleMesh;
         std::unique_ptr<btBvhTriangleMeshShape> collisionMesh;
-        std::unique_ptr<btCollisionObject> collisionObject;
+        std::unique_ptr<btDefaultMotionState> motionState;
+        std::unique_ptr<btRigidBody> rigidBody;
 
         GLuint vertexArray;
         GLuint vertexArrayBuffer;

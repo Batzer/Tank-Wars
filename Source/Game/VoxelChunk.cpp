@@ -104,7 +104,7 @@ namespace tankwars {
     }
 
     VoxelChunk::~VoxelChunk() {
-        dynamicsWorld->removeCollisionObject(collisionObject.get());
+        dynamicsWorld->removeRigidBody(rigidBody.get());
         glDeleteBuffers(1, &vertexArrayBuffer);
         glDeleteBuffers(1, &elementArrayBuffer);
         glDeleteVertexArrays(1, &vertexArray);
@@ -274,9 +274,14 @@ namespace tankwars {
         }
 
         collisionMesh.reset(new btBvhTriangleMeshShape(triangleMesh.get(), true));
-        if (collisionObject) dynamicsWorld->removeCollisionObject(collisionObject.get());
-        collisionObject.reset(new btCollisionObject());
-        collisionObject->setCollisionShape(collisionMesh.get());
-        dynamicsWorld->addCollisionObject(collisionObject.get());
+        if (rigidBody) {
+            dynamicsWorld->removeRigidBody(rigidBody.get());
+        }
+
+        motionState.reset(new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0))));
+        btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, motionState.get(), collisionMesh.get(), btVector3(0, 0, 0));
+        rigidBody.reset(new btRigidBody(groundRigidBodyCI));
+
+        dynamicsWorld->addRigidBody(rigidBody.get());
     }
 }

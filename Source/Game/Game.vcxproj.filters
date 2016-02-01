@@ -23,6 +23,7 @@
     <ClCompile Include="Wavefront.cpp" />
     <ClCompile Include="MeshInstance.cpp" />
     <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="ExplosionHandling.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -41,6 +42,7 @@
     <ClInclude Include="Wavefront.h" />
     <ClInclude Include="MeshInstance.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="ExplosionHandling.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">

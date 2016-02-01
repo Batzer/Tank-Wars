@@ -264,6 +264,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ExplosionHandling.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GLTools.cpp" />
     <ClCompile Include="Image.cpp" />
@@ -294,6 +295,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ExplosionHandling.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GLTools.h" />
     <ClInclude Include="Image.h" />

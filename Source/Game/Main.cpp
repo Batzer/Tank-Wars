@@ -21,6 +21,7 @@
 #include "Tank.h"
 #include "Wavefront.h"
 #include "Keyboard.h"
+#include "ExplosionHandling.h"
 
 constexpr char* WindowTitle = "Tank Wars";
 constexpr int ResolutionX = 1280;
@@ -79,7 +80,7 @@ int main() {
 	//TESTINGQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
 	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
 	btDefaultMotionState* groundMotionState =
-		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 50, 0)));
+		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 15, 0)));
 	btRigidBody::btRigidBodyConstructionInfo
 		groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
 	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
@@ -95,12 +96,14 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test.png",
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/testWhite.png",
         dynamicsWorld.get(), 16, 8, 16, 16);
     renderer.setTerrain(&terrain2);
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
-	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 52, -30));
+	tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 17, -30));
+	gContactAddedCallback = tankwars::customCallback;
+	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer);
 	//dynamicsWorld->addAction(tank1.getAction());
 	//dynamicsWorld->addRigidBody(tank1.getRigidBody());
 
@@ -144,6 +147,7 @@ int main() {
     btRigidBody* fallRigidBody = new btRigidBody(fallRigidBodyCI);
     dynamicsWorld->addRigidBody(fallRigidBody);
 
+	
     tankwars::Mesh sphereMesh = tankwars::createSphereMesh(2, 16, 16);
     tankwars::Material mat;
     tankwars::MeshInstance sphere(sphereMesh, mat);

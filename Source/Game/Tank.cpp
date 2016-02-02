@@ -112,16 +112,16 @@ namespace tankwars {
 	}
 
 	void Tank::addWheels() {
-		btVector3 connectionPointCSO(-0.5f, .2f, -1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
+		btVector3 connectionPointCSO(-1.f, .4f, -1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, true);
 
-		connectionPointCSO = btVector3(0.5f, .2f, -1.8f);//0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
+		connectionPointCSO = btVector3(1.f, .4f, -1.8f);//0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, true);
 
-		connectionPointCSO = btVector3(-0.5f, .2f, 1.8f);//0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		connectionPointCSO = btVector3(-1.f, .4f, 1.8f);//0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
-		connectionPointCSO = btVector3(0.5f, .2f, 1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		connectionPointCSO = btVector3(1.f, .4f, 1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
 
@@ -141,6 +141,21 @@ namespace tankwars {
 		return glm::vec3(float(pos.getX()), float(pos.getY()), float(pos.getZ()));
 	}
 
+	glm::vec3 Tank::getDirectionVector() {
+		btTransform trans;
+		tankChassis->getMotionState()->getWorldTransform(trans);
+		glm::mat4 bulletMatrix(0.f);
+		trans.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
+		bulletMatrix = glm::rotate(bulletMatrix, headAndTurretAngle, glm::vec3(0, 1, 0));
+		return glm::vec3(-bulletMatrix[2][0],0 , -bulletMatrix[2][2]);//-bulletMatrix[2][1]
+	}
+	glm::vec3 Tank::offset() {
+		btTransform trans;
+		tankChassis->getMotionState()->getWorldTransform(trans);
+		glm::mat4 bulletMatrix(0.f);
+		trans.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
+		return glm::vec3(bulletMatrix[3][0], bulletMatrix[3][1], bulletMatrix[3][2]);
+	}
 	//tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(m);
 
 	//-------------------------------------------Controller-Functions----------------------------
@@ -237,8 +252,8 @@ namespace tankwars {
 		tank->resetSuspension();
 		for (int i = 0; i < 4; i++) {
 		tank->updateWheelTransform(i, true);
-		if (tank->getWheelInfo(i).m_raycastInfo.m_groundObject)
-		std::cout << i << " ";								//Doesn't touch the fucking ground!
+		//if (tank->getWheelInfo(i).m_raycastInfo.m_groundObject)
+		//std::cout << i << " ";								//Doesn't touch the fucking ground!
 		}
 		std::cout << "\n";
 		tank->applyEngineForce(tankEngineForce, 2);
@@ -256,10 +271,10 @@ namespace tankwars {
 			mI.modelMatrix = tankModelMat;
 		}
 
-		glm::vec3 forwardVec(tankModelMat[0][0], tankModelMat[0][1], tankModelMat[0][1]);
+		glm::vec3 rightVec(tankModelMat[0][0], 0, tankModelMat[0][2]);
 		glm::vec3 upVec(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]);
 		tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndTurretAngle, upVec);//HeadAndCanonRotationAngle 
-		tankMeshInstances[2].modelMatrix = glm::rotate(glm::rotate(tankModelMat, headAndTurretAngle, upVec), turretAngle, forwardVec);
+		tankMeshInstances[2].modelMatrix = glm::rotate(glm::rotate(tankModelMat, headAndTurretAngle, upVec), turretAngle, glm::normalize(rightVec));
 		for (int i = 0; i < 4; i++) {
 			tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(glm::value_ptr(tankModelMat));
 			tankMeshInstances[i + 3].modelMatrix = tankModelMat;
@@ -270,16 +285,17 @@ namespace tankwars {
 	}
 
 	Tank::BulletHandler::BulletHandler(btDynamicsWorld* dnmcWorld, Renderer& renderer) :
-		dnmcWorld(dnmcWorld),
-		renderer(renderer),
-		bulletMesh(createSphereMesh(0.1f, 5, 5)),
-		bulletShape(0.1f) {
+			dnmcWorld(dnmcWorld),
+			renderer(renderer),
+			bulletMesh(createSphereMesh(0.1f, 5, 5)),
+			bulletShape(0.1f) {
 		bulletMat.diffuseColor = { 0.6f, 0.6f, 0 };
 		bulletMat.specularColor = { 1, 0, 0 };
 		bulletMat.specularExponent = 16;
+		bullets.reserve(bulletMax);
 	}
 	void Tank::BulletHandler::createNewBullet(btTransform& tr, btScalar headAngle, btScalar turretAngle, btScalar power) {
-		if (bulletCounter >= bulletMax) return;
+		if (bullets.size() >= bulletMax) return;
 		glm::mat4 bulletMatrix;
 		tr.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
 		bulletMatrix[3][1] += 4;										//<---- for testing
@@ -291,48 +307,39 @@ namespace tankwars {
 
 		glm::vec4 direction(1, 0, 0, 0);
 		bulletMatrix = glm::rotate(bulletMatrix, 1.57f + headAngle, glm::vec3(0, 1, 0));
-		glm::vec3 forwardVec(bulletMatrix[0][0], bulletMatrix[0][1], bulletMatrix[0][1]); // there is a 1 instead of the 2 in the z-Parameter
+		glm::vec3 forwardVec(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2]); // there is a 1 instead of the 2 in the z-Parameter
 		bulletMatrix = glm::rotate(bulletMatrix, turretAngle, glm::cross(forwardVec, glm::vec3(0, 1, 0)));
 		direction = bulletMatrix*direction;
 		if (headAngle>0)
 			direction = glm::vec4(direction.x, -direction.y, direction.z, 0);
 		direction = glm::normalize(direction);
-		//bulletRigidBodies[bulletCounter]->setLinearVelocity(btVector3(direction.x*power,direction.y*power,direction.z*power));
-		//bulletRigidBodies[bulletCounter]->setCollisionFlags(bulletRigidBodies[bulletCounter]->getCollisionFlags | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-		//dnmcWorld->addRigidBody(bulletRigidBodies[bulletCounter]);
-		//bulletInstances[bulletCounter] = new MeshInstance(bulletMesh, bulletMat);
-		//renderer.addSceneObject(*bulletInstances[bulletCounter]);
-
-		//updated version
-		bullets[bulletCounter] = new Bullet(new btRigidBody(mass, new btDefaultMotionState(tr), &bulletShape, bulletInertia),MeshInstance(bulletMesh, bulletMat));
-		bullets[bulletCounter]->bulletBody->setLinearVelocity(btVector3(direction.x*power, direction.y*power, direction.z*power));
-		bullets[bulletCounter]->bulletBody->setCollisionFlags(bullets[bulletCounter]->bulletBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-		bullets[bulletCounter]->bulletBody->setUserPointer(bullets[bulletCounter]);
-		bullets[bulletCounter]->bulletBody->setUserIndex(10);
-		dnmcWorld->addRigidBody(bullets[bulletCounter]->bulletBody);
-		renderer.addSceneObject(bullets[bulletCounter]->bulletMeshInstance);
-		bulletCounter++;
+		bullets.emplace_back(new btRigidBody(mass, new btDefaultMotionState(tr), &bulletShape, bulletInertia), MeshInstance(bulletMesh, bulletMat));
+		bullets.back().bulletBody->setLinearVelocity(btVector3(direction.x*power, direction.y*power, direction.z*power));
+		bullets.back().bulletBody->setCollisionFlags(bullets.back().bulletBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+		bullets.back().bulletBody->setUserIndex(10);
+		bullets.back().bulletBody->setUserPointer(&bullets.back());
+		dnmcWorld->addRigidBody(bullets.back().bulletBody);
+		renderer.addSceneObject(bullets.back().bulletMeshInstance);
 	}
 	void Tank::BulletHandler::updateBullets() {
 		glm::mat4 bulletMat;
 		btTransform trans;
-		for (size_t i = 0; i < bulletCounter; i++) {
-			if (bullets[i]->active) {
-				if (bullets[i]->disableMe) {
-					removeBullet(i);
-				}
-				else {
-					bullets[i]->bulletBody->getMotionState()->getWorldTransform(trans);
-					trans.getOpenGLMatrix(glm::value_ptr(bulletMat));
-					bullets[i]->bulletMeshInstance.modelMatrix = bulletMat;
-				}
+		for (int i = 0; i < bullets.size();) {
+			if (bullets[i].disableMe) {
+				removeBullet(bullets[i]);
 			}
-			i++;
+			else {
+				bullets[i].bulletBody->getMotionState()->getWorldTransform(trans);
+				trans.getOpenGLMatrix(glm::value_ptr(bulletMat));
+				bullets[i].bulletMeshInstance.modelMatrix = bulletMat;
+				i++;
+			}
 		}
 	}
-	void Tank::BulletHandler::removeBullet(int index) {
-		dnmcWorld->removeRigidBody(bullets[index]->bulletBody);
-		renderer.removeSceneObject(bullets[index]->bulletMeshInstance);
-		bullets[index]->active = false;
+	void Tank::BulletHandler::removeBullet(Bullet & bul) {
+		dnmcWorld->removeRigidBody(bul.bulletBody);
+		renderer.removeSceneObject(bul.bulletMeshInstance);
+		std::swap(bul, bullets.back());
+		bullets.pop_back();
 	}
 }

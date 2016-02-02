@@ -10,7 +10,7 @@ namespace tankwars {
 	void ExplosionHandler::addExplosionPoint(btVector3 explosionAt) {
 		explosionPoints.push_back(explosionAt);
 	}
-	void ExplosionHandler::explosion(btVector3 expl) {
+	void ExplosionHandler::explosion(btVector3 expl) {					// recalculate boundaries
 		//do sth...								start explosion Animations
 		int xMin = std::max((int)(expl.getX() - explRadius), 1);
 		int yMin = std::max((int)(expl.getY() - explRadius), 1);

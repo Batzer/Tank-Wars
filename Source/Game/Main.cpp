@@ -170,10 +170,10 @@ int main() {
 
         // Update simulation
 		
-        dynamicsWorld->stepSimulation(frameTime, 7);
+        dynamicsWorld->stepSimulation(frameTime, 1);
 
         // Update game here
-		game.update(DeltaTime);
+		game.update((float)currentTime);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
@@ -190,9 +190,9 @@ int main() {
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))dynamicsWorld->removeRigidBody(groundRigidBody);
         if (tankwars::Keyboard::isKeyPressed(GLFW_KEY_SPACE)) fallRigidBody->applyForce(btVector3(0, 0, -20), btVector3(0, 0, 0));
-
-		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
-		//freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
+		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*15.f+glm::vec3(0,6,0);
+		//freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
+		freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
         freeCam.update();
 		
 		tank1.update();

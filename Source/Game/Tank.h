@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <algorithm>
 #include "Wavefront.h"
 #include "Mesh.h"
 #include "MeshInstance.h"
@@ -30,6 +31,8 @@ namespace tankwars {
 		void turn(bool left);
 		void drive(bool forward);
 		void driveBack(bool backward);
+		glm::vec3 getDirectionVector();
+		glm::vec3 offset();
 		btRaycastVehicle* getAction();
 		MeshInstance getTankMeshInstance(int i);
 		glm::vec3 getPosition();
@@ -95,10 +98,10 @@ namespace tankwars {
 		float	steeringClamp = 0.2f;
 		float	tankSteering = 0.f;
 
-		btScalar mass = 400;
+		btScalar mass = 700;
 		btScalar wheelWidth = 0.4f;
-		btScalar frontWheelRadius = .838f;//0.838f;
-		btScalar backWheelRadius = .838f; //1.f;
+		btScalar frontWheelRadius = .5f;//0.838f;
+		btScalar backWheelRadius = .5f; //1.f;
 		btScalar suspensionRestLength = 0.6f;
 		btVector3 wheelDirection;
 		btVector3 wheelAxle;
@@ -123,16 +126,16 @@ namespace tankwars {
 			BulletHandler(btDynamicsWorld* dnmcWorld, Renderer& renderer);
 			void createNewBullet(btTransform& tr, btScalar headAngle, btScalar turretAngle, btScalar power);
 			void updateBullets();
-			void removeBullet(int index);
+			void removeBullet(Bullet& bul);
 		private:
 			int tankID;
 			btDynamicsWorld* dnmcWorld;
 			Renderer& renderer;
 			btSphereShape bulletShape;
 			Mesh bulletMesh;
-			size_t bulletMax = 5000;
-			size_t bulletCounter = 0;
-			Bullet* bullets[5000];					//replace with an std::vector
+			size_t bulletMax = 5;
+			//Bullet* bullets[5000];					//replace with an std::vector
+			std::vector<Bullet> bullets;
 			Material bulletMat;
 		};
 		BulletHandler bulletHandler;

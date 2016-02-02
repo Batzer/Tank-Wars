@@ -24,15 +24,14 @@ namespace tankwars {
 		tanks[controllerID] = tank;
 	}
 	void Game::update(float dt) {
-		(void)dt;
-		controller();
+		controller(dt);
 	}
 
 	void Game::render() {
 
 	}
 
-	void Game::controller() {
+	void Game::controller(float dt) {
 		float movement_alpha = 1;
 		float rotation_alpha = 0.1f;
 		//name
@@ -76,7 +75,10 @@ namespace tankwars {
 				case 2:
 					if (axes[i]) {
 						//std::cout << "X" << "\n";
-						tanks[1]->shoot();
+						if ((dt - lastShot) > timeBetweenShots) {
+							tanks[1]->shoot();
+							lastShot = dt;
+						}
 					}
 					break;
 				case 3:

@@ -97,7 +97,7 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/testWhite.png",
         dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 
@@ -195,24 +195,24 @@ int main() {
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
 		//if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))dynamicsWorld->removeRigidBody(groundRigidBody);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_SPACE)) {
-            for (size_t z = 40; z < 80; z++)
+            for (size_t z = 1; z < terrain2.getDepth()-1; z++)
             for (size_t y = 1; y < terrain2.getHeight()-1; y++)
-            for (size_t x = 40; x < 80; x++) {
+            for (size_t x = 1; x < terrain2.getWidth()-1; x++) {
                 terrain2.setVoxel(x, y, z, tankwars::VoxelType::Empty);
             }
             terrain2.updateMesh();
         }
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_V)) {
-            for (size_t z = 40; z < 80; z++)
-            for (size_t y = 1; y < terrain2.getHeight()-1; y++)
-            for (size_t x = 40; x < 80; x++) {
+            for (size_t z = 0; z < terrain2.getDepth(); z++)
+            for (size_t y = 0; y < terrain2.getHeight(); y++)
+            for (size_t x = 0; x < terrain2.getWidth(); x++) {
                 terrain2.setVoxel(x, y, z, tankwars::VoxelType::Solid);
             }
             terrain2.updateMesh();
         }
-		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*15.f+glm::vec3(0,6,0);
-		//freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
-		freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
+		//freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*15.f+glm::vec3(0,6,0);
+		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
+		//freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
         freeCam.update();
 		
 		tank1.update();

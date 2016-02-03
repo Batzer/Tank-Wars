@@ -26,6 +26,7 @@ namespace tankwars {
 				}
 			}
 		}
+        terrain.updateMesh();
 	}
 	void ExplosionHandler::handleExplosions() {
 		while (explosionPoints.size()) {

@@ -206,6 +206,12 @@ namespace tankwars {
         auto chunkIndex = startX + startY * numChunksX + startZ * numChunksX * numChunksY;
         if (posCache.empty()) {
             chunkElementCounts[chunkIndex] = 0;
+
+            if (chunkRigidBodies[chunkIndex]) {
+                dynamicsWorld->removeRigidBody(chunkRigidBodies[chunkIndex].get());
+                chunkRigidBodies[chunkIndex].reset();
+            }
+
             return;
         }
 
@@ -270,11 +276,11 @@ namespace tankwars {
                 btVector3(pos3.x, pos3.y, pos3.z));
         }
 
-        chunkCollisionMeshes[chunkIndex].reset(new btBvhTriangleMeshShape(chunkTriangleMeshes[chunkIndex].get(), true));
         if (chunkRigidBodies[chunkIndex]) {
             dynamicsWorld->removeRigidBody(chunkRigidBodies[chunkIndex].get());
         }
-
+        
+        chunkCollisionMeshes[chunkIndex].reset(new btBvhTriangleMeshShape(chunkTriangleMeshes[chunkIndex].get(), true));
         chunkMotionStates[chunkIndex].reset(new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0))));
         btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, chunkMotionStates[chunkIndex].get(),
                                                                    chunkCollisionMeshes[chunkIndex].get(), btVector3(0, 0, 0));

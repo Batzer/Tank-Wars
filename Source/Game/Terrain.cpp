@@ -39,15 +39,15 @@ namespace tankwars {
             }
         }
 
-        std::vector<uint16_t> indices;
+        std::vector<uint32_t> indices;
         for (size_t y = 0; y < height - 1; y++) {
             for (size_t x = 0; x < width - 1; x++) {
-                auto baseIndex = static_cast<uint16_t>(x + y * width);
+                auto baseIndex = static_cast<uint32_t>(x + y * width);
                 indices.push_back(baseIndex);
-                indices.push_back(baseIndex + static_cast<uint16_t>(width));
-                indices.push_back(baseIndex + static_cast<uint16_t>(width) + 1);
+                indices.push_back(baseIndex + static_cast<uint32_t>(width));
+                indices.push_back(baseIndex + static_cast<uint32_t>(width) + 1);
                 indices.push_back(baseIndex);
-                indices.push_back(baseIndex + static_cast<uint16_t>(width) + 1);
+                indices.push_back(baseIndex + static_cast<uint32_t>(width) + 1);
                 indices.push_back(baseIndex + 1);
             }
         }

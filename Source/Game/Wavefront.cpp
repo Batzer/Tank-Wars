@@ -5,9 +5,9 @@
 
 namespace {
     struct FaceVertex {
-        uint16_t positionIndex;
-        uint16_t texCoordIndex;
-        uint16_t normalIndex;
+        uint32_t positionIndex;
+        uint32_t texCoordIndex;
+        uint32_t normalIndex;
     };
 
     std::vector<std::string> splitString(const std::string& str, char delim) {
@@ -38,7 +38,7 @@ namespace tankwars {
         std::vector<glm::vec2> tempTexCoords;
         std::vector<glm::vec3> tempNormals;
         std::vector<FaceVertex> faceVertices;
-        std::vector<uint16_t> triangleCache;
+        std::vector<uint32_t> triangleCache;
 
         for (std::string line; std::getline(file, line); ) {
             // Ignore empty, comment, smoothing group, object group and polygon group lines
@@ -73,12 +73,12 @@ namespace tankwars {
                     auto hasTexCoord = (vertexIndices.size() >= 2 && !vertexIndices[1].empty());
                     auto hasNormal = (vertexIndices.size() >= 3 && !vertexIndices[2].empty());
 
-                    auto posIndex = static_cast<uint16_t>(std::stoi(vertexIndices[0]));
-                    uint16_t texCoordIndex = hasTexCoord ? static_cast<uint16_t>(std::stoi(vertexIndices[1])) : 0;
-                    uint16_t normalIndex = hasNormal ? static_cast<uint16_t>(std::stoi(vertexIndices[2])) : 0;
+                    auto posIndex = static_cast<uint32_t>(std::stoi(vertexIndices[0]));
+                    uint32_t texCoordIndex = hasTexCoord ? static_cast<uint32_t>(std::stoi(vertexIndices[1])) : 0;
+                    uint32_t normalIndex = hasNormal ? static_cast<uint32_t>(std::stoi(vertexIndices[2])) : 0;
 
                     bool needNewVertex = true;
-                    uint16_t vertexIndex = 0;
+                    uint32_t vertexIndex = 0;
 
                     for (size_t index = 0; index < faceVertices.size(); index++) {
                         const auto& faceVertex = faceVertices[index];

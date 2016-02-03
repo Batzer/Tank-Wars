@@ -1,5 +1,6 @@
 #include "MeshTools.h"
 #include <vector>
+#include <glm/gtc/constants.hpp>
 
 namespace tankwars {
     Mesh createBoxMesh(float width, float height, float depth) {
@@ -45,7 +46,7 @@ namespace tankwars {
             { glm::vec3(-hw, -hh,  hd), glm::vec3(0, -1, 0) }
         };
 
-        const uint16_t indices[] = {
+        const uint32_t indices[] = {
             0,  1,  2,  0,  2,  3,  // Front
             4,  5,  6,  4,  6,  7,  // Left
             8,  9,  10, 8,  10, 11, // Right
@@ -68,7 +69,7 @@ namespace tankwars {
             { glm::vec3(-hw, 0, -hd), glm::vec3(0, 1, 0) }
         };
 
-        const uint16_t indices[] = {
+        const uint32_t indices[] = {
             0,  1,  2,  0,  2,  3
         };
 
@@ -97,8 +98,8 @@ namespace tankwars {
 
         vertices.push_back({ glm::vec3(0, -radius, 0), glm::vec3(0, -1, 0) });
 
-        std::vector<uint16_t> indices;
-        for (uint16_t i = 0; i < numSlices; i++) {
+        std::vector<uint32_t> indices;
+        for (uint32_t i = 0; i < numSlices; i++) {
             indices.push_back(0); // North pole
             indices.push_back(1 + (i + 1) % numSlices);
             indices.push_back(1 + i);
@@ -107,21 +108,21 @@ namespace tankwars {
 
         for (size_t y = 0; y < numStacks - 2; y++) {
             for (size_t x = 0; x < numSlices; x++) {
-                indices.push_back(static_cast<uint16_t>(1 + y * numSlices + x));
-                indices.push_back(static_cast<uint16_t>(1 + (y + 1) * numSlices + (x + 1) % numSlices));
-                indices.push_back(static_cast<uint16_t>(1 + (y + 1) * numSlices + x));
+                indices.push_back(static_cast<uint32_t>(1 + y * numSlices + x));
+                indices.push_back(static_cast<uint32_t>(1 + (y + 1) * numSlices + (x + 1) % numSlices));
+                indices.push_back(static_cast<uint32_t>(1 + (y + 1) * numSlices + x));
                 
 
-                indices.push_back(static_cast<uint16_t>(1 + y * numSlices + x));
-                indices.push_back(static_cast<uint16_t>(1 + y * numSlices + (x + 1) % numSlices));
-                indices.push_back(static_cast<uint16_t>(1 + (y + 1) * numSlices + (x + 1) % numSlices));
+                indices.push_back(static_cast<uint32_t>(1 + y * numSlices + x));
+                indices.push_back(static_cast<uint32_t>(1 + y * numSlices + (x + 1) % numSlices));
+                indices.push_back(static_cast<uint32_t>(1 + (y + 1) * numSlices + (x + 1) % numSlices));
                 
             }
         }
 
-        auto southPoleIndex = static_cast<uint16_t>(vertices.size() - 1);
-        auto baseIndex = static_cast<uint16_t>(southPoleIndex - numSlices);
-        for (uint16_t i = 0; i < numSlices; i++) {
+        auto southPoleIndex = static_cast<uint32_t>(vertices.size() - 1);
+        auto baseIndex = static_cast<uint32_t>(southPoleIndex - numSlices);
+        for (uint32_t i = 0; i < numSlices; i++) {
             indices.push_back(baseIndex + i);
             indices.push_back(baseIndex + (i + 1) % numSlices);
             indices.push_back(southPoleIndex);

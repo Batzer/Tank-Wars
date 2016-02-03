@@ -88,7 +88,7 @@ namespace tankwars {
 
 		//Tank Physics Variables
 
-		float maxEngineForce = 1000.f;
+		float maxEngineForce = 3000.f;
 		float defaultBreakingForce = 10.f;
 		float maxBreakingForce = 100.f;					// what is this for?0.o
 		float tankEngineForce = 0.f;

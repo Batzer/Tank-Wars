@@ -5,7 +5,6 @@
 
 #include <GL/gl3w.h>
 #include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
 
 #include "Vertex.h"
 
@@ -18,7 +17,7 @@ namespace tankwars {
     
     class Mesh {
     public:
-        Mesh(const Vertex* vertices, size_t numVertices, const uint16_t* indices, size_t numIndices);
+        Mesh(const Vertex* vertices, size_t numVertices, const uint32_t* indices, size_t numIndices);
         Mesh(const Mesh&) = delete;
         Mesh(Mesh&& other);
         ~Mesh();

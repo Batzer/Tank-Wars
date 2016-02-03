@@ -97,16 +97,16 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test.png",
-        dynamicsWorld.get(), 16, 8, 16, 16);
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
+        dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
-	/*
-    tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 17, -30));
+	
+    tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30));
 	gContactAddedCallback = tankwars::customCallback;
 	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2);
-    */
+    
 	//dynamicsWorld->addAction(tank1.getAction());
 	//dynamicsWorld->addRigidBody(tank1.getRigidBody());
 
@@ -138,7 +138,7 @@ int main() {
     /*renderer.addSceneObject(tankBodyInstance);
     renderer.addSceneObject(tankHeadInstance);
     renderer.addSceneObject(tankCanonInstance);*/
-    /*
+    
     btCollisionShape* fallShape = new btSphereShape(2);
     btDefaultMotionState* fallMotionState =
         new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(20, 50, -20)));
@@ -147,7 +147,7 @@ int main() {
     fallShape->calculateLocalInertia(mass, fallInertia);
     btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass, fallMotionState, fallShape, fallInertia);
     btRigidBody* fallRigidBody = new btRigidBody(fallRigidBodyCI);
-    dynamicsWorld->addRigidBody(fallRigidBody);
+    //dynamicsWorld->addRigidBody(fallRigidBody);
 
 	
     tankwars::Mesh sphereMesh = tankwars::createSphereMesh(2, 16, 16);
@@ -155,7 +155,7 @@ int main() {
     mat.specularExponent = 256;
     tankwars::MeshInstance sphere(sphereMesh, mat);
     renderer.addSceneObject(sphere);
-    */
+    
     float roll = 0.0f;
     float yaw = 0.0f;
     float pitch = 0.0f;
@@ -163,11 +163,11 @@ int main() {
     tankwars::Camera freeCam;
     freeCam.position = { 10, 40, 10 };
 	tankwars::Game game(&freeCam);
-    /*
+    
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank1);
-    */
+    
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
@@ -188,29 +188,44 @@ int main() {
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_DOWN)) roll -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_LEFT)) yaw += glm::quarter_pi<float>() *  static_cast<float>(frameTime);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_RIGHT)) yaw -= glm::quarter_pi<float>() *  static_cast<float>(frameTime);
-		//if (tankwars::Keyboard::isKeyDown(GLFW_KEY_I))tank1.drive(true);
-		//if (tankwars::Keyboard::isKeyDown(GLFW_KEY_K)) { tank1.drive(false); tank1.driveBack(false); }
-		//if (tankwars::Keyboard::isKeyDown(GLFW_KEY_O)) tank1.driveBack(true);
-		//if (tankwars::Keyboard::isKeyDown(GLFW_KEY_J))tank1.turn(true);
-        //if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_I))tank1.drive(true);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_K)) { tank1.drive(false); tank1.driveBack(false); }
+	    if (tankwars::Keyboard::isKeyDown(GLFW_KEY_O)) tank1.driveBack(true);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_J))tank1.turn(true);
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
 		//if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))dynamicsWorld->removeRigidBody(groundRigidBody);
-        //if (tankwars::Keyboard::isKeyPressed(GLFW_KEY_SPACE)) fallRigidBody->applyForce(btVector3(0, 0, -20), btVector3(0, 0, 0));
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_SPACE)) {
+            for (size_t z = 40; z < 80; z++)
+            for (size_t y = 1; y < terrain2.getHeight()-1; y++)
+            for (size_t x = 40; x < 80; x++) {
+                terrain2.setVoxel(x, y, z, tankwars::VoxelType::Empty);
+            }
+            terrain2.updateMesh();
+        }
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_V)) {
+            for (size_t z = 40; z < 80; z++)
+            for (size_t y = 1; y < terrain2.getHeight()-1; y++)
+            for (size_t x = 40; x < 80; x++) {
+                terrain2.setVoxel(x, y, z, tankwars::VoxelType::Solid);
+            }
+            terrain2.updateMesh();
+        }
 		//freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*15.f+glm::vec3(0,6,0);
 		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
 		//freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
         freeCam.update();
 		
-		//tank1.update();
+		tank1.update();
 
-        terrain2.updateMesh();
+        //terrain2.updateMesh();
 
-		//tankwars::explosionHandler->update();
+		tankwars::explosionHandler->update();
         // TEST
-        /*
+        
         btTransform tr;
         fallRigidBody->getMotionState()->getWorldTransform(tr);
         tr.getOpenGLMatrix(glm::value_ptr(sphere.modelMatrix));
-        */
+        
         // END
 
         // Render

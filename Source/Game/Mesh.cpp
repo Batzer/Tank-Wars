@@ -4,7 +4,7 @@
 #include "GLTools.h"
 
 namespace tankwars {
-    Mesh::Mesh(const Vertex* vertices, size_t numVertices, const uint16_t* indices, size_t numIndices)
+    Mesh::Mesh(const Vertex* vertices, size_t numVertices, const uint32_t* indices, size_t numIndices)
             : elementCount(static_cast<GLsizei>(numIndices)) {
         glGenBuffers(1, &vertexBuffer);
         glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
@@ -12,7 +12,7 @@ namespace tankwars {
 
         glGenBuffers(1, &elementBuffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) * numIndices, indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * numIndices, indices, GL_STATIC_DRAW);
 
         glGenVertexArrays(1, &vertexArray);
         glBindVertexArray(vertexArray);
@@ -44,6 +44,6 @@ namespace tankwars {
     void Mesh::render() const {
         glBindVertexArray(vertexArray);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-        glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
     }
 }

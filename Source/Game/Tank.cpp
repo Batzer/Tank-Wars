@@ -4,7 +4,7 @@ namespace tankwars {
 
 	Tank::Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition)
 		:wheelDirection(0, -1, 0),
-		wheelAxle(1, 0, 0),
+		wheelAxle(-1, 0, 0),
 		renderer(renderer),
 		//boxMesh(createBoxMesh(2, 1, 1)),
 		dnmcWorld(dynamicsWorld),
@@ -58,10 +58,10 @@ namespace tankwars {
 		tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
 		tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
 
-		tankLeftFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftFrontWheel.obj");
-		tankRightFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightFrontWheel.obj");
-		tankLeftBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftBackWheel.obj");
-		tankRightBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightBackWheel.obj");
+		tankLeftFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftFrontWheelCentered.obj");
+		tankRightFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightFrontWheelCentered.obj");
+		tankLeftBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftBackWheelCentered.obj");
+		tankRightBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightBackWheelCentered.obj");
 		//Meshes
 		tankBodyMesh = new Mesh(tankwars::createMeshFromWavefront(tankBodyModel));
 		tankHeadMesh = new Mesh(tankwars::createMeshFromWavefront(tankHeadModel));
@@ -79,10 +79,11 @@ namespace tankwars {
 		tankMeshInstances.push_back(MeshInstance(*tankHeadMesh, tankMaterial));
 		tankMeshInstances.push_back(MeshInstance(*tankCanonMesh, tankMaterial));
 
-		tankMeshInstances.push_back(MeshInstance(*tankLeftFrontWheelMesh, tankMaterial));
 		tankMeshInstances.push_back(MeshInstance(*tankRightFrontWheelMesh, tankMaterial));
-		tankMeshInstances.push_back(MeshInstance(*tankLeftBackWheelMesh, tankMaterial));
+		tankMeshInstances.push_back(MeshInstance(*tankLeftFrontWheelMesh, tankMaterial));
+		
 		tankMeshInstances.push_back(MeshInstance(*tankRightBackWheelMesh, tankMaterial));
+		tankMeshInstances.push_back(MeshInstance(*tankLeftBackWheelMesh, tankMaterial));
 
 
 		tankMeshInstances.resize(7);
@@ -112,18 +113,17 @@ namespace tankwars {
 	}
 
 	void Tank::addWheels() {
-		btVector3 connectionPointCSO(-1.f, .4f, -1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
+		btVector3  connectionPointCSO(1.f, .4f, -1.8f);//0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, true);
 
-		connectionPointCSO = btVector3(1.f, .4f, -1.8f);//0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
+		connectionPointCSO = btVector3(-1.f, .4f, -1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, true);
-
-		connectionPointCSO = btVector3(-1.f, .4f, 1.8f);//0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
-		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
 		connectionPointCSO = btVector3(1.f, .4f, 1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
+		connectionPointCSO = btVector3(-1.f, .4f, 1.8f);//0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
 		for (int i = 0; i < 4; i++) {
 			tank->getWheelInfo(i).m_suspensionStiffness = 20.f;
@@ -185,10 +185,10 @@ namespace tankwars {
 
 	void Tank::driveController(float val) {
 		if (val <= 0) {
-			tankEngineForce = -maxEngineForce*val;
+			tankEngineForce = maxEngineForce*val;
 		}
 		else {
-			tankEngineForce = -(maxEngineForce / 2)*val;
+			tankEngineForce = (maxEngineForce / 2)*val;
 		}
 	}
 
@@ -318,6 +318,8 @@ namespace tankwars {
 		bullets.back().bulletBody->setCollisionFlags(bullets.back().bulletBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 		bullets.back().bulletBody->setUserIndex(10);
 		bullets.back().bulletBody->setUserPointer(&bullets.back());
+		bullets.back().bulletBody->setCcdMotionThreshold(0.1f);
+		bullets.back().bulletBody->setCcdSweptSphereRadius(0.1f);
 		dnmcWorld->addRigidBody(bullets.back().bulletBody);
 		renderer.addSceneObject(bullets.back().bulletMeshInstance);
 	}
@@ -329,6 +331,7 @@ namespace tankwars {
 				removeBullet(bullets[i]);
 			}
 			else {
+				bullets[i].bulletBody->setUserPointer(&bullets[i]);
 				bullets[i].bulletBody->getMotionState()->getWorldTransform(trans);
 				trans.getOpenGLMatrix(glm::value_ptr(bulletMat));
 				bullets[i].bulletMeshInstance.modelMatrix = bulletMat;

@@ -97,7 +97,7 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/testWhite.png",
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
         dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 
@@ -210,9 +210,9 @@ int main() {
             }
             terrain2.updateMesh();
         }
-		//freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*15.f+glm::vec3(0,6,0);
+		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*15.f+glm::vec3(0,6,0);
 		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
-		//freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
+		freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
         freeCam.update();
 		
 		tank1.update();

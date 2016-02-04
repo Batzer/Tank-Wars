@@ -37,6 +37,7 @@ namespace tankwars {
             size_t chunkWidth, size_t chunkHeight, size_t chunkDepth, size_t invHeightScale);
 		
     private:
+        size_t computeChunkIndex(size_t x, size_t y, size_t z) const;
         void updateChunk(size_t startX, size_t startY, size_t startZ);
 
         // Terrain

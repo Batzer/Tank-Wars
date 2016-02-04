@@ -302,31 +302,6 @@ namespace {
         {4, 5}, {5, 6}, {6, 7}, {7, 4},
         {0, 4}, {1, 5}, {2, 6}, {3, 7}
     };
-
-    bool isLess(const glm::vec3& a, const glm::vec3& b) {
-        if (a.x < b.x) {
-            return true;
-        }
-        else if (a.x > b.x) {
-            return false;
-        }
-
-        if (a.y < b.y) {
-            return true;
-        }
-        else if (a.y > b.y) {
-            return false;
-        }
-
-        if (a.z < b.z) {
-            return true;
-        }
-        else if (a.z > b.z) {
-            return false;
-        }
-
-        return false;
-    }
 }
 
 namespace tankwars {

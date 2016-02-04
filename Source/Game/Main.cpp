@@ -28,7 +28,7 @@ constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
 constexpr bool GoFullscreen = false;
 constexpr bool UseVSync = true;
-constexpr bool UseMsaa = false;
+constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
 
 tankwars::Tank *tank;
@@ -175,7 +175,7 @@ int main() {
 
         // Update simulation
 		
-        dynamicsWorld->stepSimulation(frameTime, 7);
+        dynamicsWorld->stepSimulation(frameTime, 15, 1.0f / 120.0f);
 
         // Update game here
 		game.update((float)currentTime);
@@ -229,9 +229,10 @@ int main() {
         // END
 
         // Render
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, ResolutionX, ResolutionY);
-        renderer.renderScene(freeCam.getViewProjMatrix(), freeCam.position);
+        int backBufferWidth, backBufferHeight;
+        glfwGetFramebufferSize(window, &backBufferWidth, &backBufferHeight);
+        renderer.setBackBufferSize(backBufferWidth, backBufferHeight);
+        renderer.renderScene(freeCam.getProjMatrix(), freeCam.getViewMatrix(), freeCam.position);
 
         glfwSwapBuffers(window);
 

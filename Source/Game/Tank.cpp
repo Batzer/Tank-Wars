@@ -3,47 +3,37 @@
 namespace tankwars {
 
 	Tank::Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition)
-		:wheelDirection(0, -1, 0),
-		wheelAxle(-1, 0, 0),
-		renderer(renderer),
-		//boxMesh(createBoxMesh(2, 1, 1)),
-		dnmcWorld(dynamicsWorld),
-		bulletHandler(dnmcWorld, renderer),
-		//startingPosition(startingPosition), 
-		tankTuning(),
-		tankBoxShape(new btBoxShape(btVector3(1.f, .5f, 2.f)))
-		//tankBodyMesh(createBoxMesh(2,1,4))
+		: wheelDirection(0, -1, 0),
+		  wheelAxle(-1, 0, 0),
+		  renderer(&renderer),
+		  dynamicsWorld(dynamicsWorld),
+		  bulletHandler(dynamicsWorld, renderer),
+		  tankTuning(),
+		  tankBoxShape(new btBoxShape(btVector3(1.f, .5f, 2.f)))
 	{
 		//setTankTuning();
 		//tr.setIdentity();
-		//tr.setOrigin(startingPosition);
-		//tankMotionState  = new btDefaultMotionState(tr);
-		//tankChassis = new btRigidBody(mass, tankMotionState, tankBoxShape);
-		tr.setIdentity();
-		tr.setOrigin(startingPosition);
-		tankMotionState = new btDefaultMotionState(tr);
+
+		tankMotionState.reset(new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), startingPosition)));
 
         // Use a compound shape so we can set a different center of mass.
         // (0, 1, 0) means that the center of mass is at (0, -1, 0) which makes the tank more stable.
-        compoundShape = new btCompoundShape();
-        compoundShape->addChildShape(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 1, 0)), tankBoxShape);
+        compoundShape.reset(new btCompoundShape);
+        compoundShape->addChildShape(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 1, 0)), tankBoxShape.get());
 
-		btVector3 localInertia(0, 0, 0);
-		//tankBoxShape->calculateLocalInertia(mass, localInertia);
-        //btRigidBody::btRigidBodyConstructionInfo tankRigidBodyCI(mass, tankMotionState, tankBoxShape, localInertia);
+		btVector3 localInertia;
         compoundShape->calculateLocalInertia(mass, localInertia);
-        btRigidBody::btRigidBodyConstructionInfo tankRigidBodyCI(mass, tankMotionState, compoundShape, localInertia);
+        btRigidBody::btRigidBodyConstructionInfo tankRigidBodyCI(mass, tankMotionState.get(), compoundShape.get(), localInertia);
 
-		tankChassis = new btRigidBody(tankRigidBodyCI);
-		dynamicsWorld->addRigidBody(tankChassis);
-		tankVehicleRaycaster = new btDefaultVehicleRaycaster(dnmcWorld);
-		tank = new btRaycastVehicle(tankTuning, tankChassis, tankVehicleRaycaster);
+		tankChassis.reset(new btRigidBody(tankRigidBodyCI));
+		dynamicsWorld->addRigidBody(tankChassis.get());
+		tankVehicleRaycaster.reset(new btDefaultVehicleRaycaster(dynamicsWorld));
+		tank.reset(new btRaycastVehicle(tankTuning, tankChassis.get(), tankVehicleRaycaster.get()));
 		tank->setCoordinateSystem(0, 1, 2);
 		tankChassis->setActivationState(DISABLE_DEACTIVATION);
-		dnmcWorld->addVehicle(tank);
+		dynamicsWorld->addVehicle(tank.get());
 		addWheels();
 
-		//mat.diffuseColor = { 1,0,0 };
 		initializeTankMeshInstances(startingPosition);
 	}
 
@@ -53,54 +43,55 @@ namespace tankwars {
 		tankMaterial.diffuseColor = { 0.6f, 0.6f, 0 };
 		tankMaterial.specularColor = { 1, 1, 0 };
 		tankMaterial.specularExponent = 16;
-		//Wavefronts
-		tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
-		tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHeadCentered.obj");
-		tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
 
-		tankLeftFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftFrontWheelCentered.obj");
-		tankRightFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightFrontWheelCentered.obj");
-		tankLeftBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftBackWheelCentered.obj");
-		tankRightBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightBackWheelCentered.obj");
+
+		auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
+		auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
+		auto tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
+		auto tankLeftFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftFrontWheelCentered.obj");
+		auto tankRightFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightFrontWheelCentered.obj");
+		auto tankLeftBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftBackWheelCentered.obj");
+		auto tankRightBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightBackWheelCentered.obj");
 		//Meshes
-		tankBodyMesh = new Mesh(tankwars::createMeshFromWavefront(tankBodyModel));
-		tankHeadMesh = new Mesh(tankwars::createMeshFromWavefront(tankHeadModel));
-		tankCanonMesh = new Mesh(tankwars::createMeshFromWavefront(tankCanonModel));
-		tankLeftFrontWheelMesh = new Mesh(tankwars::createMeshFromWavefront(tankLeftFrontWheelModel));
-		tankRightFrontWheelMesh = new Mesh(tankwars::createMeshFromWavefront(tankRightFrontWheelModel));
-		tankLeftBackWheelMesh = new Mesh(tankwars::createMeshFromWavefront(tankLeftBackWheelModel));
-		tankRightBackWheelMesh = new Mesh(tankwars::createMeshFromWavefront(tankRightBackWheelModel));
+		tankBodyMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankBodyModel)));
+		tankHeadMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankHeadModel)));
+		tankCanonMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankCanonModel)));
+		tankLeftFrontWheelMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankLeftFrontWheelModel)));
+		tankRightFrontWheelMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankRightFrontWheelModel)));
+		tankLeftBackWheelMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankLeftBackWheelModel)));
+		tankRightBackWheelMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankRightBackWheelModel)));
+
 		//Transform
 		tankModelMat = glm::translate(glm::mat4(1), glm::vec3(startPos.getX(), startPos.getY(), startPos.getZ()));
 		tankModelMat = glm::scale(tankModelMat, glm::vec3(8, 8, 8));
 		tankModelMat = glm::rotate(tankModelMat, glm::pi<float>(), glm::vec3(0, 1, 0));
+
 		//MeshInstances
-		tankMeshInstances.push_back(MeshInstance(*tankBodyMesh, tankMaterial));
-		tankMeshInstances.push_back(MeshInstance(*tankHeadMesh, tankMaterial));
-		tankMeshInstances.push_back(MeshInstance(*tankCanonMesh, tankMaterial));
+        tankMeshInstances.reserve(7);
+		tankMeshInstances.emplace_back(*tankBodyMesh, tankMaterial);
+		tankMeshInstances.emplace_back(*tankHeadMesh, tankMaterial);
+		tankMeshInstances.emplace_back(*tankCanonMesh, tankMaterial);
+		tankMeshInstances.emplace_back(*tankRightFrontWheelMesh, tankMaterial);
+		tankMeshInstances.emplace_back(*tankLeftFrontWheelMesh, tankMaterial);
+		tankMeshInstances.emplace_back(*tankRightBackWheelMesh, tankMaterial);
+		tankMeshInstances.emplace_back(*tankLeftBackWheelMesh, tankMaterial);
 
-		tankMeshInstances.push_back(MeshInstance(*tankRightFrontWheelMesh, tankMaterial));
-		tankMeshInstances.push_back(MeshInstance(*tankLeftFrontWheelMesh, tankMaterial));
-		
-		tankMeshInstances.push_back(MeshInstance(*tankRightBackWheelMesh, tankMaterial));
-		tankMeshInstances.push_back(MeshInstance(*tankLeftBackWheelMesh, tankMaterial));
-
-
-		tankMeshInstances.resize(7);
-		for (int i = 0; i < 7; i++) {//wheels not there yet
+		for (int i = 0; i < 7; i++) { //wheels not there yet
 			tankMeshInstances[i].modelMatrix = tankModelMat;
-			renderer.addSceneObject(tankMeshInstances[i]);
+			renderer->addSceneObject(tankMeshInstances[i]);
 		}
+	}
 
-	}
 	btRaycastVehicle* Tank::getAction() {
-		return tank;
+		return tank.get();
 	}
+
 	btRigidBody* Tank::getRigidBody() {
-		return tankChassis;
+		return tankChassis.get();
 	}
-	MeshInstance Tank::getTankMeshInstance(int i) { // how to best return all of the instances?
-		return tankMeshInstances[i];
+
+	MeshInstance* Tank::getTankMeshInstance(int i) { // how to best return all of the instances?
+		return &tankMeshInstances[i];
 	}
 
 	void Tank::setTankTuning() {
@@ -149,6 +140,7 @@ namespace tankwars {
 		bulletMatrix = glm::rotate(bulletMatrix, headAndTurretAngle, glm::vec3(0, 1, 0));
 		return glm::vec3(-bulletMatrix[2][0],0 , -bulletMatrix[2][2]);//-bulletMatrix[2][1]
 	}
+
 	glm::vec3 Tank::offset() {
 		btTransform trans;
 		tankChassis->getMotionState()->getWorldTransform(trans);
@@ -214,6 +206,7 @@ namespace tankwars {
 		}
 	}
 	//---------------------------------------End-Controller-Functions----------------------------
+
 	void Tank::turn(bool left) {
 		if (!left) {
 			tankSteering += steeringIncrement;
@@ -228,6 +221,7 @@ namespace tankwars {
 			}
 		}
 	}
+
 	void Tank::drive(bool forward) {
 		if (forward) {
 			tankEngineForce = maxEngineForce;
@@ -238,6 +232,7 @@ namespace tankwars {
 			tankBreakingForce = defaultBreakingForce;
 		}
 	}
+
 	void Tank::driveBack(bool backward) {
 		if (backward) {
 			tankEngineForce = -maxEngineForce / 2;
@@ -248,6 +243,7 @@ namespace tankwars {
 			tankBreakingForce = defaultBreakingForce;
 		}
 	}
+
 	void Tank::update() {
 		tank->resetSuspension();
 		for (int i = 0; i < 4; i++) {
@@ -270,11 +266,11 @@ namespace tankwars {
 		for (MeshInstance& mI : tankMeshInstances) {
 			mI.modelMatrix = tankModelMat;
 		}
-
 		glm::vec3 rightVec = glm::normalize(glm::vec3(tankModelMat[0][0], 0, tankModelMat[0][2]));
 		glm::vec3 upVec = glm::normalize(glm::vec3(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]));
 		tankMeshInstances[1].modelMatrix = glm::translate(glm::rotate(tankModelMat, headAndTurretAngle, glm::vec3(0,1,0)),glm::vec3(0,3,0));//HeadAndCanonRotationAngle 
 		tankMeshInstances[2].modelMatrix = glm::translate(glm::rotate(tankMeshInstances[1].modelMatrix, headAndTurretRotationAlpha, glm::vec3(1, 0, 0)), glm::vec3(1, 0, 0));
+
 		for (int i = 0; i < 4; i++) {
 			tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(glm::value_ptr(tankModelMat));
 			tankMeshInstances[i + 3].modelMatrix = tankModelMat;
@@ -284,16 +280,17 @@ namespace tankwars {
 
 	}
 
-	Tank::BulletHandler::BulletHandler(btDynamicsWorld* dnmcWorld, Renderer& renderer) :
-			dnmcWorld(dnmcWorld),
-			renderer(renderer),
-			bulletMesh(createSphereMesh(0.1f, 5, 5)),
-			bulletShape(0.1f) {
+	Tank::BulletHandler::BulletHandler(btDynamicsWorld* dynamicsWorld, Renderer& renderer)
+            : dynamicsWorld(dynamicsWorld),
+			  renderer(renderer),
+			  bulletMesh(createSphereMesh(0.1f, 5, 5)),
+			  bulletShape(0.1f) {
 		bulletMat.diffuseColor = { 0.6f, 0.6f, 0 };
 		bulletMat.specularColor = { 1, 0, 0 };
 		bulletMat.specularExponent = 16;
 		bullets.reserve(bulletMax);
 	}
+
 	void Tank::BulletHandler::createNewBullet(btTransform& tr, btScalar headAngle, btScalar turretAngle, btScalar power) {
 		if (bullets.size() >= bulletMax) return;
 		glm::mat4 bulletMatrix;
@@ -310,8 +307,11 @@ namespace tankwars {
 		glm::vec3 forwardVec(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2]); // there is a 1 instead of the 2 in the z-Parameter
 		bulletMatrix = glm::rotate(bulletMatrix, turretAngle, glm::cross(forwardVec, glm::vec3(0, 1, 0)));
 		direction = bulletMatrix*direction;
-		if (headAngle>0)
+
+		if (headAngle > 0) {
 			direction = glm::vec4(direction.x, -direction.y, direction.z, 0);
+        }
+
 		direction = glm::normalize(direction);
 		bullets.emplace_back(new btRigidBody(mass, new btDefaultMotionState(tr), &bulletShape, bulletInertia), MeshInstance(bulletMesh, bulletMat));
 		bullets.back().bulletBody->setLinearVelocity(btVector3(direction.x*power, direction.y*power, direction.z*power));
@@ -320,12 +320,14 @@ namespace tankwars {
 		bullets.back().bulletBody->setUserPointer(&bullets.back());
 		bullets.back().bulletBody->setCcdMotionThreshold(0.2f);
 		bullets.back().bulletBody->setCcdSweptSphereRadius(0.1f);
-		dnmcWorld->addRigidBody(bullets.back().bulletBody);
+		dynamicsWorld->addRigidBody(bullets.back().bulletBody);
 		renderer.addSceneObject(bullets.back().bulletMeshInstance);
 	}
+
 	void Tank::BulletHandler::updateBullets() {
 		glm::mat4 bulletMat;
 		btTransform trans;
+
 		for (int i = 0; i < bullets.size();) {
 			if (bullets[i].disableMe) {
 				removeBullet(bullets[i]);
@@ -339,8 +341,9 @@ namespace tankwars {
 			}
 		}
 	}
+
 	void Tank::BulletHandler::removeBullet(Bullet & bul) {
-		dnmcWorld->removeRigidBody(bul.bulletBody);
+		dynamicsWorld->removeRigidBody(bul.bulletBody);
 		renderer.removeSceneObject(bul.bulletMeshInstance);
 		std::swap(bul, bullets.back());
 		bullets.pop_back();

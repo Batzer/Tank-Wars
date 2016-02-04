@@ -66,10 +66,20 @@ namespace tankwars {
 
         auto index = x + y * getWidth() + z * getWidth() * getHeight();
         if (static_cast<VoxelType>(voxels[index]) != voxel) {
-            auto chunkIndex = (x / chunkWidth) + (y / chunkHeight) * numChunksX
-                + (z / chunkDepth) * numChunksX * numChunksY;
             voxels[index] = static_cast<uint8_t>(voxel);
-            chunkDirtyStates[chunkIndex] = 1;
+            chunkDirtyStates[computeChunkIndex(x, y, z)] = 1;
+            
+            if (x != 0 && x % chunkWidth == 0) {
+                chunkDirtyStates[computeChunkIndex(x - 1, y, z)] = 1;
+            }
+
+            if (y != 0 && y % chunkHeight == 0) {
+                chunkDirtyStates[computeChunkIndex(x, y - 1, z)] = 1;
+            }
+
+            if (z != 0 && z % chunkDepth == 0) {
+                chunkDirtyStates[computeChunkIndex(x, y, z - 1)] = 1;
+            }
         }
     }
 
@@ -126,9 +136,15 @@ namespace tankwars {
         size_t maxHeight = 1;
         for (int i = 0; i < heightMap.getWidth() * heightMap.getHeight(); i++) {
             auto heightValue = heightMap.getImage()[i * heightMap.getNumChannels()];
-            maxHeight = std::max(maxHeight, static_cast<size_t>(heightValue + 1));
+            maxHeight = std::max(maxHeight, static_cast<size_t>(heightValue));
         }
-        maxHeight = std::max(static_cast<size_t>(1), maxHeight / invHeightScale);
+
+        if (maxHeight % invHeightScale != 0) {
+            maxHeight = std::max(static_cast<size_t>(1), maxHeight / invHeightScale + 1);
+        }
+        else {
+            maxHeight = std::max(static_cast<size_t>(1), maxHeight / invHeightScale);
+        }
 
         auto numChunksX = heightMap.getWidth() / chunkWidth;
         if (heightMap.getWidth() % chunkWidth != 0) {
@@ -163,6 +179,10 @@ namespace tankwars {
         return terrain;
     }
 
+    size_t VoxelTerrain::computeChunkIndex(size_t x, size_t y, size_t z) const {
+        return (x / chunkWidth) + (y / chunkHeight) * numChunksX + (z / chunkDepth) * numChunksX * numChunksY;
+    }
+
     void VoxelTerrain::updateChunk(size_t startX, size_t startY, size_t startZ) {
         static std::vector<glm::vec3> posCache;
         static std::vector<glm::vec3> normalCache;
@@ -174,6 +194,7 @@ namespace tankwars {
         vertexCache.clear();
         indexCache.clear();
 
+        // Perform marching cubes on the chunk
         GridCell gridCell;
         auto endX = std::min(startX * chunkWidth + chunkWidth, getWidth() - 1);
         auto endY = std::min(startY * chunkHeight + chunkHeight, getHeight() - 1);
@@ -203,18 +224,22 @@ namespace tankwars {
             polygonize(gridCell, posCache, indexCache);
         }
 
+        // If the marching cubes algorithm didn't return any geometry, the chunk is invisible.
+        // So ignore it when rendering and remove it from the physics world
         auto chunkIndex = startX + startY * numChunksX + startZ * numChunksX * numChunksY;
         if (posCache.empty()) {
             chunkElementCounts[chunkIndex] = 0;
 
-            if (chunkRigidBodies[chunkIndex]) {
-                dynamicsWorld->removeRigidBody(chunkRigidBodies[chunkIndex].get());
-                chunkRigidBodies[chunkIndex].reset();
+            auto& rigidBody = chunkRigidBodies[chunkIndex];
+            if (rigidBody) {
+                dynamicsWorld->removeRigidBody(rigidBody.get());
+                rigidBody.reset();
             }
 
             return;
         }
 
+        // Compute normals and vertices
         if (normalCache.size() < posCache.size()) {
             normalCache.resize(posCache.size(), glm::vec3(0.0f));
         }
@@ -245,6 +270,7 @@ namespace tankwars {
             vertexCache.push_back({posCache[i], normalCache[i]});
         }
 
+        // Upload the new geometry to the GPU
         auto vertexArrayBufferSize = static_cast<GLsizei>((chunkWidth + 1) * (chunkHeight + 1) * (chunkDepth + 1) * sizeof(Vertex));
         auto elementArrayBufferSize = static_cast<GLsizei>(chunkWidth * chunkHeight * chunkDepth * 36 * sizeof(uint32_t));
 
@@ -257,9 +283,11 @@ namespace tankwars {
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexCache.size() * sizeof(uint32_t), indexCache.data());
         chunkElementCounts[chunkIndex] = indexCache.size();
 
-        chunkTriangleMeshes[chunkIndex].reset(new btTriangleMesh);
-        chunkTriangleMeshes[chunkIndex]->preallocateVertices(indexCache.size() / 3);
-        chunkTriangleMeshes[chunkIndex]->preallocateIndices(indexCache.size());
+        // Recreate the collision mesh
+        auto& triangleMesh = chunkTriangleMeshes[chunkIndex];
+        triangleMesh.reset(new btTriangleMesh);
+        triangleMesh->preallocateVertices(indexCache.size() / 3);
+        triangleMesh->preallocateIndices(indexCache.size());
 
         for (size_t i = 0; i < indexCache.size() / 3; i++) {
             auto index1 = indexCache[i * 3];
@@ -270,21 +298,22 @@ namespace tankwars {
             const auto& pos2 = posCache[index2];
             const auto& pos3 = posCache[index3];
 
-            chunkTriangleMeshes[chunkIndex]->addTriangle(
+            triangleMesh->addTriangle(
                 btVector3(pos1.x, pos1.y, pos1.z),
                 btVector3(pos2.x, pos2.y, pos2.z),
                 btVector3(pos3.x, pos3.y, pos3.z));
         }
 
-        if (chunkRigidBodies[chunkIndex]) {
-            dynamicsWorld->removeRigidBody(chunkRigidBodies[chunkIndex].get());
+        auto& rigidBody = chunkRigidBodies[chunkIndex];
+        if (rigidBody) {
+            dynamicsWorld->removeRigidBody(rigidBody.get());
         }
         
-        chunkCollisionMeshes[chunkIndex].reset(new btBvhTriangleMeshShape(chunkTriangleMeshes[chunkIndex].get(), true));
+        chunkCollisionMeshes[chunkIndex].reset(new btBvhTriangleMeshShape(triangleMesh.get(), true));
         chunkMotionStates[chunkIndex].reset(new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0))));
         btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(0, chunkMotionStates[chunkIndex].get(),
                                                                    chunkCollisionMeshes[chunkIndex].get(), btVector3(0, 0, 0));
-        chunkRigidBodies[chunkIndex].reset(new btRigidBody(groundRigidBodyCI));
-        dynamicsWorld->addRigidBody(chunkRigidBodies[chunkIndex].get());
+        rigidBody.reset(new btRigidBody(groundRigidBodyCI));
+        dynamicsWorld->addRigidBody(rigidBody.get());
     }
 }

@@ -136,9 +136,15 @@ namespace tankwars {
         size_t maxHeight = 1;
         for (int i = 0; i < heightMap.getWidth() * heightMap.getHeight(); i++) {
             auto heightValue = heightMap.getImage()[i * heightMap.getNumChannels()];
-            maxHeight = std::max(maxHeight, static_cast<size_t>(heightValue + 1));
+            maxHeight = std::max(maxHeight, static_cast<size_t>(heightValue));
         }
-        maxHeight = std::max(static_cast<size_t>(1), maxHeight / invHeightScale);
+
+        if (maxHeight % invHeightScale != 0) {
+            maxHeight = std::max(static_cast<size_t>(1), maxHeight / invHeightScale + 1);
+        }
+        else {
+            maxHeight = std::max(static_cast<size_t>(1), maxHeight / invHeightScale);
+        }
 
         auto numChunksX = heightMap.getWidth() / chunkWidth;
         if (heightMap.getWidth() % chunkWidth != 0) {

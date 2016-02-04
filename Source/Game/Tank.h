@@ -1,14 +1,16 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
+#include <algorithm>
+#include <memory>
 
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision\CollisionShapes\btBoxShape.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
-#include <algorithm>
+
 #include "Wavefront.h"
 #include "Mesh.h"
 #include "MeshInstance.h"
@@ -19,13 +21,19 @@ namespace tankwars {
 	class Tank {
 	public:
 		struct Bullet {
-			bool active;
-			bool disableMe;
+			Bullet( btRigidBody* body, MeshInstance inst)
+                : bulletBody(body), bulletMeshInstance(inst)
+            {
+            }
+            
+            bool active = true;
+			bool disableMe = false;
 			btRigidBody* bulletBody;
 			MeshInstance bulletMeshInstance;
-			Bullet( btRigidBody* body, MeshInstance inst) :active(true),disableMe(false), bulletBody(body), bulletMeshInstance(inst) {};
 		};
+
 		Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition);
+
 		void addWheels();
 		void update();
 		void turn(bool left);
@@ -34,7 +42,7 @@ namespace tankwars {
 		glm::vec3 getDirectionVector();
 		glm::vec3 offset();
 		btRaycastVehicle* getAction();
-		MeshInstance getTankMeshInstance(int i);
+		MeshInstance* getTankMeshInstance(int i);
 		glm::vec3 getPosition();
 		btRigidBody* getRigidBody();
 
@@ -46,40 +54,33 @@ namespace tankwars {
 		void turnHeadAndTurretController(float val);
 		void shoot();
 		void adjustPower(bool increase);
-	private:
 
-		Renderer& renderer;
-		btCollisionShape* tankBoxShape;
-        btCompoundShape* compoundShape;
-		void initializeTankMeshInstances(btVector3 startPos);
-		//btVector3 startingPosition;
-		btDiscreteDynamicsWorld* dnmcWorld;
+	private:
+        void initializeTankMeshInstances(btVector3 startPos);
 		void setTankTuning();
-		btTransform tr;
-		btMotionState *tankMotionState;
-		btDefaultVehicleRaycaster* tankVehicleRaycaster;
+
+		Renderer* renderer;
+        btDiscreteDynamicsWorld* dynamicsWorld;
+		std::unique_ptr<btCollisionShape> tankBoxShape;
+        std::unique_ptr<btCompoundShape> compoundShape;
+		std::unique_ptr<btMotionState> tankMotionState;
+        std::unique_ptr<btRigidBody> tankChassis;
+        std::unique_ptr<btDefaultVehicleRaycaster> tankVehicleRaycaster;
+        std::unique_ptr<btRaycastVehicle> tank;
+
 		btRaycastVehicle::btVehicleTuning tankTuning;
-		btRigidBody* tankChassis;
-		btRaycastVehicle* tank;
+        
 
 		//Tank Meshes and MeshInstances
-
 		glm::mat4x4 tankModelMat;
 		Material tankMaterial;
-		WavefrontModel tankBodyModel;
-		WavefrontModel tankHeadModel;
-		WavefrontModel tankCanonModel;
-		WavefrontModel tankLeftFrontWheelModel;
-		WavefrontModel tankRightFrontWheelModel;
-		WavefrontModel tankLeftBackWheelModel;
-		WavefrontModel tankRightBackWheelModel;
-		Mesh* tankBodyMesh;
-		Mesh* tankHeadMesh;
-		Mesh* tankCanonMesh;
-		Mesh* tankLeftFrontWheelMesh;
-		Mesh* tankRightFrontWheelMesh;
-		Mesh* tankLeftBackWheelMesh;
-		Mesh* tankRightBackWheelMesh;
+        std::unique_ptr<Mesh> tankBodyMesh;
+        std::unique_ptr<Mesh> tankHeadMesh;
+        std::unique_ptr<Mesh> tankCanonMesh;
+        std::unique_ptr<Mesh> tankLeftFrontWheelMesh;
+        std::unique_ptr<Mesh> tankRightFrontWheelMesh;
+        std::unique_ptr<Mesh> tankLeftBackWheelMesh;
+        std::unique_ptr<Mesh> tankRightBackWheelMesh;
 
 		// 0 = tankBody / 1 = tankHead / 2 = turret / 3-6 = wheels
 		std::vector<MeshInstance> tankMeshInstances;					// how to add this shit to the renderer?
@@ -123,13 +124,13 @@ namespace tankwars {
 		//End Tank Movement Variables
 		class BulletHandler {
 		public:
-			BulletHandler(btDynamicsWorld* dnmcWorld, Renderer& renderer);
+			BulletHandler(btDynamicsWorld* dynamicsWorld, Renderer& renderer);
 			void createNewBullet(btTransform& tr, btScalar headAngle, btScalar turretAngle, btScalar power);
 			void updateBullets();
 			void removeBullet(Bullet& bul);
 		private:
 			int tankID;
-			btDynamicsWorld* dnmcWorld;
+			btDynamicsWorld* dynamicsWorld;
 			Renderer& renderer;
 			btSphereShape bulletShape;
 			Mesh bulletMesh;
@@ -138,6 +139,7 @@ namespace tankwars {
 			std::vector<Bullet> bullets;
 			Material bulletMat;
 		};
+
 		BulletHandler bulletHandler;
 	};
 }

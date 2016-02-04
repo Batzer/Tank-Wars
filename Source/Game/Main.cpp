@@ -97,13 +97,13 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/flat.png",
         dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 	
-    tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30));
+    tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 20, -30));
 	gContactAddedCallback = tankwars::customCallback;
 	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2);
     
@@ -175,7 +175,7 @@ int main() {
 
         // Update simulation
 		
-        dynamicsWorld->stepSimulation(frameTime, 7);
+        dynamicsWorld->stepSimulation(frameTime, 15, 1.0f / 120.0f);
 
         // Update game here
 		game.update((float)currentTime);

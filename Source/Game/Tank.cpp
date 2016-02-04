@@ -55,7 +55,7 @@ namespace tankwars {
 		tankMaterial.specularExponent = 16;
 		//Wavefronts
 		tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
-		tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
+		tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHeadCentered.obj");
 		tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
 
 		tankLeftFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftFrontWheelCentered.obj");
@@ -271,10 +271,10 @@ namespace tankwars {
 			mI.modelMatrix = tankModelMat;
 		}
 
-		glm::vec3 rightVec(tankModelMat[0][0], 0, tankModelMat[0][2]);
-		glm::vec3 upVec(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]);
-		tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndTurretAngle, upVec);//HeadAndCanonRotationAngle 
-		tankMeshInstances[2].modelMatrix = glm::rotate(glm::rotate(tankModelMat, headAndTurretAngle, upVec), turretAngle, glm::normalize(rightVec));
+		glm::vec3 rightVec = glm::normalize(glm::vec3(tankModelMat[0][0], 0, tankModelMat[0][2]));
+		glm::vec3 upVec = glm::normalize(glm::vec3(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]));
+		tankMeshInstances[1].modelMatrix = glm::translate(glm::rotate(tankModelMat, headAndTurretAngle, glm::vec3(0,1,0)),glm::vec3(0,3,0));//HeadAndCanonRotationAngle 
+		tankMeshInstances[2].modelMatrix = glm::translate(glm::rotate(tankMeshInstances[1].modelMatrix, headAndTurretRotationAlpha, glm::vec3(1, 0, 0)), glm::vec3(1, 0, 0));
 		for (int i = 0; i < 4; i++) {
 			tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(glm::value_ptr(tankModelMat));
 			tankMeshInstances[i + 3].modelMatrix = tankModelMat;

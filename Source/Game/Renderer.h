@@ -30,9 +30,12 @@ namespace tankwars {
 
     private:
         // Shaders
-        GLuint vertexShader;
-        GLuint fragmentShader;
-        GLuint shaderProgram;
+        GLuint toonLightingVS;
+        GLuint toonLightingFS;
+        GLuint toonLightingProgram;
+        GLuint outlineVS;
+        GLuint outlineFS;
+        GLuint outlineProgram;
 
         // Uniform locations
         GLint modelMatrixLocation;
@@ -45,6 +48,9 @@ namespace tankwars {
         GLint materialDiffuseLocation;
         GLint materialSpecularLocation;
         GLint specularExponentLocation;
+
+        GLint outlineModelMatrixLocation;
+        GLint outlineViewProjMatrixLocation;
 
         // Scene managment
         // TODO: Refactor this into a seperate class

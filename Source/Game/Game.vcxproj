@@ -287,6 +287,7 @@
     <None Include="..\..\Content\Shaders\Basic.vsh">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\..\Content\Shaders\Outline.fsh" />
     <None Include="..\..\Content\Shaders\ToonLighting.fsh" />
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +317,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\ToonLighting.vsh">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\Outline.vsh">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

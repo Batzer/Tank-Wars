@@ -59,6 +59,9 @@
     <None Include="..\..\Content\Shaders\ToonLighting.vsh">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\..\Content\Shaders\Outline.fsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -67,5 +70,10 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{eb6801dc-0d12-45b0-963a-0c95820a2467}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Content\Shaders\Outline.vsh">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

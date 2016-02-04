@@ -28,7 +28,7 @@ constexpr int ResolutionX = 1280;
 constexpr int ResolutionY = 720;
 constexpr bool GoFullscreen = false;
 constexpr bool UseVSync = true;
-constexpr bool UseMsaa = false;
+constexpr bool UseMsaa = true;
 constexpr double DeltaTime = 1.0 / 60.0;
 
 tankwars::Tank *tank;

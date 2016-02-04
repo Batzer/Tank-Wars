@@ -16,7 +16,7 @@ namespace tankwars {
 
 		void update();
 	private:
-		btScalar explRadius = 4.f;
+		btScalar explRadius = 2.5f;
 		void handleExplosions();
 		void explosion(btVector3 expl);
 		std::vector<btVector3> explosionPoints;

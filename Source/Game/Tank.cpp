@@ -318,7 +318,7 @@ namespace tankwars {
 		bullets.back().bulletBody->setCollisionFlags(bullets.back().bulletBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 		bullets.back().bulletBody->setUserIndex(10);
 		bullets.back().bulletBody->setUserPointer(&bullets.back());
-		bullets.back().bulletBody->setCcdMotionThreshold(0.1f);
+		bullets.back().bulletBody->setCcdMotionThreshold(0.2f);
 		bullets.back().bulletBody->setCcdSweptSphereRadius(0.1f);
 		dnmcWorld->addRigidBody(bullets.back().bulletBody);
 		renderer.addSceneObject(bullets.back().bulletMeshInstance);

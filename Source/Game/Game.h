@@ -18,7 +18,7 @@ namespace tankwars {
 		void bindControllerToTank(int controllerID, Tank* tank);
 
 	private:
-		float timeBetweenShots = 2.f;
+		float timeBetweenShots = 0.5f;
 		float lastShot = 0;
 		Tank* tanks[2];
 		void pew();

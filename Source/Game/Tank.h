@@ -133,7 +133,7 @@ namespace tankwars {
 			Renderer& renderer;
 			btSphereShape bulletShape;
 			Mesh bulletMesh;
-			size_t bulletMax = 5;
+			size_t bulletMax = 10;
 			//Bullet* bullets[5000];					//replace with an std::vector
 			std::vector<Bullet> bullets;
 			Material bulletMat;

@@ -287,6 +287,8 @@
     <None Include="..\..\Content\Shaders\Basic.vsh">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\..\Content\Shaders\DepthQuad.fsh" />
+    <None Include="..\..\Content\Shaders\GenShadowMap.fsh" />
     <None Include="..\..\Content\Shaders\Outline.fsh" />
     <None Include="..\..\Content\Shaders\ToonLighting.fsh" />
   </ItemGroup>
@@ -322,6 +324,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Outline.vsh">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\GenShadowMap.vsh">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\DepthQuad.vsh">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

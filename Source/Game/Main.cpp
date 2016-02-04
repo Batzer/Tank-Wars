@@ -97,13 +97,13 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/flat.png",
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
         dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 	
-    tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 20, -30));
+    tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30));
 	gContactAddedCallback = tankwars::customCallback;
 	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2);
     
@@ -229,9 +229,10 @@ int main() {
         // END
 
         // Render
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, ResolutionX, ResolutionY);
-        renderer.renderScene(freeCam.getViewProjMatrix(), freeCam.position);
+        int backBufferWidth, backBufferHeight;
+        glfwGetFramebufferSize(window, &backBufferWidth, &backBufferHeight);
+        renderer.setBackBufferSize(backBufferWidth, backBufferHeight);
+        renderer.renderScene(freeCam.getProjMatrix(), freeCam.getViewMatrix(), freeCam.position);
 
         glfwSwapBuffers(window);
 

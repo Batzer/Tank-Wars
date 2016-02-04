@@ -62,6 +62,15 @@
     <None Include="..\..\Content\Shaders\Outline.fsh">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\..\Content\Shaders\GenShadowMap.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Content\Shaders\DepthQuad.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Content\Shaders\Outline.vsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -72,7 +81,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Content\Shaders\Outline.vsh">
+    <FxCompile Include="..\..\Content\Shaders\GenShadowMap.vsh">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Content\Shaders\DepthQuad.vsh">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

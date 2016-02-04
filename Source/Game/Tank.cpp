@@ -270,7 +270,7 @@ namespace tankwars {
 
 		glm::vec3 rightVec(tankModelMat[0][0], 0, tankModelMat[0][2]);
 		glm::vec3 upVec(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]);
-		tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndTurretAngle, upVec);//HeadAndCanonRotationAngle 
+		tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndTurretAngle, glm::normalize(upVec));//HeadAndCanonRotationAngle 
 		tankMeshInstances[2].modelMatrix = glm::rotate(glm::rotate(tankModelMat, headAndTurretAngle, upVec), turretAngle, glm::normalize(rightVec));
 
 		for (int i = 0; i < 4; i++) {

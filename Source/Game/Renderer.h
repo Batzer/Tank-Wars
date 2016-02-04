@@ -18,7 +18,8 @@ namespace tankwars {
         Renderer& operator=(const Renderer&) = delete;
         Renderer& operator=(Renderer&& other);
 
-        void renderScene(const glm::mat4& viewProjMatrix, const glm::vec3& cameraPos);
+        void renderScene(const glm::mat4& projMatrix, const glm::mat4& viewMatrix, const glm::vec3& cameraPos);
+        void setBackBufferSize(GLsizei width, GLsizei height);
 
         // Scene managment
         // TODO: Refactor this into a seperate class
@@ -29,6 +30,10 @@ namespace tankwars {
         void setTerrain(const VoxelTerrain* terrain);
 
     private:
+        // Window info
+        GLsizei backBufferWidth;
+        GLsizei backBufferHeight;
+
         // Shaders
         GLuint toonLightingVS;
         GLuint toonLightingFS;
@@ -36,11 +41,18 @@ namespace tankwars {
         GLuint outlineVS;
         GLuint outlineFS;
         GLuint outlineProgram;
+        GLuint genShadowMapVS;
+        GLuint genShadowMapFS;
+        GLuint genShadowMapProgram;
+        GLuint depthQuadVS;
+        GLuint depthQuadFS;
+        GLuint depthQuadProgram;
 
         // Uniform locations
         GLint modelMatrixLocation;
         GLint invTrModelMatrixLocation;
         GLint viewProjMatrixLocation;
+        GLint lightMatrixLocation;
         GLint ambientColorLocation;
         GLint dirToLightLocation;
         GLint eyePosLocation;
@@ -48,9 +60,19 @@ namespace tankwars {
         GLint materialDiffuseLocation;
         GLint materialSpecularLocation;
         GLint specularExponentLocation;
+        GLint shadowMapLocation;
 
         GLint outlineModelMatrixLocation;
         GLint outlineViewProjMatrixLocation;
+
+        GLint genShadowMapModelMatrixLocation;
+        GLint genShadowMapViewProjMatrixLocation;
+
+        // Shadow mapping
+        static constexpr GLsizei ShadowMapSize = 4096;
+        GLuint shadowMap;
+        GLuint shadowMapFBO;
+
 
         // Scene managment
         // TODO: Refactor this into a seperate class

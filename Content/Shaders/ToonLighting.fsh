@@ -2,6 +2,7 @@
 
 in vec3 outNormal;
 in vec3 outWorldPos;
+in vec4 outLightPos;
 
 out vec4 colorF;
 
@@ -12,6 +13,7 @@ uniform vec3 EyePos;
 uniform vec3 MaterialDiffuse;
 uniform vec3 MaterialSpecular;
 uniform float SpecularExponent;
+uniform sampler2D ShadowMap;
 
 void main() {
 	vec3 color = AmbientColor * MaterialDiffuse;
@@ -19,15 +21,34 @@ void main() {
     float NdotL = dot(N, DirToLight);
 
 	if (NdotL > 0.0) {
-		vec3 V = normalize(EyePos - outWorldPos);
-		vec3 H = normalize(V + DirToLight);
 		float diffuseFactor = max(NdotL, 0.0);
 		if (diffuseFactor < 0.1) diffuseFactor = 0.0;
 		else if (diffuseFactor < 0.3) diffuseFactor = 0.3;
 		else if (diffuseFactor < 0.6) diffuseFactor = 0.6;
 		else diffuseFactor = 1.0;
+
+		vec3 V = normalize(EyePos - outWorldPos);
+		vec3 H = normalize(V + DirToLight);
 		float specularFactor = step(0.5, pow(max(dot(N, H), 0.0), SpecularExponent));
-		color += diffuseFactor * MaterialDiffuse + specularFactor * MaterialSpecular;
+
+		vec3 projCoords = (outLightPos.xyz / outLightPos.w) * 0.5 + 0.5;
+		float shadow = 0.0;
+
+		if (projCoords.z > 1.0) {
+			shadow = 1.0;
+		}
+		else {
+			vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
+			for (int x = -1; x <= 1; x++) {
+				for (int y = -1; y <= 1; y++) {
+					float depth = texture(ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+					shadow += projCoords.z - 0.005 > depth ? 0.0 : 1.0;        
+				}    
+			}
+			shadow /= 9.0;
+		}
+
+		color += (diffuseFactor * MaterialDiffuse + specularFactor * MaterialSpecular) * shadow;
 	}
 
     colorF = vec4(color * LightColor, 1.0);

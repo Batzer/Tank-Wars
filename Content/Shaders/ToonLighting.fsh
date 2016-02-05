@@ -33,20 +33,14 @@ void main() {
 
 		vec3 projCoords = (outLightPos.xyz / outLightPos.w) * 0.5 + 0.5;
 		float shadow = 0.0;
-
-		if (projCoords.z > 1.0) {
-			shadow = 1.0;
+		vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
+		for (int x = -1; x <= 1; x++) {
+			for (int y = -1; y <= 1; y++) {
+				vec2 offset = vec2(x, y) * texelSize;
+				shadow += texture(ShadowMap, vec3(projCoords.xy + offset, projCoords.z - 0.005));      
+			}    
 		}
-		else {
-			vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
-			for (int x = -1; x <= 1; x++) {
-				for (int y = -1; y <= 1; y++) {
-					vec2 offset = vec2(x, y) * texelSize;
-					shadow += texture(ShadowMap, vec3(projCoords.xy + offset, projCoords.z - 0.005));      
-				}    
-			}
-			shadow /= 9.0;
-		}
+		shadow /= 9.0;
 
 		color += (diffuseFactor * MaterialDiffuse + specularFactor * MaterialSpecular) * shadow;
 	}

@@ -13,7 +13,7 @@ uniform vec3 EyePos;
 uniform vec3 MaterialDiffuse;
 uniform vec3 MaterialSpecular;
 uniform float SpecularExponent;
-uniform sampler2D ShadowMap;
+uniform sampler2DShadow ShadowMap;
 
 void main() {
 	vec3 color = AmbientColor * MaterialDiffuse;
@@ -41,8 +41,8 @@ void main() {
 			vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
 			for (int x = -1; x <= 1; x++) {
 				for (int y = -1; y <= 1; y++) {
-					float depth = texture(ShadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
-					shadow += projCoords.z - 0.005 > depth ? 0.0 : 1.0;        
+					vec2 offset = vec2(x, y) * texelSize;
+					shadow += texture(ShadowMap, vec3(projCoords.xy + offset, projCoords.z - 0.005));      
 				}    
 			}
 			shadow /= 9.0;

@@ -14,14 +14,14 @@ namespace tankwars {
 		//do sth...								start explosion Animations
 		int xMin = std::max((int)(expl.getX() - explRadius), 1);
 		int yMin = std::max((int)(expl.getY() - explRadius), 1);
-		int zMin = std::max((int)(expl.getZ() + explRadius), -(int)terrain.getDepth());
-		int xMax = std::min((int)(expl.getX() + explRadius + 0.5), (int)terrain.getWidth());
-		int yMax = std::min((int)(expl.getY() + explRadius + 0.5), (int)terrain.getHeight());
+		int zMin = std::max((int)(expl.getZ() + explRadius), -(int)terrain.getDepth()+1);
+		int xMax = std::min((int)(expl.getX() + explRadius + 0.5), (int)terrain.getWidth()-1);
+		int yMax = std::min((int)(expl.getY() + explRadius + 0.5), (int)terrain.getHeight()-1);
 		int zMax = std::min((int)(expl.getZ() - explRadius + 0.5), 1);
 		for (int x = xMin; x < xMax; x++) {
 			for (int y = yMin; y < yMax; y++) {
 				for (int z = zMin; z > zMax; z--) {
-					if (sqrt(pow(x - expl.getX(), 2) + std::pow(y - expl.getY(), 2) + pow(z - expl.getZ(), 2)) < explRadius)
+					if (pow(x - expl.getX(), 2) + std::pow(y - expl.getY(), 2) + pow(z - expl.getZ(), 2) < pow(explRadius,2))
 						terrain.setVoxel(x, y, -z, tankwars::VoxelType::Empty);
 				}
 			}
@@ -47,7 +47,7 @@ namespace tankwars {
 			bulletCollision += 2;
 		}
 		if (bulletCollision) {
-			if (bulletCollision == 1) {
+			if (bulletCollision == 1 || bulletCollision == 3) {
 				explosionHandler->addExplosionPoint(cp.getPositionWorldOnA());
 				bulletCollision -= 1;
 			}

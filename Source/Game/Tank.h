@@ -47,8 +47,9 @@ namespace tankwars {
 		btRigidBody* getRigidBody();
 
 		//Controller Functions
+		void hit();
 		void breakController();
-		void driveController(float val);
+		void driveController(bool forward);
 		void turnController(float val);
 		void turnTurretController(float val);
 		void turnHeadAndTurretController(float val);
@@ -114,7 +115,7 @@ namespace tankwars {
 		btScalar shootingPowerIncrease = 10;		//not adjusted
 		btScalar shootingPowerMax = 100;			//not adjusted
 
-		btScalar turretMinAngle = -.06f;
+		btScalar turretMinAngle = -.1f;
 		btScalar turretMaxAngle = .5f;				//not adjusted
 		btScalar turretRotationAlpha = .01f;		//not adjusted
 		btScalar turretAngle = .0f;

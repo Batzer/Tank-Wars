@@ -46,7 +46,7 @@ namespace tankwars {
 					tanks[1]->turnController(axis[i]);
 					break;
 				case 1:		//L-stick y-Axis
-					tanks[1]->driveController(axis[i]);
+					
 					break;
 				case 2:		//R-stick x-Axis
 					tanks[1]->turnHeadAndTurretController(axis[i]);
@@ -89,32 +89,26 @@ namespace tankwars {
 					break;
 				case 4:
 					if (axes[i]) {
-						std::cout << "L1" << "\n";
-                        //camera->rotate(glm::quat({rotation_alpha, 0, 0}));
+						//std::cout << "L1" << "\n";
+						tanks[1]->driveController(false);
 					}
 					break;
 				case 5:
 					if (axes[i]) {
-						std::cout << "R1" << "\n";
-                        //camera->rotate(glm::quat({-rotation_alpha, 0, 0}));
+						//std::cout << "R1" << "\n";
+						tanks[1]->driveController(true);
 					}
 					break;
 				case 6:
 					if (axes[i]) {
 						//std::cout << "L2" << "\n";
-						if (explosion_radius > 0) {
-							explosion_radius -= 0.1f;
-							std::cout << "Explosion radius changed to: " << explosion_radius << "\n";
-						}
+						tanks[1]->adjustPower(false);
 					}
 					break;
 				case 7:
 					if (axes[i]) {
 						//std::cout << "R2" << "\n";
-						if (explosion_radius < 9.9) {
-							explosion_radius += 0.1f;
-							std::cout << "Explosion radius changed to: " << explosion_radius << "\n";
-						}
+						tanks[1]->adjustPower(true);
 					}
 					break;
 

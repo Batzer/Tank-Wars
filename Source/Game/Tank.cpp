@@ -46,8 +46,8 @@ namespace tankwars {
 
 
 		auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
-		auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
-		auto tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
+		auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHeadCentered.obj");
+		auto tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThingCentered.obj");
 		auto tankLeftFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftFrontWheelCentered.obj");
 		auto tankRightFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightFrontWheelCentered.obj");
 		auto tankLeftBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftBackWheelCentered.obj");
@@ -133,12 +133,7 @@ namespace tankwars {
 	}
 
 	glm::vec3 Tank::getDirectionVector() {
-		btTransform trans;
-		tankChassis->getMotionState()->getWorldTransform(trans);
-		glm::mat4 bulletMatrix(0.f);
-		trans.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
-		bulletMatrix = glm::rotate(bulletMatrix, headAndTurretAngle, glm::vec3(0, 1, 0));
-		return glm::vec3(-bulletMatrix[2][0],0 , -bulletMatrix[2][2]);//-bulletMatrix[2][1]
+		return -glm::vec3(tankMeshInstances[1].modelMatrix[2][0], 0, tankMeshInstances[1].modelMatrix[2][2]);
 	}
 
 	glm::vec3 Tank::offset() {
@@ -148,9 +143,13 @@ namespace tankwars {
 		trans.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
 		return glm::vec3(bulletMatrix[3][0], bulletMatrix[3][1], bulletMatrix[3][2]);
 	}
-	//tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(m);
 
 	//-------------------------------------------Controller-Functions----------------------------
+	void Tank::hit() {
+		// tank got hit function
+		// reset variables
+		// position tank at new pos
+	}
 	void Tank::turnTurretController(float val) {
 		if (val > 0) {
 			if (turretAngle<turretMaxAngle)
@@ -175,12 +174,12 @@ namespace tankwars {
 		tankBreakingForce = defaultBreakingForce;
 	}
 
-	void Tank::driveController(float val) {
-		if (val <= 0) {
-			tankEngineForce = maxEngineForce*val;
+	void Tank::driveController(bool forward) {
+		if (forward) {
+			tankEngineForce = -maxEngineForce;
 		}
 		else {
-			tankEngineForce = (maxEngineForce / 2)*val;
+			tankEngineForce = (maxEngineForce / 2);
 		}
 	}
 
@@ -191,10 +190,10 @@ namespace tankwars {
 
 	void Tank::shoot() {
 		btTransform trans;
-		tankChassis->getMotionState()->getWorldTransform(trans);
+		//tankChassis->getMotionState()->getWorldTransform(trans);
+		trans.setFromOpenGLMatrix(glm::value_ptr(tankMeshInstances[2].modelMatrix));
 		bulletHandler.createNewBullet(trans, headAndTurretAngle, turretAngle, shootingPower);
 	}
-
 	void Tank::adjustPower(bool increase) {
 		if (increase) {
 			if (shootingPower < shootingPowerMax)
@@ -268,8 +267,8 @@ namespace tankwars {
 		}
 		glm::vec3 rightVec = glm::normalize(glm::vec3(tankModelMat[0][0], 0, tankModelMat[0][2]));
 		glm::vec3 upVec = glm::normalize(glm::vec3(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]));
-		tankMeshInstances[1].modelMatrix = glm::translate(glm::rotate(tankModelMat, headAndTurretAngle, glm::vec3(0,1,0)),glm::vec3(0,3,0));//HeadAndCanonRotationAngle 
-		tankMeshInstances[2].modelMatrix = glm::translate(glm::rotate(tankMeshInstances[1].modelMatrix, headAndTurretRotationAlpha, glm::vec3(1, 0, 0)), glm::vec3(1, 0, 0));
+		tankMeshInstances[1].modelMatrix = glm::translate(glm::rotate(tankModelMat, headAndTurretAngle, glm::vec3(0,1,0)),glm::vec3(0,2,0));//HeadAndCanonRotationAngle 
+		tankMeshInstances[2].modelMatrix = glm::translate(glm::rotate(tankMeshInstances[1].modelMatrix, turretAngle, glm::vec3(1, 0, 0)), glm::vec3(0, 0, -1));
 
 		for (int i = 0; i < 4; i++) {
 			tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(glm::value_ptr(tankModelMat));
@@ -295,17 +294,16 @@ namespace tankwars {
 		if (bullets.size() >= bulletMax) return;
 		glm::mat4 bulletMatrix;
 		tr.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
-		bulletMatrix[3][1] += 4;										//<---- for testing
-		tr.setFromOpenGLMatrix(glm::value_ptr(bulletMatrix));
+		//tr.setFromOpenGLMatrix(glm::value_ptr(bulletMatrix));
 
 		btVector3 bulletInertia(0, 0, 0);
 		btScalar mass = 20;
 		//bulletRigidBodies[bulletCounter] = new btRigidBody(mass, new btDefaultMotionState(tr), &bulletShape, bulletInertia);
 
-		glm::vec4 direction(1, 0, 0, 0);
-		bulletMatrix = glm::rotate(bulletMatrix, 1.57f + headAngle, glm::vec3(0, 1, 0));
-		glm::vec3 forwardVec(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2]); // there is a 1 instead of the 2 in the z-Parameter
-		bulletMatrix = glm::rotate(bulletMatrix, turretAngle, glm::cross(forwardVec, glm::vec3(0, 1, 0)));
+		glm::vec4 direction(0, 0, -1, 0);
+		//bulletMatrix = glm::rotate(bulletMatrix, 1.57f + headAngle, glm::vec3(0, 1, 0));
+		glm::vec3 forwardVec(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2]);
+		//bulletMatrix = glm::rotate(bulletMatrix, turretAngle, glm::cross(forwardVec, glm::vec3(0, 1, 0)));
 		direction = bulletMatrix*direction;
 
 		if (headAngle > 0) {

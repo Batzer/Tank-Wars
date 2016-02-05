@@ -8,5 +8,8 @@
 [Bb]in/
 [Oo]bj/
 
+# Don't ignore *.obj files
+!*.obj
+
 # VS folder
 .vs/

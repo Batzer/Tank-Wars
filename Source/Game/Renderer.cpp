@@ -10,6 +10,7 @@
 #include "Mesh.h"
 #include "MeshInstance.h"
 #include "Terrain.h"
+#include "ParticleSystem.h"
 
 namespace {
     GLuint quadVAO = 0;
@@ -61,6 +62,10 @@ namespace tankwars {
         depthQuadFS = createShaderFromFile("Content/Shaders/DepthQuad.fsh", GL_FRAGMENT_SHADER);
         depthQuadProgram = createAndLinkProgram(depthQuadVS, depthQuadFS);
 
+        particleBillboardVS = createShaderFromFile("Content/Shaders/ParticleBillboard.vsh", GL_VERTEX_SHADER);
+        particleBillboardFS = createShaderFromFile("Content/Shaders/ParticleBillboard.fsh", GL_FRAGMENT_SHADER);
+        particleBillboardProgram = createAndLinkProgram(particleBillboardVS, particleBillboardFS);
+
         // Query uniform locations from the shader programs
         modelMatrixLocation = glGetUniformLocation(toonLightingProgram, "ModelMatrix");
         invTrModelMatrixLocation = glGetUniformLocation(toonLightingProgram, "InvTrModelMatrix");
@@ -80,6 +85,10 @@ namespace tankwars {
 
         genShadowMapModelMatrixLocation = glGetUniformLocation(genShadowMapProgram, "ModelMatrix");
         genShadowMapViewProjMatrixLocation = glGetUniformLocation(genShadowMapProgram, "ViewProjMatrix");
+
+        particleBillboardCameraRightLocation = glGetUniformLocation(particleBillboardProgram, "CameraRight");
+        particleBillboardCameraUpLocation = glGetUniformLocation(particleBillboardProgram, "CameraUp");
+        particleBillboardViewProjMatLocation = glGetUniformLocation(particleBillboardProgram, "ViewProjMat");
 
         // Create shadow map
         glGenTextures(1, &shadowMap);
@@ -221,6 +230,27 @@ namespace tankwars {
             sceneObject->mesh->render();
         }
 
+        // Render particles
+        glUseProgram(particleBillboardProgram);
+        glUniformMatrix4fv(particleBillboardViewProjMatLocation, 1, GL_FALSE, glm::value_ptr(viewProjMatrix));
+
+        glm::vec3 cameraRight(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]);
+        glm::vec3 cameraUp(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]);
+        glUniform3fv(particleBillboardCameraRightLocation, 1, glm::value_ptr(cameraRight));
+        glUniform3fv(particleBillboardCameraUpLocation, 1, glm::value_ptr(cameraUp));
+
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        for (auto particleSystem : particleSystems) {
+            particleSystem->render();
+        }
+
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+
         /*
         glUseProgram(depthQuadProgram);
         glActiveTexture(GL_TEXTURE0);
@@ -254,5 +284,14 @@ namespace tankwars {
 
     void Renderer::setTerrain(const VoxelTerrain* terrain) {
         this->terrain = terrain;
+    }
+
+    void Renderer::addParticleSystem(const ParticleSystem& particleSystem) {
+        particleSystems.push_back(&particleSystem);
+    }
+
+    void Renderer::removeParticleSystem(const ParticleSystem& particleSystem) {
+        auto end = particleSystems.end();
+        particleSystems.erase(std::remove(particleSystems.begin(), end, &particleSystem), end);
     }
 }

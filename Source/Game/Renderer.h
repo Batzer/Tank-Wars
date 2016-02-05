@@ -7,6 +7,7 @@
 
 namespace tankwars {
     struct MeshInstance;
+    class ParticleSystem;
 
     class Renderer {
     public:
@@ -28,6 +29,8 @@ namespace tankwars {
         void addSceneObject(const MeshInstance& instance);
         void removeSceneObject(const MeshInstance& instance);
         void setTerrain(const VoxelTerrain* terrain);
+        void addParticleSystem(const ParticleSystem& particleSystem);
+        void removeParticleSystem(const ParticleSystem& particleSystem);
 
     private:
         // Window info
@@ -47,6 +50,9 @@ namespace tankwars {
         GLuint depthQuadVS;
         GLuint depthQuadFS;
         GLuint depthQuadProgram;
+        GLuint particleBillboardVS;
+        GLuint particleBillboardFS;
+        GLuint particleBillboardProgram;
 
         // Uniform locations
         GLint modelMatrixLocation;
@@ -68,6 +74,10 @@ namespace tankwars {
         GLint genShadowMapModelMatrixLocation;
         GLint genShadowMapViewProjMatrixLocation;
 
+        GLint particleBillboardCameraRightLocation;
+        GLint particleBillboardCameraUpLocation;
+        GLint particleBillboardViewProjMatLocation;
+
         // Shadow mapping
         static constexpr GLsizei ShadowMapSize = 4096;
         GLuint shadowMap;
@@ -80,6 +90,7 @@ namespace tankwars {
         glm::vec3 lightDirection = { 0, -1, -1 };
         glm::vec3 lightColor = { 1, 1, 1 };
         std::vector<const MeshInstance*> sceneObjects;
+        std::vector<const ParticleSystem*> particleSystems;
         const VoxelTerrain* terrain = nullptr;
     };
 }

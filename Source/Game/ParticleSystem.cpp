@@ -97,7 +97,7 @@ namespace tankwars {
     }
 
     void ParticleSystem::update(float delta, const std::function<void(Particle&)>& customUpdate) {
-        for (std::size_t i = 0; i < nextFreeParticle; i++) {
+        for (std::size_t i = 0; i < nextFreeParticle; ) {
             auto& particle = particles[i];
             particle.velocity += particle.acceleration * delta;
             particle.position += particle.velocity * delta;
@@ -111,6 +111,9 @@ namespace tankwars {
             if (!particle.isAlive) {
                 std::swap(particles[i], particles[nextFreeParticle - 1]);
                 nextFreeParticle--;
+            }
+            else {
+                i++;
             }
         }
 

@@ -44,7 +44,7 @@ namespace tankwars {
 		tankMaterial.specularColor = { 1, 1, 0 };
 		tankMaterial.specularExponent = 16;
 
-		//Wavefronts
+
 		auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
 		auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
 		auto tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
@@ -52,7 +52,6 @@ namespace tankwars {
 		auto tankRightFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightFrontWheelCentered.obj");
 		auto tankLeftBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftBackWheelCentered.obj");
 		auto tankRightBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightBackWheelCentered.obj");
-
 		//Meshes
 		tankBodyMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankBodyModel)));
 		tankHeadMesh.reset(new Mesh(tankwars::createMeshFromWavefront(tankHeadModel)));
@@ -267,11 +266,10 @@ namespace tankwars {
 		for (MeshInstance& mI : tankMeshInstances) {
 			mI.modelMatrix = tankModelMat;
 		}
-
-		glm::vec3 rightVec(tankModelMat[0][0], 0, tankModelMat[0][2]);
-		glm::vec3 upVec(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]);
-		tankMeshInstances[1].modelMatrix = glm::rotate(tankModelMat, headAndTurretAngle, glm::normalize(upVec));//HeadAndCanonRotationAngle 
-		tankMeshInstances[2].modelMatrix = glm::rotate(glm::rotate(tankModelMat, headAndTurretAngle, upVec), turretAngle, glm::normalize(rightVec));
+		glm::vec3 rightVec = glm::normalize(glm::vec3(tankModelMat[0][0], 0, tankModelMat[0][2]));
+		glm::vec3 upVec = glm::normalize(glm::vec3(tankModelMat[1][0], tankModelMat[1][1], tankModelMat[1][2]));
+		tankMeshInstances[1].modelMatrix = glm::translate(glm::rotate(tankModelMat, headAndTurretAngle, glm::vec3(0,1,0)),glm::vec3(0,3,0));//HeadAndCanonRotationAngle 
+		tankMeshInstances[2].modelMatrix = glm::translate(glm::rotate(tankMeshInstances[1].modelMatrix, headAndTurretRotationAlpha, glm::vec3(1, 0, 0)), glm::vec3(1, 0, 0));
 
 		for (int i = 0; i < 4; i++) {
 			tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(glm::value_ptr(tankModelMat));

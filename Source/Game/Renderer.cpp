@@ -84,10 +84,12 @@ namespace tankwars {
         // Create shadow map
         glGenTextures(1, &shadowMap);
         glBindTexture(GL_TEXTURE_2D, shadowMap);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, ShadowMapSize, ShadowMapSize,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, ShadowMapSize, ShadowMapSize,
                      0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
@@ -155,7 +157,7 @@ namespace tankwars {
         glUseProgram(genShadowMapProgram);
         
         auto lightViewMatrix = glm::lookAt(cameraPos - lightDirection * 50.0f, cameraPos, glm::vec3(0, 1, 0));
-        auto lightProjMatrix = glm::ortho(-75.0f, 75.0f, -75.0f, 75.0f, -25.0f, 150.0f);
+        auto lightProjMatrix = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 1.0f, 150.0f);
         auto lightMatrix = lightProjMatrix * lightViewMatrix;
         glUniformMatrix4fv(genShadowMapViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(lightMatrix));
 

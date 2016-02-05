@@ -271,8 +271,9 @@ namespace tankwars {
         }
 
         // Upload the new geometry to the GPU
+        // Marching Cubes generates max 5 triangles per cell, so 15 indices
         auto vertexArrayBufferSize = static_cast<GLsizei>((chunkWidth + 1) * (chunkHeight + 1) * (chunkDepth + 1) * sizeof(Vertex));
-        auto elementArrayBufferSize = static_cast<GLsizei>(chunkWidth * chunkHeight * chunkDepth * 36 * sizeof(uint32_t));
+        auto elementArrayBufferSize = static_cast<GLsizei>(chunkWidth * chunkHeight * chunkDepth * 15 * sizeof(uint32_t));
 
         glBindBuffer(GL_ARRAY_BUFFER, chunkVertexArrayBuffers[chunkIndex]);
         glBufferData(GL_ARRAY_BUFFER, vertexArrayBufferSize, nullptr, GL_STREAM_DRAW);

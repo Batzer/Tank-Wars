@@ -6,8 +6,8 @@
 #include <memory>
 
 #include <btBulletDynamicsCommon.h>
-#include <BulletCollision\CollisionShapes\btBvhTriangleMeshShape.h>
-#include <BulletCollision\CollisionShapes\btTriangleMesh.h>
+#include <BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h>
+#include <BulletCollision/CollisionShapes/btTriangleMesh.h>
 #include <GL/gl3w.h>
 
 #include "Vertex.h"

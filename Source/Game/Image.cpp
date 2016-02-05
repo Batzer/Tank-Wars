@@ -3,6 +3,7 @@
 #include <stb_image.h>
 #include <vector>
 #include <fstream>
+#include <stdexcept>
 
 namespace tankwars {
     Image::Image(const std::string& path) {

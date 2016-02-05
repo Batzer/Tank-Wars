@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
-#include <GLFW/glfw3.h>
 #include "Terrain.h"
+#include <GLFW/glfw3.h>
 #include "Tank.h"
 #include "Camera.h"
 

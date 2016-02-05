@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <memory>
+#include <stdexcept>
 
 namespace tankwars {
     GLuint createAndCompileShader(const GLchar* source, GLenum type) {

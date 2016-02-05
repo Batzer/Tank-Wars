@@ -4,7 +4,7 @@
 
 #include "Mesh.h"
 #include <btBulletDynamicsCommon.h>
-#include <BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h>
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <vector>
 #include <string>
 

@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <algorithm>
+#include <stdexcept>
 
 namespace {
     struct FaceVertex {

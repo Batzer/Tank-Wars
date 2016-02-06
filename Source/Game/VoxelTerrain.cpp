@@ -166,10 +166,16 @@ namespace tankwars {
 
         for (int z = 0; z < heightMap.getHeight(); z++)
         for (int x = 0; x < heightMap.getWidth(); x++) {
-            auto index = (heightMap.getWidth() - x - 1) + (heightMap.getHeight() - z - 1) * heightMap.getWidth();
-            auto heightValue = static_cast<int>(heightMap.getImage()[index * heightMap.getNumChannels()]);
-            heightValue /= invHeightScale;
-
+            int heightValue;
+            if (x == 0 || x == heightMap.getWidth() - 1 || z == 0 || z == heightMap.getHeight() - 1) {
+                heightValue = terrain.getHeight() - 1;
+            }
+            else {
+                auto index = (heightMap.getWidth() - x - 1) + (heightMap.getHeight() - z - 1) * heightMap.getWidth();
+                heightValue = static_cast<int>(heightMap.getImage()[index * heightMap.getNumChannels()]);
+                heightValue /= invHeightScale;
+            }
+            
             for (int y = 0; y <= heightValue; y++) {
                 terrain.setVoxel(x, y, z, VoxelType::Solid);
             }

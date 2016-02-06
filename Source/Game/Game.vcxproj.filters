@@ -78,7 +78,9 @@
     <None Include="..\..\Content\Shaders\DepthQuad.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\..\Content\Shaders\ParticleBillboard.vsh" />
+    <None Include="..\..\Content\Shaders\ParticleBillboard.vsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">

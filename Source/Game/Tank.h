@@ -138,10 +138,15 @@ namespace tankwars {
 		class BulletHandler {
 		public:
 			BulletHandler(btDynamicsWorld* dynamicsWorld, Renderer& renderer, int tankId);
-			void createNewBullet(btTransform& tr, btScalar power);
-			void updateBullets();
+			void createNewBullet(btTransform& tr);
+			void updateBullets(btScalar dt, btTransform direction);
 			void removeBullet(int index);
+			void updatePower(btScalar pwr);
 		private:
+			btVector3 bulletInertia;
+			btScalar mass = 20;
+			void removeRaycastBullet(int index);
+			btScalar power;
 			int tankID;
 			btDynamicsWorld* dynamicsWorld;
 			Renderer& renderer;
@@ -149,9 +154,12 @@ namespace tankwars {
 			Mesh bulletMesh;
 			size_t bulletMax = 20;
 			std::array<Bullet, 20> bullets;
+			size_t bulletRaycastMax = 500;
+			std::array<Bullet, 500> raycastBullets;
+			btScalar lastTimeBulletRaycastShot = 0;
+			btScalar timeBetweenBulletRaycastShots = 0.02f;
 			Material bulletMat;
 		};
-
 		BulletHandler bulletHandler;
 	};
 }

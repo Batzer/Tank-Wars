@@ -32,12 +32,6 @@ namespace tankwars {
 			mean++;
 		}
 		int height = getBestHeightFor(spawnCoordinates[mean]);
-		/*for (height = terrain->getHeight()-3; height > 3; height--) {
-			if (!isPlaneClear(spawnCoordinates[mean],height)) {
-				break;
-			}
-		}
-		height+=4;*/
 		tanks[index]->reset(glm::vec3(spawnCoordinates[mean].getX(), height, -spawnCoordinates[mean].getZ()), glm::vec3(terrain->getWidth()/2,0,terrain->getDepth()));
 	}
 	btScalar Game::getBestHeightFor(btVector3 pos) {
@@ -87,10 +81,10 @@ namespace tankwars {
 		float rotation_alpha = 0.1f;
 		//name
 		//const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-		if (joystickAvailable[0]) {
+		if (joystickAvailable[1]) {
 			//axis
 			int count;
-			const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
+			const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_2, &count);
 			for (char i = 0; i < count; i++) {
 				switch (i) {
 				case 0:		//L-stick x-Axis
@@ -110,7 +104,7 @@ namespace tankwars {
 			//std::cout << axis[0] << "\t" << axis[1] << "\t" << axis[2] << "\t" << axis[3]<<"\n";
 			//buttons
 			count;
-			const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+			const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_2, &count);
 			for (char i = 0; i < count; i++) {
 				switch (i) {
 				case 0:

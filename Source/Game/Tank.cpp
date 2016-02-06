@@ -225,7 +225,7 @@ namespace tankwars {
 		if (dt - lastTimeShot > timeBetweenShots) {
 			btTransform trans;
 			trans.setFromOpenGLMatrix(glm::value_ptr(tankMeshInstances[2].modelMatrix));
-			bulletHandler.createNewBullet(trans, shootingPower);
+			bulletHandler.createNewBullet(trans);
 			lastTimeShot = dt;
 		}
 	}
@@ -240,6 +240,7 @@ namespace tankwars {
 					shootingPower -= shootingPowerIncrease;
 			}
 			lastPowerAdjust = dt;
+			bulletHandler.updatePower(shootingPower);
 		}
 	}
 	//---------------------------------------End-Controller-Functions----------------------------
@@ -324,8 +325,9 @@ namespace tankwars {
 			tank->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(glm::value_ptr(tankModelMat));
 			tankMeshInstances[i + 3].modelMatrix = tankModelMat;
 		}
-
-		bulletHandler.updateBullets();
+		btTransform transi;
+		transi.setFromOpenGLMatrix(glm::value_ptr(tankMeshInstances[2].modelMatrix));
+		bulletHandler.updateBullets(dt,transi);
 	}
 
 	Tank::BulletHandler::BulletHandler(btDynamicsWorld* dynamicsWorld, Renderer& renderer,int tankId)
@@ -337,14 +339,18 @@ namespace tankwars {
 		bulletMat.diffuseColor = { 0.6f, 0.6f, 0 };
 		bulletMat.specularColor = { 1, 0, 0 };
 		bulletMat.specularExponent = 16;
+		bulletInertia = btVector3(0, 0, 0);
 		for (int i = 0; i < bulletMax;i++) {
 			bullets.at(i).set(tankId, MeshInstance(bulletMesh, bulletMat));
 		}
+		for (int i = 0; i < bulletRaycastMax; i++) {
+			raycastBullets.at(i).set(tankId, MeshInstance(bulletMesh, bulletMat));
+		}
 	}
-
-	void Tank::BulletHandler::createNewBullet(btTransform& tr, btScalar power) {
-		btVector3 bulletInertia(0, 0, 0);
-		btScalar mass = 20;
+	void Tank::BulletHandler::updatePower(btScalar pwr) {
+		power = pwr;
+	}
+	void Tank::BulletHandler::createNewBullet(btTransform& tr) {
 		glm::mat4 bulletMatrix;
 		tr.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
 
@@ -366,10 +372,10 @@ namespace tankwars {
 		}
 	}
 
-	void Tank::BulletHandler::updateBullets() {
+	void Tank::BulletHandler::updateBullets(btScalar dt,btTransform direction) {
 		glm::mat4 bulletMat;
 		btTransform trans;
-
+		bool shotABulletThisTick = false;
 		for (int i = 0; i < bulletMax;i++) {
 			if (bullets.at(i).disableMe) {
 				removeBullet(i);
@@ -379,6 +385,33 @@ namespace tankwars {
 				bullets.at(i).bulletBody->getMotionState()->getWorldTransform(trans);
 				trans.getOpenGLMatrix(glm::value_ptr(bulletMat));
 				bullets.at(i).bulletMeshInstance.modelMatrix = bulletMat;
+				shotABulletThisTick = true;
+			}
+		}
+		for (int i = 0; i < bulletRaycastMax; i++) {
+			if (raycastBullets[i].disableMe) {
+				removeRaycastBullet(i);
+			}
+		}
+		if (!shotABulletThisTick && (dt-lastTimeBulletRaycastShot>timeBetweenBulletRaycastShots)) {
+			glm::mat4 bulletMatrix;
+			direction.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
+			bool foundASpot = false;
+			for (int i = 0; !foundASpot || i >= bulletRaycastMax;i++) {
+				if (raycastBullets.at(i).active == false) {
+					raycastBullets.at(i).set(new btRigidBody(mass, new btDefaultMotionState(direction), &bulletShape, bulletInertia));
+					raycastBullets.at(i).bulletBody->setLinearVelocity(-btVector3(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2])*power);
+					raycastBullets.at(i).bulletBody->setCollisionFlags(raycastBullets.at(i).bulletBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+					raycastBullets.at(i).bulletBody->setUserIndex(7);
+					raycastBullets.at(i).bulletBody->setUserPointer(&raycastBullets.at(i));
+					//raycastBullets.at(i).bulletBody->setCcdMotionThreshold(0.2f);
+					//raycastBullets.at(i).bulletBody->setCcdSweptSphereRadius(0.1f);
+					raycastBullets.at(i).active = true;
+					raycastBullets.at(i).disableMe = false;
+					dynamicsWorld->addRigidBody(raycastBullets.at(i).bulletBody.get());
+					lastTimeBulletRaycastShot = dt;
+					foundASpot = true;
+				}
 			}
 		}
 	}
@@ -387,5 +420,9 @@ namespace tankwars {
 		dynamicsWorld->removeRigidBody(bullets.at(index).bulletBody.get());
 		renderer.removeSceneObject(bullets.at(index).bulletMeshInstance);
 		bullets.at(index).active = false;
+	}
+	void Tank::BulletHandler::removeRaycastBullet(int index) {
+		dynamicsWorld->removeRigidBody(raycastBullets.at(index).bulletBody.get());
+		raycastBullets.at(index).active = false;
 	}
 }

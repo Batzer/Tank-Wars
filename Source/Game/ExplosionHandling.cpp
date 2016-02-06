@@ -48,6 +48,20 @@ namespace tankwars {
 		}
 	}
 	bool customCallback(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1) {
+		if (colObj0Wrap->getCollisionObject()->getUserIndex() == 7) {
+			Tank::Bullet* bullet = ((Tank::Bullet*)colObj0Wrap->getCollisionObject()->getUserPointer());
+			bullet->disableMe = true;
+			std::cout << cp.getPositionWorldOnA().getX() << " " << cp.getPositionWorldOnA().getY() << " " << cp.getPositionWorldOnA().getZ() << "\n";
+			//show aim circle at collision position
+			return false;
+		}
+		if (colObj1Wrap->getCollisionObject()->getUserIndex() == 7) {
+			Tank::Bullet* bullet = ((Tank::Bullet*)colObj1Wrap->getCollisionObject()->getUserPointer());
+			bullet->disableMe = true;
+			std::cout << cp.getPositionWorldOnB().getX() << " " << cp.getPositionWorldOnB().getY() << " " << cp.getPositionWorldOnB().getZ() << "\n";
+			//show aim circle at collision position
+			return false;
+		}
 		if (colObj0Wrap->getCollisionObject()->getUserIndex() == 10) {
 			Tank::Bullet* bullet = ((Tank::Bullet*)colObj0Wrap->getCollisionObject()->getUserPointer());
 			bullet->disableMe = true;

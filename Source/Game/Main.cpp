@@ -158,7 +158,7 @@ int main() {
     tankwars::MeshInstance sphere(sphereMesh, mat);
     renderer.addSceneObject(sphere);
 
-    auto smokeTexture = tankwars::createTextureFromFile("Content/Textures/smoke.png");
+    auto smokeTexture = tankwars::createTextureFromFile("Content/Textures/comic-boom-explosion.png");
     tankwars::ParticleSystem particleSystem(512, smokeTexture);
     particleSystem.setEmitterPosition({30, 30, -30});
     particleSystem.setParticleColorRange({1, 1, 1, 0.25f}, {1, 1, 1, 0.75f});

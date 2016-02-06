@@ -142,6 +142,7 @@ namespace tankwars {
 			void updateBullets(btScalar dt, btTransform direction);
 			void removeBullet(int index);
 			void updatePower(btScalar pwr);
+			~BulletHandler();
 		private:
 			btVector3 bulletInertia;
 			btScalar mass = 20;

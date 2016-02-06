@@ -25,6 +25,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="ExplosionHandling.cpp" />
     <ClCompile Include="MarchingCubes.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -45,6 +46,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="ExplosionHandling.h" />
     <ClInclude Include="MarchingCubes.h" />
+    <ClInclude Include="ParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">
@@ -71,6 +73,11 @@
     <None Include="..\..\Content\Shaders\Outline.vsh">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\..\Content\Shaders\GenShadowMap.vsh" />
+    <None Include="..\..\Content\Shaders\DepthQuad.vsh" />
+    <None Include="..\..\Content\Shaders\ParticleBillboard.fsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -81,10 +88,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Content\Shaders\GenShadowMap.vsh">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Content\Shaders\DepthQuad.vsh">
+    <FxCompile Include="..\..\Content\Shaders\ParticleBillboard.vsh">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -274,6 +274,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshInstance.cpp" />
     <ClCompile Include="MeshTools.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="stb_image.cpp" />
@@ -290,6 +291,7 @@
     <None Include="..\..\Content\Shaders\DepthQuad.fsh" />
     <None Include="..\..\Content\Shaders\GenShadowMap.fsh" />
     <None Include="..\..\Content\Shaders\Outline.fsh" />
+    <None Include="..\..\Content\Shaders\ParticleBillboard.fsh" />
     <None Include="..\..\Content\Shaders\ToonLighting.fsh" />
   </ItemGroup>
   <ItemGroup>
@@ -308,6 +310,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshInstance.h" />
     <ClInclude Include="MeshTools.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Tank.h" />
@@ -334,6 +337,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\DepthQuad.vsh">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\ParticleBillboard.vsh">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

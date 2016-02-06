@@ -1,7 +1,10 @@
 #include "GLTools.h"
+
 #include <fstream>
 #include <sstream>
 #include <memory>
+
+#include "Image.h"
 
 namespace tankwars {
     GLuint createAndCompileShader(const GLchar* source, GLenum type) {
@@ -83,5 +86,43 @@ namespace tankwars {
         }
 
         return program;
+    }
+
+    GLuint createTextureFromFile(const std::string& path, bool generateMipMaps) {
+        static const GLint channelToFormat[] = {
+            GL_R8, GL_RG8, GL_RGB8, GL_RGBA8
+        };
+
+        Image image(path);
+        GLint format = channelToFormat[image.getNumChannels() - 1];
+        GLenum textureFormat;
+        GLenum textureFormatType = GL_UNSIGNED_BYTE;
+
+        switch (format) {
+        case GL_R8:    textureFormat = GL_RED;  break;
+        case GL_RG8:   textureFormat = GL_RG;   break;
+        case GL_RGB8:  textureFormat = GL_RGB;  break;
+        case GL_RGBA8: textureFormat = GL_RGBA; break;
+        }
+
+        if (!textureFormat || !textureFormatType) {
+            throw std::runtime_error("invalid texture format");
+        }
+
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, image.getWidth(), image.getHeight(), 0,
+                     textureFormat, textureFormatType, image.getImage());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        if (generateMipMaps) {
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+
+        return texture;
     }
 }

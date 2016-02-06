@@ -22,6 +22,8 @@
 #include "Wavefront.h"
 #include "Keyboard.h"
 #include "ExplosionHandling.h"
+#include "ParticleSystem.h"
+#include "GLTools.h"
 
 constexpr char* WindowTitle = "Tank Wars";
 constexpr int ResolutionX = 1280;
@@ -155,6 +157,14 @@ int main() {
     mat.specularExponent = 256;
     tankwars::MeshInstance sphere(sphereMesh, mat);
     renderer.addSceneObject(sphere);
+
+    auto smokeTexture = tankwars::createTextureFromFile("Content/Textures/smoke.png");
+    tankwars::ParticleSystem particleSystem(512, smokeTexture);
+    particleSystem.setEmitterPosition({30, 30, -30});
+    particleSystem.setParticleColorRange({1, 1, 1, 0.25f}, {1, 1, 1, 0.75f});
+    particleSystem.setParticleSizeRange(1, 2);
+    particleSystem.setParticleLifeTimeRange(3, 4);
+    renderer.addParticleSystem(particleSystem);
     
     float roll = 0.0f;
     float yaw = 0.0f;
@@ -175,7 +185,13 @@ int main() {
         lastTime = currentTime;
 
         // Update simulation
-		
+        
+        particleSystem.update(frameTime, [&](tankwars::Particle& p) {
+            p.color.a -= 0.3f * frameTime;
+            if (p.color.a < 0.0f) {
+                p.isAlive = false;
+            }
+        });
         dynamicsWorld->stepSimulation(frameTime, 15, 1.0f / 120.0f);
 
         // Update game here
@@ -194,7 +210,7 @@ int main() {
 	    if (tankwars::Keyboard::isKeyDown(GLFW_KEY_O)) tank1.driveBack(true);
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_J))tank1.turn(true);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
-		//if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))dynamicsWorld->removeRigidBody(groundRigidBody);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))particleSystem.emit(1);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_SPACE)) {
             for (size_t z = 1; z < terrain2.getDepth()-1; z++)
             for (size_t y = 1; y < terrain2.getHeight()-1; y++)
@@ -212,6 +228,7 @@ int main() {
             terrain2.updateMesh();
         }
 		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
+
 		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
 		freeCam.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
         freeCam.update();

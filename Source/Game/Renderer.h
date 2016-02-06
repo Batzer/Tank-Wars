@@ -41,6 +41,9 @@ namespace tankwars {
         GLuint toonLightingVS;
         GLuint toonLightingFS;
         GLuint toonLightingProgram;
+        GLuint toonTerrainVS;
+        GLuint toonTerrainFS;
+        GLuint toonTerrainProgram;
         GLuint outlineVS;
         GLuint outlineFS;
         GLuint outlineProgram;
@@ -55,18 +58,32 @@ namespace tankwars {
         GLuint particleBillboardProgram;
 
         // Uniform locations
-        GLint modelMatrixLocation;
-        GLint invTrModelMatrixLocation;
-        GLint viewProjMatrixLocation;
-        GLint lightMatrixLocation;
-        GLint ambientColorLocation;
-        GLint dirToLightLocation;
-        GLint eyePosLocation;
-        GLint lightColorLocation;
-        GLint materialDiffuseLocation;
-        GLint materialSpecularLocation;
-        GLint specularExponentLocation;
-        GLint shadowMapLocation;
+        GLint toonLightingModelMatrixLocation;
+        GLint toonLightingInvTrModelMatrixLocation;
+        GLint toonLightingViewProjMatrixLocation;
+        GLint toonLightingLightMatrixLocation;
+        GLint toonLightingAmbientColorLocation;
+        GLint toonLightingDirToLightLocation;
+        GLint toonLightingEyePosLocation;
+        GLint toonLightingLightColorLocation;
+        GLint toonLightingMaterialDiffuseLocation;
+        GLint toonLightingMaterialSpecularLocation;
+        GLint toonLightingSpecularExponentLocation;
+        GLint toonLightingShadowMapLocation;
+
+        GLint toonTerrainModelMatrixLocation;
+        GLint toonTerrainInvTrModelMatrixLocation;
+        GLint toonTerrainViewProjMatrixLocation;
+        GLint toonTerrainLightMatrixLocation;
+        GLint toonTerrainAmbientColorLocation;
+        GLint toonTerrainDirToLightLocation;
+        GLint toonTerrainEyePosLocation;
+        GLint toonTerrainLightColorLocation;
+        GLint toonTerrainMaterialDiffuseLocation;
+        GLint toonTerrainMaterialSpecularLocation;
+        GLint toonTerrainSpecularExponentLocation;
+        GLint toonTerrainColorMapLocation;
+        GLint toonTerrainShadowMapLocation;
 
         GLint outlineModelMatrixLocation;
         GLint outlineViewProjMatrixLocation;
@@ -92,5 +109,6 @@ namespace tankwars {
         std::vector<const MeshInstance*> sceneObjects;
         std::vector<const ParticleSystem*> particleSystems;
         const VoxelTerrain* terrain = nullptr;
+        GLuint terrainTexture;
     };
 }

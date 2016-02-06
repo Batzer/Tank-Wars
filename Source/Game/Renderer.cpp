@@ -49,6 +49,10 @@ namespace tankwars {
         toonLightingFS = createShaderFromFile("Content/Shaders/ToonLighting.fsh", GL_FRAGMENT_SHADER);
         toonLightingProgram = createAndLinkProgram(toonLightingVS, toonLightingFS);
 
+        toonTerrainVS = createShaderFromFile("Content/Shaders/ToonTerrain.vsh", GL_VERTEX_SHADER);
+        toonTerrainFS = createShaderFromFile("Content/Shaders/ToonTerrain.fsh", GL_FRAGMENT_SHADER);
+        toonTerrainProgram = createAndLinkProgram(toonTerrainVS, toonTerrainFS);
+
         outlineVS = createShaderFromFile("Content/Shaders/Outline.vsh", GL_VERTEX_SHADER);
         outlineFS = createShaderFromFile("Content/Shaders/Outline.fsh", GL_FRAGMENT_SHADER);
         outlineProgram = createAndLinkProgram(outlineVS, outlineFS);
@@ -66,18 +70,32 @@ namespace tankwars {
         particleBillboardProgram = createAndLinkProgram(particleBillboardVS, particleBillboardFS);
 
         // Query uniform locations from the shader programs
-        modelMatrixLocation = glGetUniformLocation(toonLightingProgram, "ModelMatrix");
-        invTrModelMatrixLocation = glGetUniformLocation(toonLightingProgram, "InvTrModelMatrix");
-        viewProjMatrixLocation = glGetUniformLocation(toonLightingProgram, "ViewProjMatrix");
-        lightMatrixLocation = glGetUniformLocation(toonLightingProgram, "LightMatrix");
-        ambientColorLocation = glGetUniformLocation(toonLightingProgram, "AmbientColor");
-        lightColorLocation = glGetUniformLocation(toonLightingProgram, "LightColor");
-        dirToLightLocation = glGetUniformLocation(toonLightingProgram, "DirToLight");
-        eyePosLocation = glGetUniformLocation(toonLightingProgram, "EyePos");
-        materialDiffuseLocation = glGetUniformLocation(toonLightingProgram, "MaterialDiffuse");
-        materialSpecularLocation = glGetUniformLocation(toonLightingProgram, "MaterialSpecular");
-        specularExponentLocation = glGetUniformLocation(toonLightingProgram, "SpecularExponent");
-        shadowMapLocation = glGetUniformLocation(toonLightingProgram, "ShadowMap");
+        toonLightingModelMatrixLocation = glGetUniformLocation(toonLightingProgram, "ModelMatrix");
+        toonLightingInvTrModelMatrixLocation = glGetUniformLocation(toonLightingProgram, "InvTrModelMatrix");
+        toonLightingViewProjMatrixLocation = glGetUniformLocation(toonLightingProgram, "ViewProjMatrix");
+        toonLightingLightMatrixLocation = glGetUniformLocation(toonLightingProgram, "LightMatrix");
+        toonLightingAmbientColorLocation = glGetUniformLocation(toonLightingProgram, "AmbientColor");
+        toonLightingLightColorLocation = glGetUniformLocation(toonLightingProgram, "LightColor");
+        toonLightingDirToLightLocation = glGetUniformLocation(toonLightingProgram, "DirToLight");
+        toonLightingEyePosLocation = glGetUniformLocation(toonLightingProgram, "EyePos");
+        toonLightingMaterialDiffuseLocation = glGetUniformLocation(toonLightingProgram, "MaterialDiffuse");
+        toonLightingMaterialSpecularLocation = glGetUniformLocation(toonLightingProgram, "MaterialSpecular");
+        toonLightingSpecularExponentLocation = glGetUniformLocation(toonLightingProgram, "SpecularExponent");
+        toonLightingShadowMapLocation = glGetUniformLocation(toonLightingProgram, "ShadowMap");
+
+        toonTerrainModelMatrixLocation = glGetUniformLocation(toonTerrainProgram, "ModelMatrix");
+        toonTerrainInvTrModelMatrixLocation = glGetUniformLocation(toonTerrainProgram, "InvTrModelMatrix");
+        toonTerrainViewProjMatrixLocation = glGetUniformLocation(toonTerrainProgram, "ViewProjMatrix");
+        toonTerrainLightMatrixLocation = glGetUniformLocation(toonTerrainProgram, "LightMatrix");
+        toonTerrainAmbientColorLocation = glGetUniformLocation(toonTerrainProgram, "AmbientColor");
+        toonTerrainLightColorLocation = glGetUniformLocation(toonTerrainProgram, "LightColor");
+        toonTerrainDirToLightLocation = glGetUniformLocation(toonTerrainProgram, "DirToLight");
+        toonTerrainEyePosLocation = glGetUniformLocation(toonTerrainProgram, "EyePos");
+        toonTerrainMaterialDiffuseLocation = glGetUniformLocation(toonTerrainProgram, "MaterialDiffuse");
+        toonTerrainMaterialSpecularLocation = glGetUniformLocation(toonTerrainProgram, "MaterialSpecular");
+        toonTerrainSpecularExponentLocation = glGetUniformLocation(toonTerrainProgram, "SpecularExponent");
+        toonTerrainShadowMapLocation = glGetUniformLocation(toonTerrainProgram, "ShadowMap");
+        toonTerrainColorMapLocation = glGetUniformLocation(toonTerrainProgram, "ColorMap");
 
         outlineModelMatrixLocation = glGetUniformLocation(outlineProgram, "ModelMatrix");
         outlineViewProjMatrixLocation = glGetUniformLocation(outlineProgram, "ViewProjMatrix");
@@ -117,6 +135,9 @@ namespace tankwars {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
+
+        // Load textures
+        terrainTexture = createTextureFromFile("Content/Textures/terrain.png", true);
     }
 
     Renderer::Renderer(Renderer&& other) {
@@ -138,7 +159,7 @@ namespace tankwars {
         std::swap(toonLightingVS, other.toonLightingVS);
         std::swap(toonLightingFS, other.toonLightingFS);
         std::swap(toonLightingProgram, other.toonLightingProgram);
-        modelMatrixLocation = other.modelMatrixLocation;
+        /*modelMatrixLocation = other.modelMatrixLocation;
         invTrModelMatrixLocation = other.invTrModelMatrixLocation;
         viewProjMatrixLocation = other.viewProjMatrixLocation;
         ambientColorLocation = other.ambientColorLocation;
@@ -147,7 +168,7 @@ namespace tankwars {
         lightColorLocation = other.lightColorLocation;
         materialDiffuseLocation = other.materialDiffuseLocation;
         materialSpecularLocation = other.materialSpecularLocation;
-        specularExponentLocation = other.specularExponentLocation;
+        specularExponentLocation = other.specularExponentLocation;*/
         ambientColor = other.ambientColor;
         lightDirection = other.lightDirection;
         lightColor = other.lightColor;
@@ -193,25 +214,45 @@ namespace tankwars {
         }
 
         // Render colors
+        //
+        // Render terrain
         glCullFace(GL_BACK);
-        glUseProgram(toonLightingProgram);
-        glUniform3fv(ambientColorLocation, 1, glm::value_ptr(ambientColor));
-        glUniform3fv(lightColorLocation, 1, glm::value_ptr(lightColor));
-        glUniform3fv(dirToLightLocation, 1, glm::value_ptr(-glm::normalize(lightDirection)));
-        glUniform3fv(eyePosLocation, 1, glm::value_ptr(cameraPos));
-        glUniformMatrix4fv(viewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMatrix));
-        glUniformMatrix4fv(lightMatrixLocation, 1, GL_FALSE, glm::value_ptr(lightMatrix));
+        glUseProgram(toonTerrainProgram);
+        glUniform3fv(toonTerrainAmbientColorLocation, 1, glm::value_ptr(ambientColor));
+        glUniform3fv(toonTerrainLightColorLocation, 1, glm::value_ptr(lightColor));
+        glUniform3fv(toonTerrainDirToLightLocation, 1, glm::value_ptr(-glm::normalize(lightDirection)));
+        glUniform3fv(toonTerrainEyePosLocation, 1, glm::value_ptr(cameraPos));
+        glUniformMatrix4fv(toonTerrainViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMatrix));
+        glUniformMatrix4fv(toonTerrainLightMatrixLocation, 1, GL_FALSE, glm::value_ptr(lightMatrix));
 
         glActiveTexture(GL_TEXTURE0);
-        glUniform1i(shadowMapLocation, 0);
+        glUniform1i(toonTerrainShadowMapLocation, 0);
         glBindTexture(GL_TEXTURE_2D, shadowMap);
+
+        glActiveTexture(GL_TEXTURE1);
+        glUniform1i(toonTerrainColorMapLocation, 1);
+        glBindTexture(GL_TEXTURE_2D, terrainTexture);
         
-        glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-        glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-        glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(glm::vec3(0, 0.6f, 0)));
-        glUniform3fv(materialSpecularLocation, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
-        glUniform1f(specularExponentLocation, 1.0f);
+        glUniformMatrix4fv(toonTerrainModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+        glUniformMatrix4fv(toonTerrainInvTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+        glUniform3fv(toonTerrainMaterialDiffuseLocation, 1, glm::value_ptr(glm::vec3(1, 1, 1)));
+        glUniform3fv(toonTerrainMaterialSpecularLocation, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
+        glUniform1f(toonTerrainSpecularExponentLocation, 1.0f);
         terrain->render();
+
+        // Render the meshes
+        glCullFace(GL_BACK);
+        glUseProgram(toonLightingProgram);
+        glUniform3fv(toonLightingAmbientColorLocation, 1, glm::value_ptr(ambientColor));
+        glUniform3fv(toonLightingLightColorLocation, 1, glm::value_ptr(lightColor));
+        glUniform3fv(toonLightingDirToLightLocation, 1, glm::value_ptr(-glm::normalize(lightDirection)));
+        glUniform3fv(toonLightingEyePosLocation, 1, glm::value_ptr(cameraPos));
+        glUniformMatrix4fv(toonLightingViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMatrix));
+        glUniformMatrix4fv(toonLightingLightMatrixLocation, 1, GL_FALSE, glm::value_ptr(lightMatrix));
+
+        glActiveTexture(GL_TEXTURE0);
+        glUniform1i(toonLightingShadowMapLocation, 0);
+        glBindTexture(GL_TEXTURE_2D, shadowMap);
 
         for (auto sceneObject : sceneObjects) {
             assert(sceneObject->mesh);
@@ -220,11 +261,11 @@ namespace tankwars {
             const auto& modelMat = sceneObject->modelMatrix;
             auto invTrModelMat = glm::transpose(glm::inverse(modelMat));
 
-            glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMat));
-            glUniformMatrix4fv(invTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(invTrModelMat));
-            glUniform3fv(materialDiffuseLocation, 1, glm::value_ptr(sceneObject->material->diffuseColor));
-            glUniform3fv(materialSpecularLocation, 1, glm::value_ptr(sceneObject->material->specularColor));
-            glUniform1f(specularExponentLocation, sceneObject->material->specularExponent);
+            glUniformMatrix4fv(toonLightingModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMat));
+            glUniformMatrix4fv(toonLightingInvTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(invTrModelMat));
+            glUniform3fv(toonLightingMaterialDiffuseLocation, 1, glm::value_ptr(sceneObject->material->diffuseColor));
+            glUniform3fv(toonLightingMaterialSpecularLocation, 1, glm::value_ptr(sceneObject->material->specularColor));
+            glUniform1f(toonLightingSpecularExponentLocation, sceneObject->material->specularExponent);
 
             sceneObject->mesh->render();
         }

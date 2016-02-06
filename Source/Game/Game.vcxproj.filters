@@ -5,10 +5,8 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="..\..\ThirdParty\gl3w\src\gl3w.c">
@@ -32,10 +30,8 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshTools.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Terrain.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="physics.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="VoxelChunk.h" />
     <ClInclude Include="Vertex.h" />
@@ -82,6 +78,7 @@
     <None Include="..\..\Content\Shaders\DepthQuad.vsh">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\..\Content\Shaders\ParticleBillboard.vsh" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -90,10 +87,5 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{eb6801dc-0d12-45b0-963a-0c95820a2467}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\Content\Shaders\ParticleBillboard.vsh">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

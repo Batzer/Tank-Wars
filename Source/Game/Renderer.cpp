@@ -9,7 +9,6 @@
 #include "GLTools.h"
 #include "Mesh.h"
 #include "MeshInstance.h"
-#include "Terrain.h"
 #include "ParticleSystem.h"
 
 namespace {

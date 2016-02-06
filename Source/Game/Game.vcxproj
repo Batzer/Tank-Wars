@@ -275,11 +275,9 @@
     <ClCompile Include="MeshInstance.cpp" />
     <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
-    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Tank.cpp" />
-    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="VoxelChunk.cpp" />
     <ClCompile Include="VoxelTerrain.cpp" />
     <ClCompile Include="Wavefront.cpp" />
@@ -311,10 +309,8 @@
     <ClInclude Include="MeshInstance.h" />
     <ClInclude Include="MeshTools.h" />
     <ClInclude Include="ParticleSystem.h" />
-    <ClInclude Include="physics.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Tank.h" />
-    <ClInclude Include="Terrain.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VoxelChunk.h" />
     <ClInclude Include="VoxelTerrain.h" />

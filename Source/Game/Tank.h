@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <memory>
+#include <array>
 
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
@@ -21,21 +22,19 @@ namespace tankwars {
 	class Tank {
 	public:
 		struct Bullet {
-			Bullet( btRigidBody* body, MeshInstance inst)
-                : bulletBody(body), bulletMeshInstance(inst)
-            {
-            }
-            
-            bool active = true;
+			void set(int own, MeshInstance inst) { owner = own; bulletMeshInstance = inst; }
+			void set(btRigidBody* body) { bulletBody.reset(body); }
+            bool active = false;
 			bool disableMe = false;
-			btRigidBody* bulletBody;
+			int owner;
+			std::unique_ptr<btRigidBody> bulletBody;
 			MeshInstance bulletMeshInstance;
 		};
 
-		Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition);
+		Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition, int tankID);
 
 		void addWheels();
-		void update();
+		void update(float dt);
 		void turn(bool left);
 		void drive(bool forward);
 		void driveBack(bool backward);
@@ -47,16 +46,19 @@ namespace tankwars {
 		btRigidBody* getRigidBody();
 
 		//Controller Functions
-		void hit();
 		void breakController();
 		void driveController(bool forward);
 		void turnController(float val);
 		void turnTurretController(float val);
 		void turnHeadAndTurretController(float val);
-		void shoot();
-		void adjustPower(bool increase);
-
+		void shoot(float dt);
+		void adjustPower(bool increase, float dt);
+		int tankID;
+		void reset(glm::vec3 position, glm::vec3 lookAt);
+		void addPoint();
+		int getPoints();
 	private:
+		int points;
         void initializeTankMeshInstances(btVector3 startPos);
 		void setTankTuning();
 
@@ -88,8 +90,17 @@ namespace tankwars {
 		
 		//End Tank Meshes and MeshInstances
 
+		// timing Variables
+		float lastTimeEngineDecreased = 0;
+		float timeBetweenEngineDecreases = 0.1f;
+		float lastTimeShot = 0;
+		float timeBetweenShots = .5f;
+
+		float lastPowerAdjust = 0;
+		float timeBetweenPowerAdjusts = 0.3f;
 		//Tank Physics Variables
 
+		float engineForceReduceFactor = 100.f; // reduces this amount every 0.1 sec or whatever
 		float maxEngineForce = 3000.f;
 		float defaultBreakingForce = 10.f;
 		float maxBreakingForce = 100.f;					// what is this for?0.o
@@ -112,8 +123,9 @@ namespace tankwars {
 
 		//Tank Movement Variables
 		btScalar shootingPower = 20;				//not adjusted
-		btScalar shootingPowerIncrease = 10;		//not adjusted
-		btScalar shootingPowerMax = 100;			//not adjusted
+		btScalar shootingPowerIncrease = 5;		//not adjusted
+		btScalar shootingPowerMax = 90;			//not adjusted
+		btScalar shootingPowerMin = 10;
 
 		btScalar turretMinAngle = -.1f;
 		btScalar turretMaxAngle = .5f;				//not adjusted
@@ -125,19 +137,18 @@ namespace tankwars {
 		//End Tank Movement Variables
 		class BulletHandler {
 		public:
-			BulletHandler(btDynamicsWorld* dynamicsWorld, Renderer& renderer);
-			void createNewBullet(btTransform& tr, btScalar headAngle, btScalar turretAngle, btScalar power);
+			BulletHandler(btDynamicsWorld* dynamicsWorld, Renderer& renderer, int tankId);
+			void createNewBullet(btTransform& tr, btScalar power);
 			void updateBullets();
-			void removeBullet(Bullet& bul);
+			void removeBullet(int index);
 		private:
 			int tankID;
 			btDynamicsWorld* dynamicsWorld;
 			Renderer& renderer;
 			btSphereShape bulletShape;
 			Mesh bulletMesh;
-			size_t bulletMax = 10;
-			//Bullet* bullets[5000];					//replace with an std::vector
-			std::vector<Bullet> bullets;
+			size_t bulletMax = 20;
+			std::array<Bullet, 20> bullets;
 			Material bulletMat;
 		};
 

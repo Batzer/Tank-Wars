@@ -1,8 +1,11 @@
 #include "Game.h"
 namespace tankwars {
-	Game::Game(Camera * camera)
-            : camera(camera) {
-        // Do nothing
+	Game::Game(Camera * camera, VoxelTerrain* ter)
+            : camera(camera),terrain(ter) {
+		spawnCoordinates[0] = btVector3(spawnOffset,0, spawnOffset);
+		spawnCoordinates[1] = btVector3(spawnOffset,0,ter->getDepth()- spawnOffset);
+		spawnCoordinates[2] = btVector3(ter->getWidth()- spawnOffset,0, ter->getDepth() - spawnOffset);
+		spawnCoordinates[3] = btVector3(ter->getWidth() - spawnOffset,0,spawnOffset);
     }
 
 	int Game::setupControllers() {
@@ -12,13 +15,61 @@ namespace tankwars {
 		std::cout << "Available joysticks: 1st-" << joystickAvailable[0] << " 2nd-" << joystickAvailable[1];
 		return joystickAvailable[0] + joystickAvailable[1];
 	}
-
+	void Game::tankGotHit(int index) {
+		tanks[1 ^ index]->addPoint();
+		int closestPointToEnemy = 0;
+		glm::vec3 posi(tanks[1 ^ index]->getPosition().x, tanks[1 ^ index]->getPosition().y, -tanks[1 ^ index]->getPosition().z);
+		for (int i = 0; i < 3; i++) {
+			if (!closer(spawnCoordinates[i], spawnCoordinates[i + 1],posi)) {
+				closestPointToEnemy = i + 1;
+			}
+		}
+		std::random_device r;
+		std::default_random_engine e1(r());
+		std::uniform_int_distribution<int> uniform_dist(0, 2);
+		int mean = uniform_dist(e1);
+		if (mean >= closestPointToEnemy) {
+			mean++;
+		}
+		int height = getBestHeightFor(spawnCoordinates[mean]);
+		/*for (height = terrain->getHeight()-3; height > 3; height--) {
+			if (!isPlaneClear(spawnCoordinates[mean],height)) {
+				break;
+			}
+		}
+		height+=4;*/
+		tanks[index]->reset(glm::vec3(spawnCoordinates[mean].getX(), height, -spawnCoordinates[mean].getZ()), glm::vec3(terrain->getWidth()/2,0,terrain->getDepth()));
+	}
+	btScalar Game::getBestHeightFor(btVector3 pos) {
+		int height;
+		for (height = terrain->getHeight() - 3; height > 3; height--) {
+			if (!isPlaneClear(pos, height)) {
+				break;
+			}
+		}
+		return height + 4;
+	}
+	bool Game::isPlaneClear(btVector3 pos, int height) {
+		for (int x = pos.getX() - tankRadius; x < pos.getX() + tankRadius; x++) {
+			for (int z = pos.getZ() - tankRadius; z < pos.getZ() + tankRadius; z++) {
+				if (pow(x - pos.getX(), 2) + pow(z - pos.getZ(), 2) < pow(tankRadius, 2)) {
+					if (terrain->getVoxel(x, height, z) == VoxelType::Solid) {
+						return false;
+					}
+				}
+			}	
+		}
+		return true;
+	}
+	bool Game::closer(btVector3 vec1, btVector3 vec2, glm::vec3 distanceTo) {
+		btScalar distVec1 = pow(vec1.getX() - distanceTo.x, 2)+ pow(vec1.getY() - distanceTo.y, 2)+ pow(vec1.getZ() - distanceTo.z, 2);
+		btScalar distVec2 = pow(vec2.getX() - distanceTo.x, 2) + pow(vec2.getY() - distanceTo.y, 2) + pow(vec2.getZ() - distanceTo.z, 2);
+		if (distVec1 < distVec2)
+			return true;
+		return false;
+	}
 	void Game::addCamera(Camera* camera) {
 		this->camera = camera;
-	}
-
-	void Game::addTerrain(Terrain* terrain) {
-		this->terrain = terrain;
 	}
 	void Game::bindControllerToTank(int controllerID, Tank* tank) {
 		tanks[controllerID] = tank;
@@ -64,21 +115,25 @@ namespace tankwars {
 				switch (i) {
 				case 0:
 					if (axes[i]) {
-						std::cout << "|>" << "\n";
+						//std::cout << "|>" << "\n";
+						if (dt - lastPositionChange > timeBetweenPositionChanges) {
+							tankGotHit(0);
+							lastPositionChange = dt;
+						}
 					}
 					break;
 				case 1:
 					if (axes[i]) {
 						std::cout << "O" << "\n";
+						glm::vec3 pos = tanks[0]->getPosition();
+						pos.y = getBestHeightFor(btVector3(pos.x,0, -pos.z));
+						tanks[0]->reset(pos, -tanks[0]->getDirectionVector());
 					}
 					break;
 				case 2:
 					if (axes[i]) {
 						//std::cout << "X" << "\n";
-						if ((dt - lastShot) > timeBetweenShots) {
-							tanks[1]->shoot();
-							lastShot = dt;
-						}
+						tanks[1]->shoot(dt);
 					}
 					break;
 				case 3:
@@ -102,19 +157,20 @@ namespace tankwars {
 				case 6:
 					if (axes[i]) {
 						//std::cout << "L2" << "\n";
-						tanks[1]->adjustPower(false);
+						tanks[1]->adjustPower(false, dt);
 					}
 					break;
 				case 7:
 					if (axes[i]) {
 						//std::cout << "R2" << "\n";
-						tanks[1]->adjustPower(true);
+						tanks[1]->adjustPower(true, dt);
 					}
 					break;
 
 				case 8:
 					if (axes[i]) {
 						std::cout << "Select" << "\n";
+						//reset tank toi higher position
 					}
 					break;
 				case 9:
@@ -166,11 +222,5 @@ namespace tankwars {
 		if (joystickAvailable[0]) {
 
 		}
-	}
-
-	void Game::pew() {
-        const auto& camPos = camera->position;
-        glm::vec3 location(camPos.x, terrain->getHeightAt(camPos.x, camPos.z), camPos.z);
-		terrain->explosionAt(location, explosion_radius);
 	}
 }

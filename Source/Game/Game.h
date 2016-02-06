@@ -1,32 +1,36 @@
 #pragma once
 #include <iostream>
+#include <random>
 #include <GLFW/glfw3.h>
-#include "Terrain.h"
+#include "VoxelTerrain.h"
 #include "Tank.h"
 #include "Camera.h"
 
 namespace tankwars {
 	class Game {
 	public:
-		Game(Camera * camera);
+		Game(Camera * camera,VoxelTerrain* ter);
 
 		int setupControllers();
 		void addCamera(Camera * camera);
-		void addTerrain(Terrain * terrain);
 		void update(float dt);
 		void render();
 		void bindControllerToTank(int controllerID, Tank* tank);
-
+		void tankGotHit(int index);
 	private:
-		float timeBetweenShots = 0.5f;
-		float lastShot = 0;
+		btScalar getBestHeightFor(btVector3 pos);
+		bool isPlaneClear(btVector3 vec, int height);
+		btScalar tankRadius = 1.5f;
+		btScalar spawnOffset = 17;
+		btVector3 spawnCoordinates[4];
 		Tank* tanks[2];
-		void pew();
 		void controller(float dt);
-
+		bool closer(btVector3 vec1, btVector3 vec2, glm::vec3 distanceTo);
 		Camera* camera;
-		Terrain* terrain;
+		VoxelTerrain* terrain;
 		int joystickAvailable[2];
 		float explosion_radius = 3;
+		btScalar lastPositionChange = .0f;
+		btScalar timeBetweenPositionChanges = 3.f;
 	};
 }

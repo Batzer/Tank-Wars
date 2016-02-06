@@ -103,9 +103,9 @@ int main() {
 
 	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 	
-    tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30));
+    tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30),0);
 	gContactAddedCallback = tankwars::customCallback;
-	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2);
+
     
 	//dynamicsWorld->addAction(tank1.getAction());
 	//dynamicsWorld->addRigidBody(tank1.getRigidBody());
@@ -162,7 +162,8 @@ int main() {
     float camSpeed = 20.0f;
     tankwars::Camera freeCam;
     freeCam.position = { 10, 40, 10 };
-	tankwars::Game game(&freeCam);
+	tankwars::Game game(&freeCam, &terrain2);
+	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2, &tank1, &tank1, &game);
     
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
@@ -210,12 +211,12 @@ int main() {
             }
             terrain2.updateMesh();
         }
-		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*15.f+glm::vec3(0,6,0);
+		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
 		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
-		freeCam.lookAt(tank1.getPosition(), { 0,1,0 });
+		freeCam.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
         freeCam.update();
 		
-		tank1.update();
+		tank1.update((float)currentTime);
 
         //terrain2.updateMesh();
 

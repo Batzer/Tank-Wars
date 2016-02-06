@@ -73,9 +73,13 @@
     <None Include="..\..\Content\Shaders\Outline.vsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\..\Content\Shaders\GenShadowMap.vsh" />
-    <None Include="..\..\Content\Shaders\DepthQuad.vsh" />
     <None Include="..\..\Content\Shaders\ParticleBillboard.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Content\Shaders\GenShadowMap.vsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Content\Shaders\DepthQuad.vsh">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

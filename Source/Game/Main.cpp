@@ -185,13 +185,6 @@ int main() {
         lastTime = currentTime;
 
         // Update simulation
-        
-        particleSystem.update(frameTime, [&](tankwars::Particle& p) {
-            p.color.a -= 0.3f * frameTime;
-            if (p.color.a < 0.0f) {
-                p.isAlive = false;
-            }
-        });
         dynamicsWorld->stepSimulation(frameTime, 15, 1.0f / 120.0f);
 
         // Update game here
@@ -245,6 +238,13 @@ int main() {
         tr.getOpenGLMatrix(glm::value_ptr(sphere.modelMatrix));
         
         // END
+
+        particleSystem.update(frameTime, [&](tankwars::Particle& p) {
+            p.color.a -= 0.3f * frameTime;
+            if (p.color.a < 0.0f) {
+                p.isAlive = false;
+            }
+        });
 
         // Render
         int backBufferWidth, backBufferHeight;

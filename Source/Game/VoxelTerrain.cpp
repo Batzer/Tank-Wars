@@ -272,16 +272,13 @@ namespace tankwars {
 
         // Upload the new geometry to the GPU
         // Marching Cubes generates max 5 triangles per cell, so 15 indices
-        auto vertexArrayBufferSize = static_cast<GLsizei>((chunkWidth + 1) * (chunkHeight + 1) * (chunkDepth + 1) * sizeof(Vertex));
-        auto elementArrayBufferSize = static_cast<GLsizei>(chunkWidth * chunkHeight * chunkDepth * 15 * sizeof(uint32_t));
-
         glBindBuffer(GL_ARRAY_BUFFER, chunkVertexArrayBuffers[chunkIndex]);
-        glBufferData(GL_ARRAY_BUFFER, vertexArrayBufferSize, nullptr, GL_STREAM_DRAW);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCache.size() * sizeof(Vertex), vertexCache.data());
+        glBufferData(GL_ARRAY_BUFFER, vertexCache.size() * sizeof(Vertex), vertexCache.data(), GL_STREAM_DRAW);
+        //glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCache.size() * sizeof(Vertex), vertexCache.data());
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunkElementBuffers[chunkIndex]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferSize, nullptr, GL_STREAM_DRAW);
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexCache.size() * sizeof(uint32_t), indexCache.data());
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCache.size() * sizeof(uint32_t), indexCache.data(), GL_STREAM_DRAW);
+        //glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexCache.size() * sizeof(uint32_t), indexCache.data());
         chunkElementCounts[chunkIndex] = indexCache.size();
 
         // Recreate the collision mesh

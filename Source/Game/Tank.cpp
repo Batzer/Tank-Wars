@@ -302,6 +302,12 @@ namespace tankwars {
 		for (int i = 0; i < 4; i++) {
 		tank->updateWheelTransform(i, true);
 		}
+
+        tank->applyEngineForce(tankEngineForce, 0);
+        tank->setBrake(tankBreakingForce, 0);
+        tank->applyEngineForce(tankEngineForce, 1);
+        tank->setBrake(tankBreakingForce, 1);
+
 		tank->applyEngineForce(tankEngineForce, 2);
 		tank->setBrake(tankBreakingForce, 2);
 		tank->applyEngineForce(tankEngineForce, 3);

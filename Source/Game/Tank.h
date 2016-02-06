@@ -113,7 +113,7 @@ namespace tankwars {
 		float tankBreakingForce = 0.f;// defaultBreakingForce;
 
 		float	steeringIncrement = 0.04f;
-		float	steeringClamp = 0.2f;
+		float	steeringClamp = 0.3f;
 		float	tankSteering = 0.f;
 
 		btScalar mass = 700;

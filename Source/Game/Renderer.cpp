@@ -137,7 +137,7 @@ namespace tankwars {
         glEnable(GL_DEPTH_TEST);
 
         // Load textures
-        terrainTexture = createTextureFromFile("Content/Textures/terrain.png", true);
+        terrainTexture = createTextureFromFile("Content/Textures/terrain_dirt.png", true);
     }
 
     Renderer::Renderer(Renderer&& other) {

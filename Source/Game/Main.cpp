@@ -100,8 +100,6 @@ int main() {
     tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
         dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
-
-	//tankwars::Terrain terrain("Content/Maps/Penis.bmp", 2);
 	
     tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30),0);
 	gContactAddedCallback = tankwars::customCallback;
@@ -218,10 +216,9 @@ int main() {
             }
             terrain2.updateMesh();
         }
-		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
-
+		//freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
 		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
-		freeCam.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
+		//freeCam.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
         freeCam.update();
 		
 		tank1.update((float)currentTime);

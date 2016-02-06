@@ -19,7 +19,8 @@ uniform sampler2D ColorMap;
 
 void main() {
 	vec3 color = AmbientColor * MaterialDiffuse;
-    vec3 N = normalize(outNormal);
+    //vec3 N = normalize(outNormal);
+	vec3 N = normalize(cross(dFdx(outWorldPos.xyz), dFdy(outWorldPos.xyz)));
     float NdotL = dot(N, DirToLight);
 
 	if (NdotL > 0.0) {
@@ -47,5 +48,10 @@ void main() {
 		color += (diffuseFactor * MaterialDiffuse + specularFactor * MaterialSpecular) * shadow;
 	}
 
-    colorF = vec4(color * LightColor * texture(ColorMap, outTexCoord).rgb, 1.0);
+	vec3 sampleX = texture(ColorMap, outWorldPos.yz).rgb;
+	vec3 sampleY = texture(ColorMap, outWorldPos.xz).rgb;
+	vec3 sampleZ = texture(ColorMap, outWorldPos.xy).rgb;
+	vec3 blendedColor = sampleX * abs(N.x) + sampleY * abs(N.y) + sampleZ * abs(N.z);
+	colorF = vec4(color * LightColor * blendedColor, 1.0);
+    //colorF = vec4(color * LightColor * texture(ColorMap, outTexCoord).rgb, 1.0);
 }

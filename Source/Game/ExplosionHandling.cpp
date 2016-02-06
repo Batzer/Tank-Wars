@@ -29,13 +29,15 @@ namespace tankwars {
 		}
 		if (pair.second) {
 			glm::vec3 pos = tanks[0]->getPosition();
-			if (pow(pos.x-expl.getX(),2)+ pow(pos.x - expl.getX(), 2)+ pow(pos.x - expl.getX(), 2)<pow(tankRadius+explRadius,2)) {
+			pos.z = -pos.z;
+			if (pow(pos.x-expl.getX(),2)+ pow(pos.y - expl.getY(), 2)+ pow(pos.z - expl.getZ(), 2)<pow(tankRadius+explRadius,2)) {
 				game->tankGotHit(0);
 			}
 		}
 		else {
 			glm::vec3 pos = tanks[1]->getPosition();
-			if (pow(pos.x - expl.getX(), 2) + pow(pos.x - expl.getX(), 2) + pow(pos.x - expl.getX(), 2)<pow(tankRadius + explRadius, 2)){
+			pos.z = -pos.z;
+			if (pow(pos.x - expl.getX(), 2) + pow(pos.y - expl.getY(), 2) + pow(pos.z - expl.getZ(), 2)<pow(tankRadius + explRadius, 2)){
 				game->tankGotHit(1);
 			}
 		}

@@ -138,7 +138,6 @@ namespace tankwars {
     }
 
     void ParticleSystem::setParticleTexture(GLuint texture) {
-        assert(texture != nullptr);
         this->texture = texture;
     }
 

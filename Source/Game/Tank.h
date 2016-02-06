@@ -29,6 +29,11 @@ namespace tankwars {
 			int owner;
 			std::unique_ptr<btRigidBody> bulletBody;
 			MeshInstance bulletMeshInstance;
+
+			//only for raycastbullets
+			bool meshInstanceActive = false;
+			int cycles;
+			btScalar lastcycle;
 		};
 
 		Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition, int tankID);
@@ -159,6 +164,8 @@ namespace tankwars {
 			btScalar lastTimeBulletRaycastShot = 0;
 			btScalar timeBetweenBulletRaycastShots = 0.02f;
 			Material bulletMat;
+			glm::mat4 dummyMatrix;
+			btScalar timeBetweenBulletRaycastVisualSpawns = 0.1f;
 		};
 		BulletHandler bulletHandler;
 	};

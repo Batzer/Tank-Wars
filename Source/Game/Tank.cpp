@@ -345,7 +345,12 @@ namespace tankwars {
 		}
 		for (int i = 0; i < bulletRaycastMax; i++) {
 			raycastBullets.at(i).set(tankId, MeshInstance(bulletMesh, bulletMat));
+			renderer.addSceneObject(raycastBullets.at(i).bulletMeshInstance);
 		}
+		dummyMatrix[0][0] = 1;
+		dummyMatrix[1][1] = 1;
+		dummyMatrix[2][2] = 1;
+		dummyMatrix[3][3] = 1;
 	}
 	void Tank::BulletHandler::updatePower(btScalar pwr) {
 		power = pwr;
@@ -408,10 +413,25 @@ namespace tankwars {
 					//raycastBullets.at(i).bulletBody->setCcdSweptSphereRadius(0.1f);
 					raycastBullets.at(i).active = true;
 					raycastBullets.at(i).disableMe = false;
+					raycastBullets.at(i).cycles = 0;
 					dynamicsWorld->addRigidBody(raycastBullets.at(i).bulletBody.get());
 					lastTimeBulletRaycastShot = dt;
 					foundASpot = true;
 				}
+			}
+		}
+		//bullet RAYCAST SPAWN VISUALS
+		for (int i = 0; i < bulletRaycastMax; i++) {
+			if (raycastBullets[i].active && (dt - raycastBullets[i].lastcycle)>timeBetweenBulletRaycastVisualSpawns) {
+				if (raycastBullets.at(i).cycles != 0) {
+					//bullets smaller or/and see-through
+					//update
+					raycastBullets.at(i).bulletBody->getMotionState()->getWorldTransform(trans);
+					trans.getOpenGLMatrix(glm::value_ptr(bulletMat));
+					raycastBullets.at(raycastBullets.at(i).cycles).bulletMeshInstance.modelMatrix = bulletMat;
+				}
+				raycastBullets.at(i).lastcycle = dt;
+				raycastBullets.at(i).cycles++;
 			}
 		}
 	}
@@ -422,7 +442,12 @@ namespace tankwars {
 		bullets.at(index).active = false;
 	}
 	void Tank::BulletHandler::removeRaycastBullet(int index) {
+		for (int i = raycastBullets.at(index).cycles + 1; i < bulletRaycastMax && raycastBullets.at(i).meshInstanceActive; i++) {
+			raycastBullets.at(i).bulletMeshInstance.modelMatrix = dummyMatrix;
+			raycastBullets.at(i).meshInstanceActive = false;
+		}
 		dynamicsWorld->removeRigidBody(raycastBullets.at(index).bulletBody.get());
 		raycastBullets.at(index).active = false;
+
 	}
 }

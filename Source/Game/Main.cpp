@@ -155,7 +155,10 @@ int main() {
     
     tankwars::HudSprite hudSprite;
     hudSprite.transparency = 0.5f;
-    hudSprite.texture = tankwars::createTextureFromFile("Content/Textures/WallToonCracks.png");
+	//hudSprite.position = { -1 , -1};
+	hudSprite.transparency = 1;
+	hudSprite.size = { 0.23, 1 };
+    hudSprite.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy.png");
 
     tankwars::Hud hud1;
     hud1.addSprite(hudSprite, 0);

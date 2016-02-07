@@ -224,6 +224,14 @@ int main() {
             }
             terrain2.updateMesh();
         }
+        if (tankwars::Keyboard::isKeyPressed(GLFW_KEY_F1)) {
+            renderer.setSplitScreenEnabled(false);
+            freeCam.aspectRatio = 16.0f / 9.0f;
+        }
+        if (tankwars::Keyboard::isKeyPressed(GLFW_KEY_F2)) {
+            renderer.setSplitScreenEnabled(true);
+            freeCam.aspectRatio = 16.0f / 4.5f;
+        }
 
 		freeCam2.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
         freeCam2.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
@@ -261,8 +269,8 @@ int main() {
         glfwSwapBuffers(window);
 
         // Update events and input
-        glfwPollEvents();
         tankwars::Keyboard::update();
+        glfwPollEvents();
     }
 
     // Clean up

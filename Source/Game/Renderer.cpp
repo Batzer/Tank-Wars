@@ -99,8 +99,8 @@ namespace tankwars {
         toonLightingSpecularExponentLocation = glGetUniformLocation(toonLightingProgram, "SpecularExponent");
         toonLightingShadowMapLocation = glGetUniformLocation(toonLightingProgram, "ShadowMap");
 
-        toonTerrainModelMatrixLocation = glGetUniformLocation(toonTerrainProgram, "ModelMatrix");
-        toonTerrainInvTrModelMatrixLocation = glGetUniformLocation(toonTerrainProgram, "InvTrModelMatrix");
+        //toonTerrainModelMatrixLocation = glGetUniformLocation(toonTerrainProgram, "ModelMatrix");
+        //toonTerrainInvTrModelMatrixLocation = glGetUniformLocation(toonTerrainProgram, "InvTrModelMatrix");
         toonTerrainViewProjMatrixLocation = glGetUniformLocation(toonTerrainProgram, "ViewProjMatrix");
         toonTerrainLightMatrixLocation = glGetUniformLocation(toonTerrainProgram, "LightMatrix");
         toonTerrainAmbientColorLocation = glGetUniformLocation(toonTerrainProgram, "AmbientColor");
@@ -378,8 +378,8 @@ namespace tankwars {
         glUniform1i(toonTerrainColorMapBottomLocation, 3);
         glBindTexture(GL_TEXTURE_2D, terrainTextureBottom);
 
-        glUniformMatrix4fv(toonTerrainModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
-        glUniformMatrix4fv(toonTerrainInvTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+        //glUniformMatrix4fv(toonTerrainModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+        //glUniformMatrix4fv(toonTerrainInvTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
         glUniform3fv(toonTerrainMaterialDiffuseLocation, 1, glm::value_ptr(glm::vec3(1, 1, 1)));
         glUniform3fv(toonTerrainMaterialSpecularLocation, 1, glm::value_ptr(glm::vec3(0, 0, 0)));
         glUniform1f(toonTerrainSpecularExponentLocation, 1.0f);

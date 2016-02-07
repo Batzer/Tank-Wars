@@ -98,7 +98,9 @@
     <None Include="..\..\Content\Shaders\SkyBox.fsh">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\..\Content\Shaders\SkyBox.vsh" />
+    <None Include="..\..\Content\Shaders\SkyBox.vsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">

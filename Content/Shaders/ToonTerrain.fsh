@@ -1,7 +1,7 @@
 #version 330 core
 
-in vec3 outNormal;
-in vec2 outTexCoord;
+//in vec3 outNormal;
+//in vec2 outTexCoord;
 in vec3 outWorldPos;
 in vec4 outLightPos;
 

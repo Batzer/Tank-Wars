@@ -1,14 +1,15 @@
 #include "ExplosionHandling.h"
 
 namespace tankwars {
-    ExplosionHandler* explosionHandler;
+    std::unique_ptr<ExplosionHandler> explosionHandler;
+
 	ExplosionHandler::ExplosionHandler(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, VoxelTerrain& terrain, Tank* tank1, Tank* tank2, Game* game) 
 			: game(game), 
-			dnmcWrld(dynamicsWorld), 
-			renderer(renderer), 
-			terrain(terrain),
-			smokeTexture(tankwars::createTextureFromFile("Content/Textures/comic-boom-explosion.png")),
-			smokeParticleSystem(512,smokeTexture){
+			  dnmcWrld(dynamicsWorld), 
+			  renderer(renderer), 
+			  terrain(terrain),
+			  smokeTexture(tankwars::createTextureFromFile("Content/Textures/comic-boom-explosion.png")),
+			  smokeParticleSystem(512,smokeTexture) {
 		tanks[0] = tank1; 
 		tanks[1] = tank2; 
 		smokeParticleSystem.setEmitterPosition({ 30, 30, -30 });
@@ -17,6 +18,10 @@ namespace tankwars {
 		smokeParticleSystem.setParticleLifeTimeRange(3, 4);
 		renderer.addParticleSystem(smokeParticleSystem);
 	};
+
+    ExplosionHandler::~ExplosionHandler() {
+        glDeleteTextures(1, &smokeTexture);
+    }
 
     void ExplosionHandler::update(btScalar dt) {
 		handleExplosions();
@@ -27,9 +32,11 @@ namespace tankwars {
 			}
 		});
 	}
+
 	void ExplosionHandler::addExplosionPoint(btVector3 explosionAt,int owner) {
 		explosionPoints.push_back(std::make_pair(explosionAt,owner));
 	}
+
 	void ExplosionHandler::explosion(std::pair<btVector3,int> pair) {
 		smokeParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
 		smokeParticleSystem.emit(1);
@@ -63,12 +70,14 @@ namespace tankwars {
 		}
         terrain.updateMesh();
 	}
+
 	void ExplosionHandler::handleExplosions() {
 		while (explosionPoints.size()) {
 			explosion(explosionPoints.back());
 			explosionPoints.pop_back();
 		}
 	}
+
 	bool customCallback(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1) {
 		if (colObj0Wrap->getCollisionObject()->getUserIndex() == 7) {
 			Tank::Bullet* bullet = ((Tank::Bullet*)colObj0Wrap->getCollisionObject()->getUserPointer());

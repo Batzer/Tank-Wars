@@ -1,8 +1,13 @@
 #pragma once
-#include <btBulletCollisionCommon.h>
-#include <btBulletDynamicsCommon.h>
+
+
 #include <algorithm>
 #include <vector>
+#include <memory>
+
+#include <btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+
 #include "Renderer.h"
 #include "Tank.h"
 #include "Game.h"
@@ -15,21 +20,25 @@ namespace tankwars {
 	class ExplosionHandler {
 	public:
 		ExplosionHandler(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, VoxelTerrain& terrain, Tank* tank1, Tank* tank2, Game* game);
+        ~ExplosionHandler();
 		void addExplosionPoint(btVector3 explosionAt, int owner);
 		void update(btScalar dt);
+
 	private:
+        void handleExplosions();
+		void explosion(std::pair<btVector3, int> pair);
+
 		GLuint smokeTexture;
 		ParticleSystem smokeParticleSystem;
 		Game* game;
 		btScalar tankRadius = 1.5f;				//adjust--------------------------------------------------------------------------
 		Tank* tanks[2];
 		btScalar explRadius = 3.5f;
-		void handleExplosions();
-		void explosion(std::pair<btVector3, int> pair);
 		std::vector<std::pair<btVector3,int>> explosionPoints;
 		btDiscreteDynamicsWorld* dnmcWrld;
 		Renderer& renderer;
 		VoxelTerrain& terrain;
 	};
-	extern ExplosionHandler* explosionHandler;
+
+	extern std::unique_ptr<ExplosionHandler> explosionHandler;
 }

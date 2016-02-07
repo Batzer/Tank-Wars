@@ -51,6 +51,7 @@ namespace tankwars {
 		void moveCam(bool closer, btScalar dt);
 		btScalar getCameraOffsetDistance();
 		btScalar getCameraOffsetHeight();
+
 		//Controller Functions
 		void breakController();
 		void driveController(bool forward);
@@ -64,6 +65,7 @@ namespace tankwars {
 		void addPoint();
 		int getPoints();
 		void toggleShootingMode(btScalar dt);
+
 	private:
 		int points;
         void initializeTankMeshInstances(btVector3 startPos);
@@ -150,14 +152,17 @@ namespace tankwars {
 		btScalar lastShootinModeToggle = 0;
 		btScalar timeBetweenShootingModeToggles = 0.5f;
 		//End Tank Movement Variables
+
 		class BulletHandler {
 		public:
 			BulletHandler(btDynamicsWorld* dynamicsWorld, Renderer& renderer, int tankId);
+            ~BulletHandler();
+
 			void createNewBullet(btTransform& tr);
 			void updateBullets(btScalar dt, btTransform direction);
 			void removeBullet(int index);
 			void updatePower(btScalar pwr);
-			~BulletHandler();
+
 		private:
 			btVector3 bulletInertia;
 			btScalar mass = 20;
@@ -176,6 +181,7 @@ namespace tankwars {
 			//btScalar timeBetweenBulletRaycastShots = 0.02f;
 			Material bulletMat;
 		};
+
 		BulletHandler bulletHandler;
 	};
 }

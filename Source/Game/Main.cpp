@@ -182,7 +182,9 @@ int main() {
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank1);
-    
+
+    float angle = 0.0f;
+
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
@@ -232,8 +234,13 @@ int main() {
             renderer.setSplitScreenEnabled(true);
             freeCam.aspectRatio = 16.0f / 4.5f;
         }
-
-		freeCam2.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
+        if (tankwars::Keyboard::isKeyDown(GLFW_KEY_F5)) {
+            angle += glm::quarter_pi<float>() * frameTime;
+        }
+        
+        auto offset = glm::normalize(-tank1.getDirectionVector()) * 10.f + glm::vec3(0, 5, 0);
+        offset = glm::rotate(glm::angleAxis(-angle, glm::vec3(1, 0, 0)), offset);
+		freeCam2.position = tank1.getPosition() + offset;
         freeCam2.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
         freeCam2.update();
 

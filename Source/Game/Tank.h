@@ -99,7 +99,7 @@ namespace tankwars {
 		float lastPowerAdjust = 0;
 		float timeBetweenPowerAdjusts = 0.3f;
 		//Tank Physics Variables
-		float dragCoefficient = .02f;
+		float dragCoefficient = .03f;
 
 		float engineForceReduceFactor = 100.f; // reduces this amount every 0.1 sec or whatever
 		float maxEngineForce = 3000.f;

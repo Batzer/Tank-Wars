@@ -158,7 +158,7 @@ namespace tankwars {
 		private:
 			btVector3 bulletInertia;
 			btScalar mass = 20;
-			void removeRaycastBullet(int index);
+			//void removeRaycastBullet(int index);
 			btScalar power;
 			int tankID;
 			btDynamicsWorld* dynamicsWorld;
@@ -167,10 +167,10 @@ namespace tankwars {
 			Mesh bulletMesh;
 			size_t bulletMax = 20;
 			std::array<Bullet, 20> bullets;
-			size_t bulletRaycastMax = 500;
-			std::array<Bullet, 500> raycastBullets;
-			btScalar lastTimeBulletRaycastShot = 0;
-			btScalar timeBetweenBulletRaycastShots = 0.02f;
+			//size_t bulletRaycastMax = 500;
+			//std::array<Bullet, 500> raycastBullets;
+			//btScalar lastTimeBulletRaycastShot = 0;
+			//btScalar timeBetweenBulletRaycastShots = 0.02f;
 			Material bulletMat;
 		};
 		BulletHandler bulletHandler;

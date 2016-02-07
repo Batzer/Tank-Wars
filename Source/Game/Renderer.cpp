@@ -421,6 +421,7 @@ namespace tankwars {
     void Renderer::renderHud(const Hud& hud) {
         glUseProgram(hudSpriteProgram);
         glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
         glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -428,6 +429,7 @@ namespace tankwars {
                    hudSpriteTexDimensionsLocation,
                    hudSpriteTransparencyLocation);
         glEnable(GL_DEPTH_TEST);
+        glDepthMask(GL_TRUE);
         glDisable(GL_BLEND);
     }
 }

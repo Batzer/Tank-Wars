@@ -31,22 +31,22 @@ namespace tankwars {
 		if (mean >= closestPointToEnemy) {
 			mean++;
 		}
-		int height = getBestHeightFor(spawnCoordinates[mean]);
+		int height = static_cast<int>(getBestHeightFor(spawnCoordinates[mean]));
 		tanks[index]->reset(glm::vec3(spawnCoordinates[mean].getX(), height, -spawnCoordinates[mean].getZ()), glm::vec3(terrain->getWidth()/2,0,terrain->getDepth()));
 	}
 	btScalar Game::getBestHeightFor(btVector3 pos) {
 		int height;
-		for (height = terrain->getHeight() - 3; height > 3; height--) {
+		for (height = static_cast<int>(terrain->getHeight() - 3); height > 3; height--) {
 			if (!isPlaneClear(pos, height)) {
 				break;
 			}
 		}
-		return height + 3;
+		return static_cast<btScalar>(height + 3);
 	}
 	btScalar Game::getBestHeightFor2(btVector3 pos) {
 		int height;
 		bool NotClear = true;
-		for (height = pos.getY()+5; height > 3; height--) {
+		for (height = static_cast<int>(pos.getY() + 5); height > 3; height--) {
 			if (NotClear && isPlaneClear(pos, height)) {
 				NotClear = false;
 			}
@@ -54,11 +54,11 @@ namespace tankwars {
 				break;
 			}
 		}
-		return height + 2;
+		return static_cast<btScalar>(height + 2);
 	}
 	bool Game::isPlaneClear(btVector3 pos, int height) {
-		for (int x = pos.getX() - tankRadius; x < pos.getX() + tankRadius; x++) {
-			for (int z = pos.getZ() - tankRadius; z < pos.getZ() + tankRadius; z++) {
+		for (int x = static_cast<int>(pos.getX() - tankRadius); x < pos.getX() + tankRadius; x++) {
+			for (int z = static_cast<int>(pos.getZ() - tankRadius); z < pos.getZ() + tankRadius; z++) {
 				if (pow(x - pos.getX(), 2) + pow(z - pos.getZ(), 2) < pow(tankRadius, 2)) {
 					if (terrain->getVoxel(x, height, z) == VoxelType::Solid) {
 						return false;

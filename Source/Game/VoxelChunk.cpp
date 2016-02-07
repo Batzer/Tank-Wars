@@ -257,8 +257,8 @@ namespace tankwars {
 
     void VoxelChunk::createCollisionMesh() {
         triangleMesh.reset(new btTriangleMesh);
-        triangleMesh->preallocateVertices(elementCache.size() / 3);
-        triangleMesh->preallocateIndices(elementCache.size());
+        triangleMesh->preallocateVertices(static_cast<int>(elementCache.size() / 3));
+        triangleMesh->preallocateIndices(static_cast<int>(elementCache.size()));
 
         for (size_t i = 0; i < elementCache.size() / 3; i++) {
             auto index1 = elementCache[i * 3];

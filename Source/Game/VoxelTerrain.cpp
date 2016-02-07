@@ -168,12 +168,12 @@ namespace tankwars {
         for (int x = 0; x < heightMap.getWidth(); x++) {
             int heightValue;
             if (x == 0 || x == heightMap.getWidth() - 1 || z == 0 || z == heightMap.getHeight() - 1) {
-                heightValue = terrain.getHeight() - 1;
+                heightValue = static_cast<int>(terrain.getHeight() - 1);
             }
             else {
                 auto index = (heightMap.getWidth() - x - 1) + (heightMap.getHeight() - z - 1) * heightMap.getWidth();
                 heightValue = static_cast<int>(heightMap.getImage()[index * heightMap.getNumChannels()]);
-                heightValue /= invHeightScale;
+                heightValue /= static_cast<int>(invHeightScale);
             }
             
             for (int y = 0; y <= heightValue; y++) {
@@ -285,13 +285,13 @@ namespace tankwars {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunkElementBuffers[chunkIndex]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCache.size() * sizeof(uint32_t), indexCache.data(), GL_STREAM_DRAW);
         //glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexCache.size() * sizeof(uint32_t), indexCache.data());
-        chunkElementCounts[chunkIndex] = indexCache.size();
+        chunkElementCounts[chunkIndex] = static_cast<int>(indexCache.size());
 
         // Recreate the collision mesh
         auto& triangleMesh = chunkTriangleMeshes[chunkIndex];
         triangleMesh.reset(new btTriangleMesh);
-        triangleMesh->preallocateVertices(indexCache.size() / 3);
-        triangleMesh->preallocateIndices(indexCache.size());
+        triangleMesh->preallocateVertices(static_cast<int>(indexCache.size() / 3));
+        triangleMesh->preallocateIndices(static_cast<int>(indexCache.size()));
 
         for (size_t i = 0; i < indexCache.size() / 3; i++) {
             auto index1 = indexCache[i * 3];

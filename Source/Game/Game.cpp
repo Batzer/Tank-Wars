@@ -41,7 +41,20 @@ namespace tankwars {
 				break;
 			}
 		}
-		return height + 4;
+		return height + 3;
+	}
+	btScalar Game::getBestHeightFor2(btVector3 pos) {
+		int height;
+		bool NotClear = true;
+		for (height = pos.getY(); height > 3; height--) {
+			if (NotClear && isPlaneClear(pos, height)) {
+				NotClear = false;
+			}
+			else if(!NotClear && !isPlaneClear(pos, height)) {
+				break;
+			}
+		}
+		return height + 2;
 	}
 	bool Game::isPlaneClear(btVector3 pos, int height) {
 		for (int x = pos.getX() - tankRadius; x < pos.getX() + tankRadius; x++) {
@@ -110,18 +123,17 @@ namespace tankwars {
 				case 0:
 					if (axes[i]) {
 						//std::cout << "|>" << "\n";
-						if (dt - lastPositionChange > timeBetweenPositionChanges) {
-							tankGotHit(0);
+						/*if (dt - lastPositionChange > timeBetweenPositionChanges) {
+							tankGotHit(1);
 							lastPositionChange = dt;
-						}
+						}*/
+						tanks[1]->toggleShootingMode(dt);
 					}
 					break;
 				case 1:
 					if (axes[i]) {
 						std::cout << "O" << "\n";
-						glm::vec3 pos = tanks[0]->getPosition();
-						pos.y = getBestHeightFor(btVector3(pos.x,0, -pos.z));
-						tanks[0]->reset(pos, -tanks[0]->getDirectionVector());
+						
 					}
 					break;
 				case 2:
@@ -164,7 +176,9 @@ namespace tankwars {
 				case 8:
 					if (axes[i]) {
 						std::cout << "Select" << "\n";
-						//reset tank toi higher position
+						glm::vec3 pos = tanks[1]->getPosition();
+						pos.y = getBestHeightFor2(btVector3(pos.x, 0, -pos.z));
+						tanks[1]->reset(pos, -tanks[0]->getDirectionVector());
 					}
 					break;
 				case 9:
@@ -186,7 +200,8 @@ namespace tankwars {
 				case 12:
 					if (axes[i]) {
 						std::cout << "pad_up" << "\n";
-                        camera->position += glm::vec3(0, 0, 1) * movement_alpha;
+                        //camera->position += glm::vec3(0, 0, 1) * movement_alpha;
+						tanks[1]->moveCam(false,dt);
 					}
 					break;
 				case 13:
@@ -198,7 +213,8 @@ namespace tankwars {
 				case 14:
 					if (axes[i]) {
 						std::cout << "pad_down" << "\n";
-                        camera->position -= glm::vec3(0, 0, 1) * movement_alpha;
+                        //camera->position -= glm::vec3(0, 0, 1) * movement_alpha;
+						tanks[1]->moveCam(true, dt);
 					}
 					break;
 				case 15:

@@ -45,6 +45,9 @@ namespace tankwars {
 		glm::vec3 getPosition();
 		btRigidBody* getRigidBody();
 
+		void moveCam(bool closer, btScalar dt);
+		btScalar getCameraOffsetDistance();
+		btScalar getCameraOffsetHeight();
 		//Controller Functions
 		void breakController();
 		void driveController(bool forward);
@@ -57,6 +60,7 @@ namespace tankwars {
 		void reset(glm::vec3 position, glm::vec3 lookAt);
 		void addPoint();
 		int getPoints();
+		void toggleShootingMode(btScalar dt);
 	private:
 		int points;
         void initializeTankMeshInstances(btVector3 startPos);
@@ -99,7 +103,7 @@ namespace tankwars {
 		float lastPowerAdjust = 0;
 		float timeBetweenPowerAdjusts = 0.3f;
 		//Tank Physics Variables
-		float dragCoefficient = .02f;
+		float dragCoefficient = .03f;
 
 		float engineForceReduceFactor = 100.f; // reduces this amount every 0.1 sec or whatever
 		float maxEngineForce = 3000.f;
@@ -135,6 +139,13 @@ namespace tankwars {
 		btScalar headAndTurretRotationAlpha = .01f;	//not adjusted
 		btScalar headAndTurretAngle = .0f;
 
+		btScalar cameraOffsetDistance = 10.f;
+		btScalar cameraOffsetHeight = 5.f;
+		btScalar lastCameraMovementChange = 0;
+		btScalar timeBetweenCameraMovementChanges = 0.01f;
+		bool shootingModeOn = false;
+		btScalar lastShootinModeToggle = 0;
+		btScalar timeBetweenShootingModeToggles = 0.5f;
 		//End Tank Movement Variables
 		class BulletHandler {
 		public:

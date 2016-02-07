@@ -151,7 +151,45 @@ namespace tankwars {
 	void Tank::addPoint() {
 		points++;
 	}
-	
+	void Tank::toggleShootingMode(btScalar dt){
+		if (dt - lastShootinModeToggle > timeBetweenShootingModeToggles) {
+			shootingModeOn = !shootingModeOn;
+			lastShootinModeToggle = dt;
+		}
+	}
+	void Tank::moveCam(bool further, btScalar dt) {
+		if (!shootingModeOn && (dt - lastCameraMovementChange > timeBetweenCameraMovementChanges)) {
+			if (further) {
+				if (cameraOffsetDistance < 13) {
+					cameraOffsetDistance += 0.04f;
+					if (cameraOffsetDistance > 8) {
+						cameraOffsetHeight += 0.03f;
+					}
+				}
+			}
+			else {
+				if (cameraOffsetDistance > 2) {
+					cameraOffsetDistance -= 0.04f;
+				}
+				if (cameraOffsetDistance > 8) {
+					cameraOffsetHeight -= 0.03f;
+				}
+			}
+			lastCameraMovementChange = dt;
+		}
+	}
+	btScalar Tank::getCameraOffsetDistance() {
+		if (shootingModeOn) {
+			return 2;
+		}
+		return cameraOffsetDistance;
+	}
+	btScalar Tank::getCameraOffsetHeight() {
+		if (shootingModeOn) {
+			return 3.5f;
+		}
+		return cameraOffsetHeight;
+	}
 
 	//-------------------------------------------Controller-Functions----------------------------
 
@@ -284,7 +322,7 @@ namespace tankwars {
 	}
 
 	void Tank::update(float dt) {
-		std::cout << tank->getCurrentSpeedKmHour() <<"\n";
+		//std::cout << tank->getCurrentSpeedKmHour() <<"\n";
 		if (tankEngineForce<0 && tank->getCurrentSpeedKmHour()<0) {
 			tankEngineForce += std::abs(pow(tank->getCurrentSpeedKmHour(), 3))*dragCoefficient;
 		}

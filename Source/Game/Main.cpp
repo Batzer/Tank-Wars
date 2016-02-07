@@ -97,54 +97,23 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/best.png",
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/black.png",
         dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 	
     tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30),0);
+	tankwars::Tank tank2(dynamicsWorld.get(), renderer, btVector3(40, 25, -40), 1);
 	gContactAddedCallback = tankwars::customCallback;
 
-    
-	//dynamicsWorld->addAction(tank1.getAction());
-	//dynamicsWorld->addRigidBody(tank1.getRigidBody());
 
-   /* auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
-    auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHead.obj");
-    auto tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThing.obj");
-
-    auto tankBodyMesh = tankwars::createMeshFromWavefront(tankBodyModel);
-    auto tankHeadMesh = tankwars::createMeshFromWavefront(tankHeadModel);
-    auto tankCanonMesh = tankwars::createMeshFromWavefront(tankCanonModel);
-
-    tankwars::Material tankMaterial;
-    tankMaterial.diffuseColor = { 0.6f, 0.6f, 0 };
-    tankMaterial.specularColor = { 1, 1, 0 };
-    tankMaterial.specularExponent = 16;
-
-    auto tankModelMat = glm::translate(glm::mat4(1), glm::vec3(50, 50, -50));
-    tankModelMat = glm::scale(tankModelMat, glm::vec3(8, 8, 8));
-
-    tankwars::MeshInstance tankBodyInstance(tankBodyMesh, tankMaterial);
-    tankBodyInstance.modelMatrix = tankModelMat;
-
-    tankwars::MeshInstance tankHeadInstance(tankHeadMesh, tankMaterial);
-    tankHeadInstance.modelMatrix = tankModelMat;
-
-    tankwars::MeshInstance tankCanonInstance(tankCanonMesh, tankMaterial);
-    tankCanonInstance.modelMatrix = tankModelMat;*/
-
-    /*renderer.addSceneObject(tankBodyInstance);
-    renderer.addSceneObject(tankHeadInstance);
-    renderer.addSceneObject(tankCanonInstance);*/
-    
-    btCollisionShape* fallShape = new btSphereShape(2);
+    /*btCollisionShape* fallShape = new btSphereShape(2);
     btDefaultMotionState* fallMotionState =
         new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(20, 50, -20)));
     btScalar mass = 50;
     btVector3 fallInertia(0, 0, 0);
     fallShape->calculateLocalInertia(mass, fallInertia);
     btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass, fallMotionState, fallShape, fallInertia);
-    btRigidBody* fallRigidBody = new btRigidBody(fallRigidBodyCI);
+    btRigidBody* fallRigidBody = new btRigidBody(fallRigidBodyCI);*/
     //dynamicsWorld->addRigidBody(fallRigidBody);
 
 	
@@ -171,7 +140,7 @@ int main() {
     freeCam.position = { 10, 40, 10 };
     renderer.attachCamera(tankwars::Renderer::ViewportTop, freeCam);
 	tankwars::Game game(&freeCam, &terrain2);
-	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2, &tank1, &tank1, &game);
+	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2, &tank1, &tank2, &game);
     
     tankwars::Camera freeCam2;
     freeCam2.position = { 15, 40, 10 };
@@ -181,7 +150,7 @@ int main() {
 
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
-	game.bindControllerToTank(1, &tank1);
+	game.bindControllerToTank(1, &tank2);
     
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
@@ -233,23 +202,35 @@ int main() {
             freeCam.aspectRatio = 16.0f / 4.5f;
         }
 
-		freeCam2.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
-        freeCam2.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
+		/*auto offset = glm::normalize(-tank2.getDirectionVector()) * 10.f;
+		offset = glm::rotate(glm::angleAxis(-glm::quarter_pi<float>(), glm::vec3(0, 1, 0)), offset);
+		freeCam2.position = tank2.getPosition() + offset + glm::vec3(0, 0, 0);
+		freeCam2.lookAt(tank2.getPosition() + glm::vec3(0, 2, 0), { 0,1,0 });
+		freeCam2.update();*/
+
+		//glm::vec3 camRotation(0,5,0);
+		
+		freeCam2.position = (tank2.getPosition() + glm::normalize(-tank2.getDirectionVector())*tank2.getCameraOffsetDistance() + glm::vec3(0, tank2.getCameraOffsetHeight(), 0));
+        freeCam2.lookAt(tank2.getPosition() + glm::vec3(0,3,0), { 0,1,0 });
+
         freeCam2.update();
 
-		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
+		freeCam.position = (tank1.getPosition() + glm::normalize(-tank1.getDirectionVector())*tank1.getCameraOffsetDistance() + glm::vec3(0, tank1.getCameraOffsetHeight(), 0));
+		freeCam.lookAt(tank1.getPosition() + glm::vec3(0, 3, 0), { 0,1,0 });
+		//freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
         freeCam.update();
 		
 		tank1.update((float)currentTime);
+		tank2.update((float)currentTime);
 
         //terrain2.updateMesh();
 
 		tankwars::explosionHandler->update(frameTime);
         // TEST
         
-        btTransform tr;
+        /*btTransform tr;
         fallRigidBody->getMotionState()->getWorldTransform(tr);
-        tr.getOpenGLMatrix(glm::value_ptr(sphere.modelMatrix));
+        tr.getOpenGLMatrix(glm::value_ptr(sphere.modelMatrix));*/
         
         // END
 

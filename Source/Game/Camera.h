@@ -37,6 +37,7 @@ namespace tankwars {
 		glm::vec3 direction{ 0, 0, -1 };
         glm::vec3 up{ 0, 1, 0 };
 
+		void rotatePos(float angle);
 	private:
 		glm::vec3 right{ 1, 0, 0 };
         glm::mat4 viewMatrix;

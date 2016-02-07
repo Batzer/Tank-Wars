@@ -19,6 +19,7 @@ namespace tankwars {
 		void tankGotHit(int index);
 	private:
 		btScalar getBestHeightFor(btVector3 pos);
+		btScalar getBestHeightFor2(btVector3 pos);
 		bool isPlaneClear(btVector3 vec, int height);
 		btScalar tankRadius = 1.5f;
 		btScalar spawnOffset = 17;

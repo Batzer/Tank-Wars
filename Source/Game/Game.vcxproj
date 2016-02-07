@@ -291,6 +291,7 @@
     <None Include="..\..\Content\Shaders\Outline.fsh" />
     <None Include="..\..\Content\Shaders\ParticleBillboard.fsh" />
     <None Include="..\..\Content\Shaders\ToonLighting.fsh" />
+    <None Include="..\..\Content\Shaders\ToonTerrain.fsh" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.fsh">
@@ -338,6 +339,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\ParticleBillboard.vsh">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\ToonTerrain.vsh">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

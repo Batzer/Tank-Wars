@@ -6,6 +6,7 @@
 #include "VoxelTerrain.h"
 
 namespace tankwars {
+    class Camera;
     struct MeshInstance;
     class ParticleSystem;
 
@@ -19,8 +20,10 @@ namespace tankwars {
         Renderer& operator=(const Renderer&) = delete;
         Renderer& operator=(Renderer&& other);
 
-        void renderScene(const glm::mat4& projMatrix, const glm::mat4& viewMatrix, const glm::vec3& cameraPos);
+        void render();
         void setBackBufferSize(GLsizei width, GLsizei height);
+        void attachCamera(size_t viewportIndex, const Camera& camera);
+        void setSplitScreenEnabled(bool enabled);
 
         // Scene managment
         // TODO: Refactor this into a seperate class
@@ -32,7 +35,13 @@ namespace tankwars {
         void addParticleSystem(const ParticleSystem& particleSystem);
         void removeParticleSystem(const ParticleSystem& particleSystem);
 
+        static constexpr size_t ViewportTop = 0;
+        static constexpr size_t ViewportBottom = 1;
+
     private:
+        void renderScene(const Camera& camera, GLint viewportX, GLint viewportY,
+                         GLsizei viewportWidth, GLsizei viewportHeight, bool clearBackBuffer);
+
         // Window info
         GLsizei backBufferWidth;
         GLsizei backBufferHeight;
@@ -41,6 +50,9 @@ namespace tankwars {
         GLuint toonLightingVS;
         GLuint toonLightingFS;
         GLuint toonLightingProgram;
+        GLuint toonTerrainVS;
+        GLuint toonTerrainFS;
+        GLuint toonTerrainProgram;
         GLuint outlineVS;
         GLuint outlineFS;
         GLuint outlineProgram;
@@ -55,18 +67,34 @@ namespace tankwars {
         GLuint particleBillboardProgram;
 
         // Uniform locations
-        GLint modelMatrixLocation;
-        GLint invTrModelMatrixLocation;
-        GLint viewProjMatrixLocation;
-        GLint lightMatrixLocation;
-        GLint ambientColorLocation;
-        GLint dirToLightLocation;
-        GLint eyePosLocation;
-        GLint lightColorLocation;
-        GLint materialDiffuseLocation;
-        GLint materialSpecularLocation;
-        GLint specularExponentLocation;
-        GLint shadowMapLocation;
+        GLint toonLightingModelMatrixLocation;
+        GLint toonLightingInvTrModelMatrixLocation;
+        GLint toonLightingViewProjMatrixLocation;
+        GLint toonLightingLightMatrixLocation;
+        GLint toonLightingAmbientColorLocation;
+        GLint toonLightingDirToLightLocation;
+        GLint toonLightingEyePosLocation;
+        GLint toonLightingLightColorLocation;
+        GLint toonLightingMaterialDiffuseLocation;
+        GLint toonLightingMaterialSpecularLocation;
+        GLint toonLightingSpecularExponentLocation;
+        GLint toonLightingShadowMapLocation;
+
+        GLint toonTerrainModelMatrixLocation;
+        GLint toonTerrainInvTrModelMatrixLocation;
+        GLint toonTerrainViewProjMatrixLocation;
+        GLint toonTerrainLightMatrixLocation;
+        GLint toonTerrainAmbientColorLocation;
+        GLint toonTerrainDirToLightLocation;
+        GLint toonTerrainEyePosLocation;
+        GLint toonTerrainLightColorLocation;
+        GLint toonTerrainMaterialDiffuseLocation;
+        GLint toonTerrainMaterialSpecularLocation;
+        GLint toonTerrainSpecularExponentLocation;
+        GLint toonTerrainColorMapTopLocation;
+        GLint toonTerrainColorMapSideLocation;
+        GLint toonTerrainColorMapBottomLocation;
+        GLint toonTerrainShadowMapLocation;
 
         GLint outlineModelMatrixLocation;
         GLint outlineViewProjMatrixLocation;
@@ -83,7 +111,6 @@ namespace tankwars {
         GLuint shadowMap;
         GLuint shadowMapFBO;
 
-
         // Scene managment
         // TODO: Refactor this into a seperate class
         glm::vec3 ambientColor = { 0.2f, 0.2f, 0.2f };
@@ -92,5 +119,11 @@ namespace tankwars {
         std::vector<const MeshInstance*> sceneObjects;
         std::vector<const ParticleSystem*> particleSystems;
         const VoxelTerrain* terrain = nullptr;
+        GLuint terrainTextureTop;
+        GLuint terrainTextureSide;
+        GLuint terrainTextureBottom;
+        bool isSplitScreenEnabled = false;
+        const Camera* cameraTop = nullptr;
+        const Camera* cameraBottom = nullptr;
     };
 }

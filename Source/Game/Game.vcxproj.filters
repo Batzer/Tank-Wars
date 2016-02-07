@@ -81,6 +81,12 @@
     <None Include="..\..\Content\Shaders\ParticleBillboard.vsh">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\..\Content\Shaders\ToonTerrain.fsh">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\..\Content\Shaders\ToonTerrain.vsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">

@@ -8,5 +8,6 @@ uniform float Transparency;
 uniform sampler2D TextureSampler;
 
 void main() {
-    colorF = vec4(texture(TextureSampler, outTexCoord).rgb, Transparency);
+	vec4 texColor = texture(TextureSampler, outTexCoord);
+    colorF = vec4(texColor.rgb, texColor.a * Transparency);
 }

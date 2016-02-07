@@ -18,6 +18,7 @@ namespace tankwars {
         std::vector<char> buffer(size);
         file.read(buffer.data(), size);
 
+        stbi_set_flip_vertically_on_load(1);
         image = stbi_load_from_memory(reinterpret_cast<const stbi_uc*>(buffer.data()), size,
             &width, &height, &numChannels, STBI_default);
     }

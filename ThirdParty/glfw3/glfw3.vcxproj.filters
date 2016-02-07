@@ -15,7 +15,6 @@
     <ClCompile Include="src\winmm_joystick.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\glfw_config.h" />
     <ClInclude Include="src\internal.h" />
     <ClInclude Include="src\wgl_context.h" />
     <ClInclude Include="src\win32_platform.h" />

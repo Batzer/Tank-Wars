@@ -267,6 +267,7 @@
     <ClCompile Include="ExplosionHandling.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GLTools.cpp" />
+    <ClCompile Include="Hud.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -288,6 +289,7 @@
     </None>
     <None Include="..\..\Content\Shaders\DepthQuad.fsh" />
     <None Include="..\..\Content\Shaders\GenShadowMap.fsh" />
+    <None Include="..\..\Content\Shaders\HudSprite.fsh" />
     <None Include="..\..\Content\Shaders\Outline.fsh" />
     <None Include="..\..\Content\Shaders\ParticleBillboard.fsh" />
     <None Include="..\..\Content\Shaders\ToonLighting.fsh" />
@@ -303,6 +305,7 @@
     <ClInclude Include="ExplosionHandling.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GLTools.h" />
+    <ClInclude Include="Hud.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="MarchingCubes.h" />
@@ -344,6 +347,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\ToonTerrain.vsh">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\HudSprite.vsh">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

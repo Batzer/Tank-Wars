@@ -16,5 +16,5 @@ namespace tankwars {
     GLuint createShaderFromFile(const std::string& path, GLenum type);
     GLuint createAndLinkProgram(GLuint vertexShader, GLuint fragmentShader);
 
-    GLuint createTextureFromFile(const std::string& path, bool generateMipMaps = true);
+    GLuint createTextureFromFile(const std::string& path, bool generateMipMaps = true, bool srgb = true);
 }

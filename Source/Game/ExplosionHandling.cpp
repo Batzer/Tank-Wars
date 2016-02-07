@@ -2,22 +2,44 @@
 
 namespace tankwars {
     ExplosionHandler* explosionHandler;
-    
-    void ExplosionHandler::update() {
+	ExplosionHandler::ExplosionHandler(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, VoxelTerrain& terrain, Tank* tank1, Tank* tank2, Game* game) 
+			: game(game), 
+			dnmcWrld(dynamicsWorld), 
+			renderer(renderer), 
+			terrain(terrain),
+			smokeTexture(tankwars::createTextureFromFile("Content/Textures/comic-boom-explosion.png")),
+			smokeParticleSystem(512,smokeTexture){
+		tanks[0] = tank1; 
+		tanks[1] = tank2; 
+		smokeParticleSystem.setEmitterPosition({ 30, 30, -30 });
+		smokeParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
+		smokeParticleSystem.setParticleSizeRange(1, 2);
+		smokeParticleSystem.setParticleLifeTimeRange(3, 4);
+		renderer.addParticleSystem(smokeParticleSystem);
+	};
+
+    void ExplosionHandler::update(btScalar dt) {
 		handleExplosions();
-		//do sth...								update explosion Animations
+		smokeParticleSystem.update(dt, [&](tankwars::Particle& p) {
+			p.color.a -= 0.3f * dt;
+			if (p.color.a < 0.0f) {
+				p.isAlive = false;
+			}
+		});
 	}
 	void ExplosionHandler::addExplosionPoint(btVector3 explosionAt,int owner) {
 		explosionPoints.push_back(std::make_pair(explosionAt,owner));
 	}
 	void ExplosionHandler::explosion(std::pair<btVector3,int> pair) {
+		smokeParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
+		smokeParticleSystem.emit(1);
 		btVector3 expl(pair.first.getX(), pair.first.getY(), -pair.first.getZ());
 		int xMin = std::max((int)(expl.getX() - explRadius), 1);
 		int yMin = std::max((int)(expl.getY() - explRadius), 1);
 		int zMin = std::max((int)(expl.getZ() - explRadius), 1);
-		int xMax = std::min((int)(expl.getX() + explRadius + 0.5), (int)terrain.getWidth()-1);
+		int xMax = std::min((int)(expl.getX() + explRadius + 0.5), (int)terrain.getWidth()-3);
 		int yMax = std::min((int)(expl.getY() + explRadius + 0.5), (int)terrain.getHeight()-1);
-		int zMax = std::min((int)(expl.getZ() + explRadius + 0.5), (int)terrain.getDepth()-1);
+		int zMax = std::min((int)(expl.getZ() + explRadius + 0.5), (int)terrain.getDepth()-3);
 		for (int x = xMin; x < xMax; x++) {
 			for (int y = yMin; y < yMax; y++) {
 				for (int z = zMin; z < zMax; z++) {
@@ -51,14 +73,14 @@ namespace tankwars {
 		if (colObj0Wrap->getCollisionObject()->getUserIndex() == 7) {
 			Tank::Bullet* bullet = ((Tank::Bullet*)colObj0Wrap->getCollisionObject()->getUserPointer());
 			bullet->disableMe = true;
-			std::cout << cp.getPositionWorldOnA().getX() << " " << cp.getPositionWorldOnA().getY() << " " << cp.getPositionWorldOnA().getZ() << "\n";
+			//std::cout << cp.getPositionWorldOnA().getX() << " " << cp.getPositionWorldOnA().getY() << " " << cp.getPositionWorldOnA().getZ() << "\n";
 			//show aim circle at collision position
 			return false;
 		}
 		if (colObj1Wrap->getCollisionObject()->getUserIndex() == 7) {
 			Tank::Bullet* bullet = ((Tank::Bullet*)colObj1Wrap->getCollisionObject()->getUserPointer());
 			bullet->disableMe = true;
-			std::cout << cp.getPositionWorldOnB().getX() << " " << cp.getPositionWorldOnB().getY() << " " << cp.getPositionWorldOnB().getZ() << "\n";
+			//std::cout << cp.getPositionWorldOnB().getX() << " " << cp.getPositionWorldOnB().getY() << " " << cp.getPositionWorldOnB().getZ() << "\n";
 			//show aim circle at collision position
 			return false;
 		}

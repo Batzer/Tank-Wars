@@ -9,7 +9,7 @@ namespace tankwars {
 		  dynamicsWorld(dynamicsWorld),
 		  bulletHandler(dynamicsWorld, renderer,tankID),
 		  tankTuning(),
-		  tankBoxShape(new btBoxShape(btVector3(1.f, .5f, 2.f))),
+		  tankBoxShape(new btBoxShape(btVector3(1.5f, .3f, 2.f))),
 		  tankID(tankID)
 	{
 		//setTankTuning();
@@ -20,7 +20,7 @@ namespace tankwars {
         // Use a compound shape so we can set a different center of mass.
         // (0, 1, 0) means that the center of mass is at (0, -1, 0) which makes the tank more stable.
         compoundShape.reset(new btCompoundShape);
-        compoundShape->addChildShape(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 1, 0)), tankBoxShape.get());
+        compoundShape->addChildShape(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0.5f, 0)), tankBoxShape.get());
 
 		btVector3 localInertia;
         compoundShape->calculateLocalInertia(mass, localInertia);
@@ -36,6 +36,7 @@ namespace tankwars {
 		addWheels();
 
 		initializeTankMeshInstances(startingPosition);
+		bulletHandler.updatePower(shootingPower);
 	}
 
 
@@ -49,8 +50,8 @@ namespace tankwars {
 		auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
 		auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHeadCentered.obj");
 		auto tankCanonModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankShootingThingCentered.obj");
-		auto tankLeftFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftFrontWheelCentered.obj");
-		auto tankRightFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightFrontWheelCentered.obj");
+		auto tankLeftFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftBackWheelCentered.obj");
+		auto tankRightFrontWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightBackWheelCentered.obj");
 		auto tankLeftBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankLeftBackWheelCentered.obj");
 		auto tankRightBackWheelModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankRightBackWheelCentered.obj");
 		//Meshes
@@ -96,32 +97,32 @@ namespace tankwars {
 	}
 
 	void Tank::setTankTuning() {
-		tankTuning.m_frictionSlip = 10.5f;
-		tankTuning.m_maxSuspensionForce = 100;
-		tankTuning.m_maxSuspensionTravelCm = 100;
-		tankTuning.m_suspensionCompression = 100;
-		tankTuning.m_suspensionDamping = 100;
-		tankTuning.m_suspensionStiffness = 5.88f;
+		tankTuning.m_frictionSlip = 1.2f;
+		tankTuning.m_maxSuspensionForce = 10;
+		tankTuning.m_maxSuspensionTravelCm = 1000;//100;
+		tankTuning.m_suspensionCompression = 200;
+		tankTuning.m_suspensionDamping = 10;
+		tankTuning.m_suspensionStiffness = 3.88f;
 	}
 
 	void Tank::addWheels() {
-		btVector3  connectionPointCSO(1.f, .4f, -1.8f);//0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
+		btVector3  connectionPointCSO(1.5f, .55f, -1.8f);//0.5 - (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, true);
 
-		connectionPointCSO = btVector3(-1.f, .4f, -1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
+		connectionPointCSO = btVector3(-1.5f, 0.55f, -1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, -2 * 1 + backWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, backWheelRadius, tankTuning, true);
 
-		connectionPointCSO = btVector3(1.f, .4f, 1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		connectionPointCSO = btVector3(1.5f, .55f, 1.8f);//-0.5 + (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
-		connectionPointCSO = btVector3(-1.f, .4f, 1.8f);//0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
+		connectionPointCSO = btVector3(-1.5f, .55f, 1.8f);//0.5 - (0.3*wheelWidth), 1.2f, 2 * 1 - frontWheelRadius);
 		tank->addWheel(connectionPointCSO, wheelDirection, wheelAxle, suspensionRestLength, frontWheelRadius, tankTuning, false);
 
 		for (int i = 0; i < 4; i++) {
 			tank->getWheelInfo(i).m_suspensionStiffness = 20.f;
-			tank->getWheelInfo(i).m_wheelsDampingRelaxation = 2.3f;
-			tank->getWheelInfo(i).m_wheelsDampingCompression = 4.4f;
-			tank->getWheelInfo(i).m_frictionSlip = 1000;
+			tank->getWheelInfo(i).m_wheelsDampingRelaxation = 1.f;//2.3f;
+			tank->getWheelInfo(i).m_wheelsDampingCompression = 2.f;//4.4f;
+			tank->getWheelInfo(i).m_frictionSlip = 1000.f;
 			tank->getWheelInfo(i).m_rollInfluence = 01.f;
 		}
 	}
@@ -211,7 +212,7 @@ namespace tankwars {
 			//tankBreakingForce = defaultBreakingForce;				????????????????-----------------------------------------------
 		}
 		else {
-			tankEngineForce = (maxEngineForce / 2);
+			tankEngineForce = maxEngineForce ;
 			//tankBreakingForce = defaultBreakingForce;				??????????????????????????????????---------------------------------			
 		}
 	}
@@ -283,6 +284,13 @@ namespace tankwars {
 	}
 
 	void Tank::update(float dt) {
+		std::cout << tank->getCurrentSpeedKmHour() <<"\n";
+		if (tankEngineForce<0 && tank->getCurrentSpeedKmHour()<0) {
+			tankEngineForce += std::abs(pow(tank->getCurrentSpeedKmHour(), 3))*dragCoefficient;
+		}
+		else if(tankEngineForce>0 && tank->getCurrentSpeedKmHour()>0) {
+			tankEngineForce -= std::abs(pow(tank->getCurrentSpeedKmHour(), 3))*dragCoefficient;
+		}
 		if (dt - lastTimeEngineDecreased > timeBetweenEngineDecreases) {
 			if (tankEngineForce > 0) {
 				tankEngineForce -= engineForceReduceFactor;
@@ -304,9 +312,9 @@ namespace tankwars {
 		}
 
         tank->applyEngineForce(tankEngineForce, 0);
-        tank->setBrake(tankBreakingForce, 0);
+        //tank->setBrake(tankBreakingForce, 0);
         tank->applyEngineForce(tankEngineForce, 1);
-        tank->setBrake(tankBreakingForce, 1);
+        //tank->setBrake(tankBreakingForce, 1);
 
 		tank->applyEngineForce(tankEngineForce, 2);
 		tank->setBrake(tankBreakingForce, 2);

@@ -97,7 +97,7 @@ int main() {
 
     // TEST
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/best.png",
         dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 
@@ -156,13 +156,13 @@ int main() {
     tankwars::MeshInstance sphere(sphereMesh, mat);
     renderer.addSceneObject(sphere);
 
-    auto smokeTexture = tankwars::createTextureFromFile("Content/Textures/comic-boom-explosion.png");
+    /*auto smokeTexture = tankwars::createTextureFromFile("Content/Textures/comic-boom-explosion.png");
     tankwars::ParticleSystem particleSystem(512, smokeTexture);
     particleSystem.setEmitterPosition({30, 30, -30});
     particleSystem.setParticleColorRange({1, 1, 1, 0.25f}, {1, 1, 1, 0.75f});
     particleSystem.setParticleSizeRange(1, 2);
     particleSystem.setParticleLifeTimeRange(3, 4);
-    renderer.addParticleSystem(particleSystem);
+    renderer.addParticleSystem(particleSystem);*/
     
     float roll = 0.0f;
     float yaw = 0.0f;
@@ -201,7 +201,7 @@ int main() {
 	    if (tankwars::Keyboard::isKeyDown(GLFW_KEY_O)) tank1.driveBack(true);
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_J))tank1.turn(true);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
-		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))particleSystem.emit(1);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))//particleSystem.emit(1);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_SPACE)) {
             for (size_t z = 1; z < terrain2.getDepth()-1; z++)
             for (size_t y = 1; y < terrain2.getHeight()-1; y++)
@@ -218,17 +218,17 @@ int main() {
             }
             terrain2.updateMesh();
         }
-		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
+		freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,4,0);
 
 		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
-		freeCam.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
+		freeCam.lookAt(tank1.getPosition() + glm::vec3(0,3,0), { 0,1,0 });
         freeCam.update();
 		
 		tank1.update((float)currentTime);
 
         //terrain2.updateMesh();
 
-		tankwars::explosionHandler->update();
+		tankwars::explosionHandler->update(frameTime);
         // TEST
         
         btTransform tr;
@@ -237,12 +237,12 @@ int main() {
         
         // END
 
-        particleSystem.update(frameTime, [&](tankwars::Particle& p) {
+        /*particleSystem.update(frameTime, [&](tankwars::Particle& p) {
             p.color.a -= 0.3f * frameTime;
             if (p.color.a < 0.0f) {
                 p.isAlive = false;
             }
-        });
+        });*/
 
         // Render
         int backBufferWidth, backBufferHeight;

@@ -99,11 +99,12 @@ namespace tankwars {
 		float lastPowerAdjust = 0;
 		float timeBetweenPowerAdjusts = 0.3f;
 		//Tank Physics Variables
+		float dragCoefficient = .02f;
 
 		float engineForceReduceFactor = 100.f; // reduces this amount every 0.1 sec or whatever
 		float maxEngineForce = 3000.f;
 		float defaultBreakingForce = 10.f;
-		float maxBreakingForce = 100.f;					// what is this for?0.o
+		float maxBreakingForce = 1000.f;					// what is this for?0.o
 		float tankEngineForce = 0.f;
 		float tankBreakingForce = 0.f;// defaultBreakingForce;
 
@@ -111,10 +112,10 @@ namespace tankwars {
 		float	steeringClamp = 0.3f;
 		float	tankSteering = 0.f;
 
-		btScalar mass = 700;
-		btScalar wheelWidth = 0.4f;
-		btScalar frontWheelRadius = .5f;//0.838f;
-		btScalar backWheelRadius = .5f; //1.f;
+		btScalar mass = 900;
+		btScalar wheelWidth = 1.f;//0.4f
+		btScalar frontWheelRadius = .7f;//0.838f;
+		btScalar backWheelRadius = .7f;
 		btScalar suspensionRestLength = 0.6f;
 		btVector3 wheelDirection;
 		btVector3 wheelAxle;
@@ -127,8 +128,8 @@ namespace tankwars {
 		btScalar shootingPowerMax = 90;			//not adjusted
 		btScalar shootingPowerMin = 10;
 
-		btScalar turretMinAngle = -.1f;
-		btScalar turretMaxAngle = .5f;				//not adjusted
+		btScalar turretMinAngle = -.2f;
+		btScalar turretMaxAngle = .7f;				//not adjusted
 		btScalar turretRotationAlpha = .01f;		//not adjusted
 		btScalar turretAngle = .0f;
 		btScalar headAndTurretRotationAlpha = .01f;	//not adjusted

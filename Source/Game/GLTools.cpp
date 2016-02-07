@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <memory>
+#include <cstring>
 
 #include "Image.h"
 
@@ -131,5 +132,19 @@ namespace tankwars {
         }
 
         return texture;
+    }
+
+    bool isExtensionSupported(const std::string& name) {
+        int numExtensions;
+        glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+        for(int i = 0; i < numExtensions; i++) {
+            const GLubyte* extStr = glGetStringi(GL_EXTENSIONS, i);
+            if (strcmp(reinterpret_cast<const char*>(extStr), name.c_str()) == 0 ){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

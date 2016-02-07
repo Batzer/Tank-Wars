@@ -173,18 +173,20 @@ namespace tankwars {
         terrainTextureSide = createTextureFromFile("Content/Textures/terrain_test.png", true);
         terrainTextureBottom = createTextureFromFile("Content/Textures/terrain_test.png", true);
 
-        float aniso = 0.0f;
-        glBindTexture(GL_TEXTURE_2D, terrainTextureTop);
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
+        if (isExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
+            float aniso = 0.0f;
+            glBindTexture(GL_TEXTURE_2D, terrainTextureTop);
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
 
-        glBindTexture(GL_TEXTURE_2D, terrainTextureSide);
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
+            glBindTexture(GL_TEXTURE_2D, terrainTextureSide);
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
 
-        glBindTexture(GL_TEXTURE_2D, terrainTextureBottom);
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
+            glBindTexture(GL_TEXTURE_2D, terrainTextureBottom);
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
+        }
     }
 
     Renderer::Renderer(Renderer&& other) {

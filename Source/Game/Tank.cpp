@@ -395,10 +395,10 @@ namespace tankwars {
 		for (int i = 0; i < bulletMax;i++) {
 			bullets.at(i).set(tankId, MeshInstance(bulletMesh, bulletMat));
 		}
-		for (int i = 0; i < bulletRaycastMax; i++) {
+		/*for (int i = 0; i < bulletRaycastMax; i++) {
 			raycastBullets.at(i).set(tankId, MeshInstance(bulletMesh, bulletMat));
 			renderer.addSceneObject(raycastBullets.at(i).bulletMeshInstance);
-		}
+		}*/
 	}
 	void Tank::BulletHandler::updatePower(btScalar pwr) {
 		power = pwr;
@@ -428,7 +428,7 @@ namespace tankwars {
 	void Tank::BulletHandler::updateBullets(btScalar dt,btTransform direction) {
 		glm::mat4 bulletMat;
 		btTransform trans;
-		bool shotABulletThisTick = false;
+		//bool shotABulletThisTick = false;
 		for (int i = 0; i < bulletMax;i++) {
 			if (bullets.at(i).disableMe) {
 				removeBullet(i);
@@ -438,10 +438,10 @@ namespace tankwars {
 				bullets.at(i).bulletBody->getMotionState()->getWorldTransform(trans);
 				trans.getOpenGLMatrix(glm::value_ptr(bulletMat));
 				bullets.at(i).bulletMeshInstance.modelMatrix = bulletMat;
-				shotABulletThisTick = true;
+				//shotABulletThisTick = true;
 			}
 		}
-		for (int i = 0; i < bulletRaycastMax; i++) {
+		/*for (int i = 0; i < bulletRaycastMax; i++) {
 			if (raycastBullets[i].disableMe) {
 				removeRaycastBullet(i);
 			}
@@ -466,7 +466,7 @@ namespace tankwars {
 					foundASpot = true;
 				}
 			}
-		}
+		}*/
 	}
 
 	void Tank::BulletHandler::removeBullet(int index) {
@@ -474,11 +474,11 @@ namespace tankwars {
 		renderer.removeSceneObject(bullets.at(index).bulletMeshInstance);
 		bullets.at(index).active = false;
 	}
-	void Tank::BulletHandler::removeRaycastBullet(int index) {
+	/*void Tank::BulletHandler::removeRaycastBullet(int index) {
 		dynamicsWorld->removeRigidBody(raycastBullets.at(index).bulletBody.get());
 		raycastBullets.at(index).active = false;
 
-	}
+	}*/
 	Tank::BulletHandler::~BulletHandler() {
         for (auto& bullet : bullets) {
             if (bullet.bulletBody) {
@@ -486,10 +486,10 @@ namespace tankwars {
             }
         }
 
-        for (auto& bullet : raycastBullets) {
+       /* for (auto& bullet : raycastBullets) {
             if (bullet.bulletBody) {
                 dynamicsWorld->removeRigidBody(bullet.bulletBody.get());
             }
-        }
+        }*/
 	}
 }

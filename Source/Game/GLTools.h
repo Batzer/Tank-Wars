@@ -3,6 +3,10 @@
 #include <GL/gl3w.h>
 #include <string>
 
+// We need to define these our selves since they are extensions ...
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+
 namespace tankwars {
     inline void* bufferOffset(GLsizeiptr offset) {
         return reinterpret_cast<void*>(offset);

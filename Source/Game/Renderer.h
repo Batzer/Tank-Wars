@@ -9,6 +9,7 @@ namespace tankwars {
     class Camera;
     struct MeshInstance;
     class ParticleSystem;
+    class Hud;
 
     class Renderer {
     public:
@@ -23,6 +24,7 @@ namespace tankwars {
         void render();
         void setBackBufferSize(GLsizei width, GLsizei height);
         void attachCamera(size_t viewportIndex, const Camera& camera);
+        void attachHud(size_t viewportIndex, const Hud& hud);
         void setSplitScreenEnabled(bool enabled);
 
         // Scene managment
@@ -41,6 +43,7 @@ namespace tankwars {
     private:
         void renderScene(const Camera& camera, GLint viewportX, GLint viewportY,
                          GLsizei viewportWidth, GLsizei viewportHeight, bool clearBackBuffer);
+        void renderHud(const Hud& hud);
 
         // Window info
         GLsizei backBufferWidth;
@@ -65,6 +68,9 @@ namespace tankwars {
         GLuint particleBillboardVS;
         GLuint particleBillboardFS;
         GLuint particleBillboardProgram;
+        GLuint hudSpriteVS;
+        GLuint hudSpriteFS;
+        GLuint hudSpriteProgram;
 
         // Uniform locations
         GLint toonLightingModelMatrixLocation;
@@ -106,6 +112,10 @@ namespace tankwars {
         GLint particleBillboardCameraUpLocation;
         GLint particleBillboardViewProjMatLocation;
 
+        GLint hudSpriteDimensionsLocation;
+        GLint hudSpriteTexDimensionsLocation;
+        GLint hudSpriteTransparencyLocation;
+
         // Shadow mapping
         static constexpr GLsizei ShadowMapSize = 4096;
         GLuint shadowMap;
@@ -125,5 +135,7 @@ namespace tankwars {
         bool isSplitScreenEnabled = false;
         const Camera* cameraTop = nullptr;
         const Camera* cameraBottom = nullptr;
+        const Hud* hudTop = nullptr;
+        const Hud* hudBottom = nullptr;
     };
 }

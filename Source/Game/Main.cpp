@@ -22,6 +22,7 @@
 #include "ExplosionHandling.h"
 #include "ParticleSystem.h"
 #include "GLTools.h"
+#include "Hud.h"
 
 constexpr char* WindowTitle = "Tank Wars";
 constexpr int ResolutionX = 1280;
@@ -152,6 +153,18 @@ int main() {
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank2);
     
+    tankwars::HudSprite hudSprite;
+    hudSprite.transparency = 0.5f;
+    hudSprite.texture = tankwars::createTextureFromFile("Content/Textures/WallToonCracks.png");
+
+    tankwars::Hud hud1;
+    hud1.addSprite(hudSprite, 0);
+    renderer.attachHud(tankwars::Renderer::ViewportTop, hud1);
+
+
+    tankwars::Hud hud2;
+    hud2.addSprite(hudSprite, 0);
+    renderer.attachHud(tankwars::Renderer::ViewportBottom, hud2);
 
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();

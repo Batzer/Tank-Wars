@@ -24,6 +24,7 @@
     <ClCompile Include="ExplosionHandling.cpp" />
     <ClCompile Include="MarchingCubes.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
+    <ClCompile Include="Hud.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLTools.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="ExplosionHandling.h" />
     <ClInclude Include="MarchingCubes.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="Hud.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\Basic.vsh">
@@ -87,6 +89,9 @@
     <None Include="..\..\Content\Shaders\ToonTerrain.vsh">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\..\Content\Shaders\HudSprite.fsh">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Dependencies">
@@ -95,5 +100,10 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{eb6801dc-0d12-45b0-963a-0c95820a2467}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Content\Shaders\HudSprite.vsh">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

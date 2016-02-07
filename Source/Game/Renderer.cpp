@@ -11,6 +11,7 @@
 #include "MeshInstance.h"
 #include "ParticleSystem.h"
 #include "Camera.h"
+#include "Hud.h"
 
 namespace {
     GLuint quadVAO = 0;
@@ -70,6 +71,10 @@ namespace tankwars {
         particleBillboardFS = createShaderFromFile("Content/Shaders/ParticleBillboard.fsh", GL_FRAGMENT_SHADER);
         particleBillboardProgram = createAndLinkProgram(particleBillboardVS, particleBillboardFS);
 
+        hudSpriteVS = createShaderFromFile("Content/Shaders/HudSprite.vsh", GL_VERTEX_SHADER);
+        hudSpriteFS = createShaderFromFile("Content/Shaders/HudSprite.fsh", GL_FRAGMENT_SHADER);
+        hudSpriteProgram = createAndLinkProgram(hudSpriteVS, hudSpriteFS);
+
         // Query uniform locations from the shader programs
         toonLightingModelMatrixLocation = glGetUniformLocation(toonLightingProgram, "ModelMatrix");
         toonLightingInvTrModelMatrixLocation = glGetUniformLocation(toonLightingProgram, "InvTrModelMatrix");
@@ -109,6 +114,10 @@ namespace tankwars {
         particleBillboardCameraRightLocation = glGetUniformLocation(particleBillboardProgram, "CameraRight");
         particleBillboardCameraUpLocation = glGetUniformLocation(particleBillboardProgram, "CameraUp");
         particleBillboardViewProjMatLocation = glGetUniformLocation(particleBillboardProgram, "ViewProjMat");
+
+        hudSpriteDimensionsLocation = glGetUniformLocation(hudSpriteProgram, "Dimensions");
+        hudSpriteTexDimensionsLocation = glGetUniformLocation(hudSpriteProgram, "TexDimensions");
+        hudSpriteTransparencyLocation = glGetUniformLocation(hudSpriteProgram, "Transparency");
 
         // Create shadow map
         glGenTextures(1, &shadowMap);
@@ -201,10 +210,13 @@ namespace tankwars {
             assert(cameraBottom != nullptr);
 
             renderScene(*cameraBottom, 0, 0, backBufferWidth, backBufferHeight / 2, true);
+            renderHud(*hudBottom);
             renderScene(*cameraTop, 0, backBufferHeight / 2, backBufferWidth, backBufferHeight / 2, false);
+            renderHud(*hudTop);
         }
         else {
             renderScene(*cameraTop, 0, 0, backBufferWidth, backBufferHeight, true);
+            renderHud(*hudTop);
         }
     }
 
@@ -221,6 +233,17 @@ namespace tankwars {
         }
         else if (viewportIndex == 1) {
             cameraBottom = &camera;
+        }
+    }
+
+    void Renderer::attachHud(size_t viewportIndex, const Hud& hud) {
+        assert(viewportIndex == 0 || viewportIndex == 1);
+
+        if (viewportIndex == 0) {
+            hudTop = &hud;
+        }
+        else if (viewportIndex == 1) {
+            hudBottom = &hud;
         }
     }
 
@@ -393,5 +416,18 @@ namespace tankwars {
         glBindTexture(GL_TEXTURE_2D, shadowMap);
         renderQuad();
         */
+    }
+
+    void Renderer::renderHud(const Hud& hud) {
+        glUseProgram(hudSpriteProgram);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendEquation(GL_FUNC_ADD);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        hud.render(hudSpriteDimensionsLocation,
+                   hudSpriteTexDimensionsLocation,
+                   hudSpriteTransparencyLocation);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
     }
 }

@@ -154,14 +154,41 @@ int main() {
 	game.bindControllerToTank(1, &tank2);
     
     tankwars::HudSprite hudSprite;
-    hudSprite.transparency = 0.5f;
-	//hudSprite.position = { -1 , -1};
+	hudSprite.position = { -0.91 , -0.5};
 	hudSprite.transparency = 1;
-	hudSprite.size = { 0.23, 1 };
+	hudSprite.size = { 0.3, 1.8 };
     hudSprite.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy.png");
 
+	tankwars::HudSprite hudSprite2;
+	hudSprite2.position = { -0.91 , -0.5 };
+	hudSprite2.transparency = 1;
+	hudSprite2.size = { 0.3, 1.8 };
+	hudSprite2.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy2.png");
+
+	tankwars::HudSprite hudSprite3;
+	hudSprite3.position = { -0.91 , -0.5 };
+	hudSprite3.transparency = 1;
+	hudSprite3.size = { 0.3, 1.8 };
+	hudSprite3.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy3.png");
+
+	tankwars::HudSprite hudSprite4tr;
+	hudSprite4tr.position = { -0.91 , -0.5 };
+	hudSprite4tr.transparency = 0.5;
+	hudSprite4tr.size = { 0.3, 1.8 };
+	hudSprite4tr.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy4.png");
+
+	tankwars::HudSprite hudSprite4;
+	hudSprite4.position = { -0.91 , -0.5 };
+	hudSprite4.transparency = 1;
+	hudSprite4.size = { 0.3, 1.8 };
+	hudSprite4.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy4.png");
+
     tankwars::Hud hud1;
-    hud1.addSprite(hudSprite, 0);
+    hud1.addSprite(hudSprite, 4);
+	hud1.addSprite(hudSprite2, 3);
+	hud1.addSprite(hudSprite3, 0);
+	hud1.addSprite(hudSprite4tr, 1);
+	hud1.addSprite(hudSprite4, 2);
     renderer.attachHud(tankwars::Renderer::ViewportTop, hud1);
 
 
@@ -179,6 +206,10 @@ int main() {
 
         // Update game here
 		game.update((float)currentTime);
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_T)) {
+			hudSprite4.texSize[1] -= 0.01;
+			hudSprite4.size[1] -= 0.03;
+		}
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;

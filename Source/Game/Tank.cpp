@@ -434,13 +434,16 @@ namespace tankwars {
 
 	}
 	Tank::BulletHandler::~BulletHandler() {
-		for (int i = 0; i < bulletMax; i++) {
-			if(bullets[i].active)
-				dynamicsWorld->removeRigidBody(bullets.at(i).bulletBody.get());
-		}
-		for (int i = 0; i < bulletRaycastMax; i++) {
-			if (raycastBullets[i].active)
-			dynamicsWorld->removeRigidBody(raycastBullets.at(i).bulletBody.get());
-		}
+        for (auto& bullet : bullets) {
+            if (bullet.bulletBody) {
+                dynamicsWorld->removeRigidBody(bullet.bulletBody.get());
+            }
+        }
+
+        for (auto& bullet : raycastBullets) {
+            if (bullet.bulletBody) {
+                dynamicsWorld->removeRigidBody(bullet.bulletBody.get());
+            }
+        }
 	}
 }

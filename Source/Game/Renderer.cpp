@@ -10,6 +10,7 @@
 #include "Mesh.h"
 #include "MeshInstance.h"
 #include "ParticleSystem.h"
+#include "Camera.h"
 
 namespace {
     GLuint quadVAO = 0;
@@ -95,7 +96,9 @@ namespace tankwars {
         toonTerrainMaterialSpecularLocation = glGetUniformLocation(toonTerrainProgram, "MaterialSpecular");
         toonTerrainSpecularExponentLocation = glGetUniformLocation(toonTerrainProgram, "SpecularExponent");
         toonTerrainShadowMapLocation = glGetUniformLocation(toonTerrainProgram, "ShadowMap");
-        toonTerrainColorMapLocation = glGetUniformLocation(toonTerrainProgram, "ColorMap");
+        toonTerrainColorMapTopLocation = glGetUniformLocation(toonTerrainProgram, "ColorMapTop");
+        toonTerrainColorMapSideLocation = glGetUniformLocation(toonTerrainProgram, "ColorMapSide");
+        toonTerrainColorMapBottomLocation = glGetUniformLocation(toonTerrainProgram, "ColorMapBottom");
 
         outlineModelMatrixLocation = glGetUniformLocation(outlineProgram, "ModelMatrix");
         outlineViewProjMatrixLocation = glGetUniformLocation(outlineProgram, "ViewProjMatrix");
@@ -137,7 +140,9 @@ namespace tankwars {
         glEnable(GL_DEPTH_TEST);
 
         // Load textures
-        terrainTexture = createTextureFromFile("Content/Textures/terrain_dirt.png", true);
+        terrainTextureTop = createTextureFromFile("Content/Textures/terrain_test.png", true);
+        terrainTextureSide = createTextureFromFile("Content/Textures/terrain_test.png", true);
+        terrainTextureBottom = createTextureFromFile("Content/Textures/terrain_test.png", true);
     }
 
     Renderer::Renderer(Renderer&& other) {
@@ -176,15 +181,83 @@ namespace tankwars {
         return *this;
     }
 
-    void Renderer::renderScene(const glm::mat4& projMatrix, const glm::mat4& viewMatrix, const glm::vec3& cameraPos) {
-        auto viewProjMatrix = projMatrix * viewMatrix;
+    void Renderer::render() {
+        assert(cameraTop != nullptr);
+
+        if (isSplitScreenEnabled) {
+            assert(cameraBottom != nullptr);
+
+            renderScene(*cameraBottom, 0, 0, backBufferWidth, backBufferHeight / 2, true);
+            renderScene(*cameraTop, 0, backBufferHeight / 2, backBufferWidth, backBufferHeight / 2, false);
+        }
+        else {
+            renderScene(*cameraTop, 0, 0, backBufferWidth, backBufferHeight, true);
+        }
+    }
+
+    void Renderer::setBackBufferSize(GLsizei width, GLsizei height) {
+        backBufferWidth = width;
+        backBufferHeight = height;
+    }
+
+    void Renderer::attachCamera(size_t viewportIndex, const Camera& camera) {
+        assert(viewportIndex == 0 || viewportIndex == 1);
+
+        if (viewportIndex == 0) {
+            cameraTop = &camera;
+        }
+        else if (viewportIndex == 1) {
+            cameraBottom = &camera;
+        }
+    }
+
+    void Renderer::setSplitScreenEnabled(bool enabled) {
+        isSplitScreenEnabled = enabled;
+    }
+
+    void Renderer::setAmbientColor(const glm::vec3& color) {
+        ambientColor = color;
+    }
+
+    void Renderer::setLight(const glm::vec3& color, const glm::vec3& direction) {
+        lightColor = color;
+        lightDirection = direction;
+    }
+
+    void Renderer::addSceneObject(const MeshInstance& instance) {
+        sceneObjects.push_back(&instance);
+    }
+
+    void Renderer::removeSceneObject(const MeshInstance& instance) {
+        auto end = sceneObjects.end();
+        sceneObjects.erase(std::remove(sceneObjects.begin(), end, &instance), end);
+    }
+
+    void Renderer::setTerrain(const VoxelTerrain* terrain) {
+        this->terrain = terrain;
+    }
+
+    void Renderer::addParticleSystem(const ParticleSystem& particleSystem) {
+        particleSystems.push_back(&particleSystem);
+    }
+
+    void Renderer::removeParticleSystem(const ParticleSystem& particleSystem) {
+        auto end = particleSystems.end();
+        particleSystems.erase(std::remove(particleSystems.begin(), end, &particleSystem), end);
+    }
+
+    void Renderer::renderScene(const Camera& camera, GLint viewportX, GLint viewportY,
+                               GLsizei viewportWidth, GLsizei viewportHeight, bool clearBackBuffer) {
+        const auto& cameraPos = camera.position;
+        const auto& viewMatrix = camera.getViewMatrix();
+        const auto& viewProjMatrix = camera.getViewProjMatrix();
 
         // Render scene to shadow map
         glViewport(0, 0, ShadowMapSize, ShadowMapSize);
         glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
         glUseProgram(genShadowMapProgram);
-        
+
         auto lightViewMatrix = glm::lookAt(cameraPos - lightDirection * 50.0f, cameraPos, glm::vec3(0, 1, 0));
         auto lightProjMatrix = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 1.0f, 150.0f);
         auto lightMatrix = lightProjMatrix * lightViewMatrix;
@@ -197,9 +270,11 @@ namespace tankwars {
 
         // Bind backbuffer and clear
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, backBufferWidth, backBufferHeight);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+        glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+        if (clearBackBuffer) {
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
+
         // Render outline
         glCullFace(GL_FRONT);
         glUseProgram(outlineProgram);
@@ -230,9 +305,17 @@ namespace tankwars {
         glBindTexture(GL_TEXTURE_2D, shadowMap);
 
         glActiveTexture(GL_TEXTURE1);
-        glUniform1i(toonTerrainColorMapLocation, 1);
-        glBindTexture(GL_TEXTURE_2D, terrainTexture);
-        
+        glUniform1i(toonTerrainColorMapTopLocation, 1);
+        glBindTexture(GL_TEXTURE_2D, terrainTextureTop);
+
+        glActiveTexture(GL_TEXTURE2);
+        glUniform1i(toonTerrainColorMapSideLocation, 2);
+        glBindTexture(GL_TEXTURE_2D, terrainTextureSide);
+
+        glActiveTexture(GL_TEXTURE3);
+        glUniform1i(toonTerrainColorMapBottomLocation, 3);
+        glBindTexture(GL_TEXTURE_2D, terrainTextureBottom);
+
         glUniformMatrix4fv(toonTerrainModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
         glUniformMatrix4fv(toonTerrainInvTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
         glUniform3fv(toonTerrainMaterialDiffuseLocation, 1, glm::value_ptr(glm::vec3(1, 1, 1)));
@@ -297,41 +380,5 @@ namespace tankwars {
         glBindTexture(GL_TEXTURE_2D, shadowMap);
         renderQuad();
         */
-    }
-
-    void Renderer::setBackBufferSize(GLsizei width, GLsizei height) {
-        backBufferWidth = width;
-        backBufferHeight = height;
-    }
-
-    void Renderer::setAmbientColor(const glm::vec3& color) {
-        ambientColor = color;
-    }
-
-    void Renderer::setLight(const glm::vec3& color, const glm::vec3& direction) {
-        lightColor = color;
-        lightDirection = direction;
-    }
-
-    void Renderer::addSceneObject(const MeshInstance& instance) {
-        sceneObjects.push_back(&instance);
-    }
-
-    void Renderer::removeSceneObject(const MeshInstance& instance) {
-        auto end = sceneObjects.end();
-        sceneObjects.erase(std::remove(sceneObjects.begin(), end, &instance), end);
-    }
-
-    void Renderer::setTerrain(const VoxelTerrain* terrain) {
-        this->terrain = terrain;
-    }
-
-    void Renderer::addParticleSystem(const ParticleSystem& particleSystem) {
-        particleSystems.push_back(&particleSystem);
-    }
-
-    void Renderer::removeParticleSystem(const ParticleSystem& particleSystem) {
-        auto end = particleSystems.end();
-        particleSystems.erase(std::remove(particleSystems.begin(), end, &particleSystem), end);
     }
 }

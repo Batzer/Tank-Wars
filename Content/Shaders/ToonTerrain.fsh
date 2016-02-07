@@ -15,7 +15,9 @@ uniform vec3 MaterialDiffuse;
 uniform vec3 MaterialSpecular;
 uniform float SpecularExponent;
 uniform sampler2DShadow ShadowMap;
-uniform sampler2D ColorMap;
+uniform sampler2D ColorMapTop;
+uniform sampler2D ColorMapSide;
+uniform sampler2D ColorMapBottom;
 
 void main() {
 	vec3 color = AmbientColor * MaterialDiffuse;
@@ -48,9 +50,17 @@ void main() {
 		color += (diffuseFactor * MaterialDiffuse + specularFactor * MaterialSpecular) * shadow;
 	}
 
-	vec3 sampleX = texture(ColorMap, outWorldPos.yz).rgb;
-	vec3 sampleY = texture(ColorMap, outWorldPos.xz).rgb;
-	vec3 sampleZ = texture(ColorMap, outWorldPos.xy).rgb;
+	vec3 sampleX = texture(ColorMapSide, outWorldPos.yz).rgb;
+	vec3 sampleZ = texture(ColorMapSide, outWorldPos.xy).rgb;
+
+	vec3 sampleY;
+	if (N.y > 0.0) {
+		sampleY = texture(ColorMapTop, outWorldPos.xz).rgb;
+	}
+	else {
+		sampleY = texture(ColorMapBottom, outWorldPos.xz).rgb;
+	}
+
 	vec3 blendedColor = sampleX * abs(N.x) + sampleY * abs(N.y) + sampleZ * abs(N.z);
 	colorF = vec4(color * LightColor * blendedColor, 1.0);
     //colorF = vec4(color * LightColor * texture(ColorMap, outTexCoord).rgb, 1.0);

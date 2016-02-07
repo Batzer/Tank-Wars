@@ -167,10 +167,18 @@ int main() {
     float pitch = 0.0f;
     float camSpeed = 20.0f;
     tankwars::Camera freeCam;
+    freeCam.aspectRatio = 16 / 4.5f;
     freeCam.position = { 10, 40, 10 };
+    renderer.attachCamera(tankwars::Renderer::ViewportTop, freeCam);
 	tankwars::Game game(&freeCam, &terrain2);
 	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2, &tank1, &tank1, &game);
     
+    tankwars::Camera freeCam2;
+    freeCam2.position = { 15, 40, 10 };
+    freeCam2.aspectRatio = 16 / 4.5f;
+    renderer.attachCamera(tankwars::Renderer::ViewportBottom, freeCam2);
+    renderer.setSplitScreenEnabled(true);
+
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank1);
@@ -216,9 +224,12 @@ int main() {
             }
             terrain2.updateMesh();
         }
-		//freeCam.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
+
+		freeCam2.position = tank1.getPosition()+glm::normalize(-tank1.getDirectionVector())*10.f+glm::vec3(0,5,0);
+        freeCam2.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
+        freeCam2.update();
+
 		freeCam.setAxes(glm::quat({ roll, yaw, 0 }));
-		//freeCam.lookAt(tank1.getPosition() + glm::vec3(0,2,0), { 0,1,0 });
         freeCam.update();
 		
 		tank1.update((float)currentTime);
@@ -245,7 +256,7 @@ int main() {
         int backBufferWidth, backBufferHeight;
         glfwGetFramebufferSize(window, &backBufferWidth, &backBufferHeight);
         renderer.setBackBufferSize(backBufferWidth, backBufferHeight);
-        renderer.renderScene(freeCam.getProjMatrix(), freeCam.getViewMatrix(), freeCam.position);
+        renderer.render();
 
         glfwSwapBuffers(window);
 

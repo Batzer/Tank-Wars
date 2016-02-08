@@ -295,7 +295,7 @@ namespace tankwars {
 			btTransform trans;
 			trans.setFromOpenGLMatrix(glm::value_ptr(tankMeshInstances[2].modelMatrix));
 
-			bulletHandler.createNewBullet(trans,glm::vec3(tankMeshInstances[0].modelMatrix[2][0], tankMeshInstances[0].modelMatrix[2][1], tankMeshInstances[0].modelMatrix[2][2]),-1*tank->getCurrentSpeedKmHour());
+			bulletHandler.createNewBullet(trans,glm::vec3(tankMeshInstances[0].modelMatrix[2][0], tankMeshInstances[0].modelMatrix[2][1], tankMeshInstances[0].modelMatrix[2][2]),tank->getCurrentSpeedKmHour());
 			lastTimeShot = dt;
 		}
 	}

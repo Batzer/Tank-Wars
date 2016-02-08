@@ -329,10 +329,6 @@ int main() {
 		else {
 			kmhMinustank2.texture = nothing;
 		}
-<<<<<<< HEAD
-=======
-
->>>>>>> 888341e4ec796f72a3aaa524af1a972d257bf4c7
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;

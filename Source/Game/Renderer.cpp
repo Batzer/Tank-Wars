@@ -189,40 +189,48 @@ namespace tankwars {
         }
     }
 
-    Renderer::Renderer(Renderer&& other) {
-        *this = std::move(other);
-    }
-
     Renderer::~Renderer() {
+        // Delete shadow map
         glDeleteFramebuffers(1, &shadowMapFBO);
         glDeleteTextures(1, &shadowMap);
+
+        // Delete shaders
         glDeleteShader(toonLightingFS);
         glDeleteShader(toonLightingVS);
+        glDeleteProgram(toonLightingProgram);
+
+        glDeleteShader(toonTerrainFS);
+        glDeleteShader(toonTerrainVS);
+        glDeleteProgram(toonTerrainProgram);
+
         glDeleteShader(outlineFS);
         glDeleteShader(outlineVS);
-        glDeleteProgram(toonLightingProgram);
         glDeleteProgram(outlineProgram);
-    }
 
-    Renderer& Renderer::operator=(Renderer&& other) {
-        std::swap(toonLightingVS, other.toonLightingVS);
-        std::swap(toonLightingFS, other.toonLightingFS);
-        std::swap(toonLightingProgram, other.toonLightingProgram);
-        /*modelMatrixLocation = other.modelMatrixLocation;
-        invTrModelMatrixLocation = other.invTrModelMatrixLocation;
-        viewProjMatrixLocation = other.viewProjMatrixLocation;
-        ambientColorLocation = other.ambientColorLocation;
-        dirToLightLocation = other.dirToLightLocation;
-        eyePosLocation = other.eyePosLocation;
-        lightColorLocation = other.lightColorLocation;
-        materialDiffuseLocation = other.materialDiffuseLocation;
-        materialSpecularLocation = other.materialSpecularLocation;
-        specularExponentLocation = other.specularExponentLocation;*/
-        ambientColor = other.ambientColor;
-        lightDirection = other.lightDirection;
-        lightColor = other.lightColor;
-        sceneObjects = std::move(other.sceneObjects);
-        return *this;
+        glDeleteShader(genShadowMapFS);
+        glDeleteShader(genShadowMapVS);
+        glDeleteProgram(genShadowMapProgram);
+
+        glDeleteShader(depthQuadFS);
+        glDeleteShader(depthQuadVS);
+        glDeleteProgram(depthQuadProgram);
+
+        glDeleteShader(particleBillboardFS);
+        glDeleteShader(particleBillboardVS);
+        glDeleteProgram(particleBillboardProgram);
+
+        glDeleteShader(hudSpriteFS);
+        glDeleteShader(hudSpriteVS);
+        glDeleteProgram(hudSpriteProgram);
+
+        glDeleteShader(skyBoxFS);
+        glDeleteShader(skyBoxVS);
+        glDeleteProgram(skyBoxProgram);
+
+        // Delete textures
+        glDeleteTextures(1, &terrainTextureTop);
+        glDeleteTextures(1, &terrainTextureSide);
+        glDeleteTextures(1, &terrainTextureBottom);
     }
 
     void Renderer::render() {

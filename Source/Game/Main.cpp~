@@ -77,7 +77,7 @@ int main() {
     std::unique_ptr<btCollisionDispatcher> dispatcher(new btCollisionDispatcher(collisionConfiguration.get()));
     std::unique_ptr<btSequentialImpulseConstraintSolver> solver(new btSequentialImpulseConstraintSolver);
     std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld(new btDiscreteDynamicsWorld(
-        dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get()));
+        dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
 
     // Init input systems
     tankwars::Keyboard::init();

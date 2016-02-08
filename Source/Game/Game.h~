@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include <random>
-#include "VoxelTerrain.h"
 #include <GLFW/glfw3.h>
+#include "VoxelTerrain.h"
 #include "Tank.h"
 #include "Camera.h"
 

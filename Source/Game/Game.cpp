@@ -108,16 +108,17 @@ namespace tankwars {
 			for (char i = 0; i < count; i++) {
 				switch (i) {
 				case 0:		//L-stick x-Axis
-					tanks[1]->turnController(axis[i]);
+					if (abs(axis[i] > 0.2f)) tanks[1]->turnController(axis[i]);
+                    else tanks[1]->turnController(0.0f);
 					break;
 				case 1:		//L-stick y-Axis
 					
 					break;
 				case 2:		//R-stick x-Axis
-					tanks[1]->turnHeadAndTurretController(axis[i]);
+                    if (abs(axis[i] > 0.2f)) tanks[1]->turnHeadAndTurretController(axis[i]);
 					break;
 				case 3:		//R-stick y-Axis
-					tanks[1]->turnTurretController(axis[i]);
+                    if (abs(axis[i] > 0.2f)) tanks[1]->turnTurretController(axis[i]);
 					break;
 				}
 			}

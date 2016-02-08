@@ -1,4 +1,6 @@
 #include "Game.h"
+#include <cmath>
+
 namespace tankwars {
 	Game::Game(Camera * camera, VoxelTerrain* ter)
             : camera(camera),terrain(ter) {
@@ -246,14 +248,14 @@ namespace tankwars {
             for (char i = 0; i < count; i++) {
                 switch (i) {
                 case 0:
-                    if (abs(axis[i]) > 0.2f) tanks[1]->turnController(axis[i]);
-                    else tanks[1]->turnController(0.0f);
+                    if (abs(axis[i]) > 0.2f) tanks[0]->turnController(axis[i]);
+                    else tanks[0]->turnController(0.0f);
                     break;
                 case 3:
-                    if (abs(axis[i]) > 0.2f) tanks[1]->turnTurretController(axis[i]);
+                    if (abs(axis[i]) > 0.2f) tanks[0]->turnTurretController(axis[i]);
                     break;
                 case 4:
-                    if (abs(axis[i]) > 0.2f) tanks[1]->turnHeadAndTurretController(axis[i]);
+                    if (abs(axis[i]) > 0.2f) tanks[0]->turnHeadAndTurretController(axis[i]);
                     break;
                 }
             }
@@ -263,7 +265,7 @@ namespace tankwars {
                 switch (i) {
                 case 0:
                     if (axes[i]) {
-                        tanks[1]->toggleShootingMode(dt);
+                        tanks[0]->toggleShootingMode(dt);
                     }
                     break;
                 case 1:
@@ -273,40 +275,40 @@ namespace tankwars {
                     break;
                 case 2:
                     if (axes[i]) {
-                        tanks[1]->shoot(dt);
+                        tanks[0]->shoot(dt);
                     }
                     break;
                 case 3:
                     if (axes[i]) {
-                        tanks[1]->breakController();
+                        tanks[0]->breakController();
                     }
                     break;
                 case 4:
                     if (axes[i]) {
-                        tanks[1]->driveController(false);
+                        tanks[0]->driveController(false);
                     }
                     break;
                 case 5:
                     if (axes[i]) {
-                        tanks[1]->driveController(true);
+                        tanks[0]->driveController(true);
                     }
                     break;
                 case 6:
                     if (axes[i]) {
-                        tanks[1]->adjustPower(false, dt);
+                        tanks[0]->adjustPower(false, dt);
                     }
                     break;
                 case 7:
                     if (axes[i]) {
-                        tanks[1]->adjustPower(true, dt);
+                        tanks[0]->adjustPower(true, dt);
                     }
                     break;
 
                 case 8:
                     if (axes[i]) {
-                        glm::vec3 pos = tanks[1]->getPosition();
+                        glm::vec3 pos = tanks[0]->getPosition();
                         pos.y = getBestHeightFor2(btVector3(pos.x, pos.y, -pos.z));
-                        tanks[1]->reset(pos, -tanks[1]->getDirectionVector());
+                        tanks[0]->reset(pos, -tanks[0]->getDirectionVector());
                     }
                     break;
                 case 9:
@@ -315,7 +317,7 @@ namespace tankwars {
                     break;
                 case 10:
                     if (axes[i]) {
-                        tanks[1]->moveCam(false, dt);
+                        tanks[0]->moveCam(false, dt);
                     }
                     break;
                 case 11:
@@ -325,7 +327,7 @@ namespace tankwars {
 
                 case 12:
                     if (axes[i]) {
-                        tanks[1]->moveCam(true,dt);
+                        tanks[0]->moveCam(true,dt);
                     }
                     break;
                 case 13:

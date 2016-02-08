@@ -94,10 +94,10 @@ namespace tankwars {
 		float rotation_alpha = 0.1f;
 		//name
 		//const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-		if (joystickAvailable[0]) {
+		if (joystickAvailable[1]) {
 			//axis
 			int count;
-			const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
+			const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_2, &count);
 			for (char i = 0; i < count; i++) {
 				switch (i) {
 				case 0:		//L-stick x-Axis
@@ -117,7 +117,7 @@ namespace tankwars {
 			//std::cout << axis[0] << "\t" << axis[1] << "\t" << axis[2] << "\t" << axis[3]<<"\n";
 			//buttons
 			count;
-			const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+			const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_2, &count);
 			for (char i = 0; i < count; i++) {
 				switch (i) {
 				case 0:

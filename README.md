@@ -45,3 +45,5 @@ The actions for analog axes are:
 Sadly there is no way to configure the actions for different controllers. So the correct buttons and axes have to be found through trial and error.
 
 The first player (top screen) was configured for the XBox 360 Controller and the second player for a generic controller with a Playstation layout.
+
+The thumb sticks steer the tank and turn/adjust the turret, the shoulder buttons make the tank drive and with the DPad the camera can be zoomed in and out. The other actions are different on many controllers.

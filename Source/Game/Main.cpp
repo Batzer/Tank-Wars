@@ -72,12 +72,12 @@ int main() {
     }
 
     // Init bullet physics
-    std::unique_ptr<btBroadphaseInterface> broadphase = std::make_unique<btDbvtBroadphase>();
-    auto collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
-    auto dispatcher = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
-    auto solver = std::make_unique<btSequentialImpulseConstraintSolver>();
-    auto dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(
-        dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
+    std::unique_ptr<btBroadphaseInterface> broadphase(new btDbvtBroadphase);
+    std::unique_ptr<btDefaultCollisionConfiguration> collisionConfiguration(new btDefaultCollisionConfiguration);
+    std::unique_ptr<btCollisionDispatcher> dispatcher(new btCollisionDispatcher(collisionConfiguration.get()));
+    std::unique_ptr<btSequentialImpulseConstraintSolver> solver(new btSequentialImpulseConstraintSolver);
+    std::unique_ptr<btDiscreteDynamicsWorld> dynamicsWorld(new btDiscreteDynamicsWorld(
+        dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get()));
 
     // Init input systems
     tankwars::Keyboard::init();
@@ -86,8 +86,8 @@ int main() {
 
     // Setup game stuff
     tankwars::Renderer renderer;
-    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
-        dynamicsWorld.get(), 16, 8, 16, 8);
+    tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap(
+        "Content/Maps/test_very_big.png", dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 	
     tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30),0);
@@ -103,7 +103,8 @@ int main() {
     freeCam.position = { 10, 40, 10 };
     renderer.attachCamera(tankwars::Renderer::ViewportTop, freeCam);
 	tankwars::Game game(&freeCam, &terrain2);
-	tankwars::explosionHandler = new tankwars::ExplosionHandler(dynamicsWorld.get(), renderer, terrain2, &tank1, &tank2, &game);
+	tankwars::explosionHandler.reset(new tankwars::ExplosionHandler(
+        dynamicsWorld.get(), renderer, terrain2, &tank1, &tank2, &game));
     
     tankwars::Camera freeCam2;
     freeCam2.position = { 15, 40, 10 };
@@ -383,6 +384,13 @@ int main() {
     }
 
     // Clean up
+    glDeleteTextures(1, &hudSprite.texture);
+    glDeleteTextures(1, &hudSprite2.texture);
+    glDeleteTextures(1, &hudSprite3.texture);
+    glDeleteTextures(1, &hudSprite32.texture);
+    glDeleteTextures(1, &hudSprite4tr.texture);
+    glDeleteTextures(1, &hudSprite4.texture);
+    glDeleteTextures(1, &hudSprite42.texture);
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <memory>
 #include <cstring>
+#include <stdexcept>
 
 #include "Image.h"
 

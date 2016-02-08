@@ -35,9 +35,9 @@ namespace tankwars {
             glBindVertexArray(chunkVertexArrays[i]);
             glBindBuffer(GL_ARRAY_BUFFER, chunkVertexArrayBuffers[i]);
             glEnableVertexAttribArray(0);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), bufferOffset(sizeof(glm::vec3)));
+            //glEnableVertexAttribArray(1);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
+            //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), bufferOffset(sizeof(glm::vec3)));
             glBindVertexArray(0);
         }
 
@@ -191,13 +191,13 @@ namespace tankwars {
 
     void VoxelTerrain::updateChunk(size_t startX, size_t startY, size_t startZ) {
         static std::vector<glm::vec3> posCache;
-        static std::vector<glm::vec3> normalCache;
-        static std::vector<Vertex> vertexCache;
+        //static std::vector<glm::vec3> normalCache;
+        //static std::vector<Vertex> vertexCache;
         static std::vector<uint32_t> indexCache;
 
         posCache.clear();
-        normalCache.clear();
-        vertexCache.clear();
+        //normalCache.clear();
+        //vertexCache.clear();
         indexCache.clear();
 
         // Perform marching cubes on the chunk
@@ -246,6 +246,7 @@ namespace tankwars {
         }
 
         // Compute normals and vertices
+        /*
         if (normalCache.size() < posCache.size()) {
             normalCache.resize(posCache.size(), glm::vec3(0.0f));
         }
@@ -275,11 +276,10 @@ namespace tankwars {
         for (size_t i = 0; i < posCache.size(); i++) {
             vertexCache.push_back({posCache[i], normalCache[i]});
         }
-
+        */
         // Upload the new geometry to the GPU
-        // Marching Cubes generates max 5 triangles per cell, so 15 indices
         glBindBuffer(GL_ARRAY_BUFFER, chunkVertexArrayBuffers[chunkIndex]);
-        glBufferData(GL_ARRAY_BUFFER, vertexCache.size() * sizeof(Vertex), vertexCache.data(), GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, posCache.size() * sizeof(glm::vec3), posCache.data(), GL_STREAM_DRAW);
         //glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCache.size() * sizeof(Vertex), vertexCache.data());
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunkElementBuffers[chunkIndex]);

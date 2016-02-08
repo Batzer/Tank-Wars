@@ -91,8 +91,8 @@ namespace tankwars {
         GLint toonLightingSpecularExponentLocation;
         GLint toonLightingShadowMapLocation;
 
-        GLint toonTerrainModelMatrixLocation;
-        GLint toonTerrainInvTrModelMatrixLocation;
+        //GLint toonTerrainModelMatrixLocation;
+        //GLint toonTerrainInvTrModelMatrixLocation;
         GLint toonTerrainViewProjMatrixLocation;
         GLint toonTerrainLightMatrixLocation;
         GLint toonTerrainAmbientColorLocation;

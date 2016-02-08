@@ -17,21 +17,25 @@ namespace tankwars {
 		tanks[0] = tank1; 
 		tanks[1] = tank2; 
 		smokeParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
-		smokeParticleSystem.setParticleSizeRange(1, 2);
+		smokeParticleSystem.setParticleSizeRange(1, 3);
 		smokeParticleSystem.setParticleLifeTimeRange(3, 6);
+		smokeParticleSystem.setEmitterType(EmitterType::Sphere);
+		smokeParticleSystem.setEmitterRadius(1);
 		smokeParticleSystem.setParticleVelocityRange(glm::vec3(-4,-4,-4), glm::vec3(4,4,4));
 		smokeParticleSystem.setParticleAccelerationRange(glm::vec3(), glm::vec3());
 		renderer.addParticleSystem(smokeParticleSystem);
 
 		starYellowParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
-		starYellowParticleSystem.setParticleSizeRange(1, 2);
+		starYellowParticleSystem.setParticleSizeRange(0, 0.5);
 		starYellowParticleSystem.setParticleLifeTimeRange(3, 4);
 		starYellowParticleSystem.setEmitterType(EmitterType::Sphere);
-		starYellowParticleSystem.setEmitterRadius(1);
+		starYellowParticleSystem.setEmitterRadius(2);
 		renderer.addParticleSystem(starYellowParticleSystem);
 
 		starOrangeParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
-		starOrangeParticleSystem.setParticleSizeRange(1, 2);
+		starOrangeParticleSystem.setParticleSizeRange(0.5, 1);
+		starOrangeParticleSystem.setEmitterType(EmitterType::Sphere);
+		starOrangeParticleSystem.setEmitterRadius(0.5);
 		starOrangeParticleSystem.setParticleLifeTimeRange(3, 4);
 		renderer.addParticleSystem(starOrangeParticleSystem);
 	};
@@ -70,12 +74,16 @@ namespace tankwars {
 			}*/
 		});
 		starYellowParticleSystem.update(dt, [&](tankwars::Particle& p) {
+			if(p.size<2)
+			p.size += 0.001;
 			/*p.color.a -= 0.4f * dt;
 			if (p.color.a < 0.0f) {
 				p.isAlive = false;
 			}*/
 		});
 		starOrangeParticleSystem.update(dt, [&](tankwars::Particle& p) {
+			if (p.size < 2.5)
+				p.size += 0.003;
 			/*p.color.a -= 0.3f * dt;
 			if (p.color.a < 0.0f) {
 				p.isAlive = false;
@@ -97,7 +105,7 @@ namespace tankwars {
 		
 		starYellowParticleSystem.emit(10);
 		
-		starOrangeParticleSystem.emit(30);
+		starOrangeParticleSystem.emit(5);
 		btVector3 expl(pair.first.getX(), pair.first.getY(), -pair.first.getZ());
 		int xMin = std::max((int)(expl.getX() - explRadius), 1);
 		int yMin = std::max((int)(expl.getY() - explRadius), 1);

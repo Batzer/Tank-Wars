@@ -21,7 +21,7 @@ Playing
 
 The game only works with game controllers, so it doesn't react to keyboard and mouse input.
 
-Also every controller is handeled differntly by GLFW3 so some actions might not get detected by the game.
+Also every controller is handeled differently by GLFW3 so some actions might not get detected by the game.
 
 The actions for digital buttons are
 

@@ -10,6 +10,7 @@ namespace tankwars {
 		  bulletHandler(dynamicsWorld, renderer,tankID),
 		  tankTuning(),
 		  tankBoxShape(new btBoxShape(btVector3(1.5f, .3f, 2.f))),
+		  tankSmallBoxShape(new btBoxShape(btVector3(0.04f, 0.04f, 0.04f))),
 		  tankID(tankID)
 	{
 		//setTankTuning();
@@ -21,6 +22,7 @@ namespace tankwars {
         // (0, 1, 0) means that the center of mass is at (0, -1, 0) which makes the tank more stable.
         compoundShape.reset(new btCompoundShape);
         compoundShape->addChildShape(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0.5f, 0)), tankBoxShape.get());
+		compoundShape->addChildShape(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0.5f,2.f,0.5f)), tankSmallBoxShape.get());
 
 		btVector3 localInertia;
         compoundShape->calculateLocalInertia(mass, localInertia);
@@ -292,7 +294,8 @@ namespace tankwars {
 		if (dt - lastTimeShot > timeBetweenShots) {
 			btTransform trans;
 			trans.setFromOpenGLMatrix(glm::value_ptr(tankMeshInstances[2].modelMatrix));
-			bulletHandler.createNewBullet(trans);
+
+			bulletHandler.createNewBullet(trans, btVector3(tankMeshInstances[0].modelMatrix[2][0], tankMeshInstances[0].modelMatrix[2][1], tankMeshInstances[0].modelMatrix[2][2]),tank->getCurrentSpeedKmHour());
 			lastTimeShot = dt;
 		}
 	}
@@ -431,7 +434,7 @@ namespace tankwars {
 	void Tank::BulletHandler::updatePower(btScalar pwr) {
 		power = pwr;
 	}
-	void Tank::BulletHandler::createNewBullet(btTransform& tr) {
+	void Tank::BulletHandler::createNewBullet(btTransform& tr,btVector3 drivingDirection,btScalar drivingSpeed) {
 		glm::mat4 bulletMatrix;
 		tr.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
 

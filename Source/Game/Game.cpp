@@ -236,8 +236,117 @@ namespace tankwars {
 				}
 			}
 		}
-		if (joystickAvailable[0]) {
 
+        // Settings are for the XBox 360 controller
+		if (joystickAvailable[0]) {
+            //axis
+            int count;
+            const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
+            for (char i = 0; i < count; i++) {
+                switch (i) {
+                case 0:
+                    if (abs(axis[i]) > 0.2f) tanks[1]->turnController(axis[i]);
+                    else tanks[1]->turnController(0.0f);
+                    break;
+                case 3:
+                    if (abs(axis[i]) > 0.2f) tanks[1]->turnTurretController(axis[i]);
+                    break;
+                case 4:
+                    if (abs(axis[i]) > 0.2f) tanks[1]->turnHeadAndTurretController(axis[i]);
+                    break;
+                }
+            }
+            
+            const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+            for (char i = 0; i < count; i++) {
+                switch (i) {
+                case 0:
+                    if (axes[i]) {
+                        tanks[1]->toggleShootingMode(dt);
+                    }
+                    break;
+                case 1:
+                    if (axes[i]) {
+                       
+                    }
+                    break;
+                case 2:
+                    if (axes[i]) {
+                        tanks[1]->shoot(dt);
+                    }
+                    break;
+                case 3:
+                    if (axes[i]) {
+                        tanks[1]->breakController();
+                    }
+                    break;
+                case 4:
+                    if (axes[i]) {
+                        tanks[1]->driveController(false);
+                    }
+                    break;
+                case 5:
+                    if (axes[i]) {
+                        tanks[1]->driveController(true);
+                    }
+                    break;
+                case 6:
+                    if (axes[i]) {
+                        tanks[1]->adjustPower(false, dt);
+                    }
+                    break;
+                case 7:
+                    if (axes[i]) {
+                        tanks[1]->adjustPower(true, dt);
+                    }
+                    break;
+
+                case 8:
+                    if (axes[i]) {
+                        glm::vec3 pos = tanks[1]->getPosition();
+                        pos.y = getBestHeightFor2(btVector3(pos.x, pos.y, -pos.z));
+                        tanks[1]->reset(pos, -tanks[1]->getDirectionVector());
+                    }
+                    break;
+                case 9:
+                    if (axes[i]) {
+                    }
+                    break;
+                case 10:
+                    if (axes[i]) {
+                        tanks[1]->moveCam(false, dt);
+                    }
+                    break;
+                case 11:
+                    if (axes[i]) {
+                    }
+                    break;
+
+                case 12:
+                    if (axes[i]) {
+                        tanks[1]->moveCam(true,dt);
+                    }
+                    break;
+                case 13:
+                    if (axes[i]) {
+                        camera->position += glm::vec3(1, 0, 0) * movement_alpha;
+                    }
+                    break;
+                case 14:
+                    if (axes[i]) {
+                        
+                    }
+                    break;
+                case 15:
+                    if (axes[i]) {
+                        camera->position -= glm::vec3(1, 0, 0) * movement_alpha;
+                    }
+                    break;
+                default:
+                    break;
+
+                }
+            }
 		}
 	}
 }

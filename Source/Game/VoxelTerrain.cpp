@@ -25,7 +25,7 @@ namespace tankwars {
         chunkVertexArrayBuffers.resize(numChunks);
         chunkElementBuffers.resize(numChunks);
         chunkElementCounts.resize(numChunks, 0);
-        chunkDirtyStates.resize(numChunks, 0);
+        chunkDirtyStates.resize(numChunks, 1);
 
         glGenVertexArrays(static_cast<GLsizei>(numChunks), chunkVertexArrays.data());
         glGenBuffers(static_cast<GLsizei>(numChunks), chunkVertexArrayBuffers.data());

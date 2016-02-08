@@ -16,7 +16,8 @@
 #include "MeshInstance.h"
 #include "MeshTools.h" // Won't be needed in the final version
 #include "Renderer.h"
-
+#include "GLTools.h"
+#include "ParticleSystem.h"
 namespace tankwars {
 	class Tank {
 	public:
@@ -67,6 +68,8 @@ namespace tankwars {
 		void toggleShootingMode(btScalar dt);
 		int getSpeed();
 	private:
+		GLuint dirtTexture;
+		ParticleSystem dirtParticleSystem;
 		int points;
         void initializeTankMeshInstances(btVector3 startPos);
 		void setTankTuning();

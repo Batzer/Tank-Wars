@@ -88,7 +88,7 @@ int main() {
     // Setup game stuff
     tankwars::Renderer renderer;
     tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap(
-        "Content/Maps/good_level.png", dynamicsWorld.get(), 16, 8, 16, 8);
+        "Content/Maps/good_level.png", dynamicsWorld.get(), 8, 4, 8, 8);
 
     renderer.setTerrain(&terrain2);
 	

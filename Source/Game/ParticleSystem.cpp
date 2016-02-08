@@ -88,9 +88,9 @@ namespace tankwars {
         for (std::size_t i = 0; i < amount; i++) {
             glm::vec3 position = emitterPosition;
             if (emitterType == EmitterType::Sphere) {
-                position.x = positionDist(mt);
-                position.y = positionDist(mt);
-                position.z = positionDist(mt);
+                position.x += positionDist(mt);
+                position.y += positionDist(mt);
+                position.z += positionDist(mt);
             }
 
             particles[nextFreeParticle].position = position;

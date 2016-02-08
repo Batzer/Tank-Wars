@@ -49,6 +49,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_SAMPLES, UseMsaa ? 4 : 1); // MSAA
+    glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
 
     // Create the window and GL context
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);

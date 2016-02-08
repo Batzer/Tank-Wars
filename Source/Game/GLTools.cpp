@@ -107,10 +107,10 @@ namespace tankwars {
         case GL_RGBA8: textureFormat = GL_RGBA; break;
         }
 
-        if (srgb && textureFormat == GL_RGB8) {
+        if (srgb && format == GL_RGB8) {
             format = GL_SRGB8;
         }
-        else if (srgb && textureFormat == GL_RGBA8) {
+        else if (srgb && format == GL_RGBA8) {
             format = GL_SRGB8_ALPHA8;
         }
 

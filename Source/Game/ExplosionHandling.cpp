@@ -8,15 +8,30 @@ namespace tankwars {
 			  dnmcWrld(dynamicsWorld), 
 			  renderer(renderer), 
 			  terrain(terrain),
-			  smokeTexture(tankwars::createTextureFromFile("Content/Textures/comic-boom-explosion.png")),
-			  smokeParticleSystem(512,smokeTexture) {
+			  smokeTexture(tankwars::createTextureFromFile("Content/Textures/smoke.png")),
+			  smokeParticleSystem(2024,smokeTexture),
+			  starYellowTexture(tankwars::createTextureFromFile("Content/Textures/starYellow.png")),
+			  starOrangeTexture(tankwars::createTextureFromFile("Content/Textures/starOrange.png")),
+			  starYellowParticleSystem(512,starYellowTexture),
+			starOrangeParticleSystem(512, starOrangeTexture) {
 		tanks[0] = tank1; 
 		tanks[1] = tank2; 
-		smokeParticleSystem.setEmitterPosition({ 30, 30, -30 });
 		smokeParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
 		smokeParticleSystem.setParticleSizeRange(1, 2);
-		smokeParticleSystem.setParticleLifeTimeRange(3, 4);
+		smokeParticleSystem.setParticleLifeTimeRange(3, 6);
+		smokeParticleSystem.setParticleVelocityRange(glm::vec3(-4,-4,-4), glm::vec3(4,4,4));
+		smokeParticleSystem.setParticleAccelerationRange(glm::vec3(), glm::vec3());
 		renderer.addParticleSystem(smokeParticleSystem);
+
+		starYellowParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
+		starYellowParticleSystem.setParticleSizeRange(1, 2);
+		starYellowParticleSystem.setParticleLifeTimeRange(3, 4);
+		renderer.addParticleSystem(starYellowParticleSystem);
+
+		starOrangeParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
+		starOrangeParticleSystem.setParticleSizeRange(1, 2);
+		starOrangeParticleSystem.setParticleLifeTimeRange(3, 4);
+		renderer.addParticleSystem(starOrangeParticleSystem);
 	};
 
     ExplosionHandler::~ExplosionHandler() {
@@ -25,12 +40,46 @@ namespace tankwars {
 
     void ExplosionHandler::update(btScalar dt) {
 		handleExplosions();
-		smokeParticleSystem.update(dt, [&](tankwars::Particle& p) {
-			p.color.a -= 0.3f * dt;
+		smokeParticleSystem.update(dt, [&](tankwars::Particle& p){
+			btScalar val = (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.001;
+			if (p.velocity[0] < 0) {
+				p.velocity[0] += val;
+			}
+			else {
+				p.velocity[0] -= val;
+			}
+			if (p.velocity[1] < 0) {
+				p.velocity[1] += val;
+			}
+			else {
+				p.velocity[1] -= val;
+			}
+			if (p.velocity[2] < 0) {
+				p.velocity[2] += val;
+			}
+			else {
+				p.velocity[2] -= val;
+			}
+			//p.velocity[1] -= (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.001;
+			//p.velocity[2] -= (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.001;
+			/*p.color.a -= 0.1f * dt;
 			if (p.color.a < 0.0f) {
 				p.isAlive = false;
-			}
+			}*/
 		});
+		starYellowParticleSystem.update(dt, [&](tankwars::Particle& p) {
+			/*p.color.a -= 0.4f * dt;
+			if (p.color.a < 0.0f) {
+				p.isAlive = false;
+			}*/
+		});
+		starOrangeParticleSystem.update(dt, [&](tankwars::Particle& p) {
+			/*p.color.a -= 0.3f * dt;
+			if (p.color.a < 0.0f) {
+				p.isAlive = false;
+			}*/
+		});
+
 	}
 
 	void ExplosionHandler::addExplosionPoint(btVector3 explosionAt,int owner) {
@@ -39,7 +88,14 @@ namespace tankwars {
 
 	void ExplosionHandler::explosion(std::pair<btVector3,int> pair) {
 		smokeParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
-		smokeParticleSystem.emit(1);
+		starYellowParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
+		starOrangeParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
+		starYellowParticleSystem.emit(60);
+		smokeParticleSystem.emit(500);
+		
+		starYellowParticleSystem.emit(10);
+		
+		starOrangeParticleSystem.emit(30);
 		btVector3 expl(pair.first.getX(), pair.first.getY(), -pair.first.getZ());
 		int xMin = std::max((int)(expl.getX() - explRadius), 1);
 		int yMin = std::max((int)(expl.getY() - explRadius), 1);

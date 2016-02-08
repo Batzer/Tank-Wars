@@ -29,7 +29,11 @@ namespace tankwars {
 		void explosion(std::pair<btVector3, int> pair);
 
 		GLuint smokeTexture;
+		GLuint starYellowTexture;
+		GLuint starOrangeTexture;
 		ParticleSystem smokeParticleSystem;
+		ParticleSystem starYellowParticleSystem;
+		ParticleSystem starOrangeParticleSystem;
 		Game* game;
 		btScalar tankRadius = 1.5f;				//adjust--------------------------------------------------------------------------
 		Tank* tanks[2];

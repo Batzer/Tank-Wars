@@ -18,7 +18,7 @@ namespace tankwars {
 		tanks[1] = tank2; 
 		smokeParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
 		smokeParticleSystem.setParticleSizeRange(1, 3);
-		smokeParticleSystem.setParticleLifeTimeRange(3, 6);
+		smokeParticleSystem.setParticleLifeTimeRange(3, 5);
 		smokeParticleSystem.setEmitterType(EmitterType::Sphere);
 		smokeParticleSystem.setEmitterRadius(1);
 		smokeParticleSystem.setParticleVelocityRange(glm::vec3(-4,-4,-4), glm::vec3(4,4,4));
@@ -66,6 +66,12 @@ namespace tankwars {
 			else {
 				p.velocity[2] -= val;
 			}
+			if (p.lifeTime > 4.f) {
+				p.color.a -= 0.4;
+				if (p.color.a < 0) {
+					p.isAlive = false;
+				}
+			}
 			//p.velocity[1] -= (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.001;
 			//p.velocity[2] -= (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.001;
 			/*p.color.a -= 0.1f * dt;
@@ -101,7 +107,7 @@ namespace tankwars {
 		starYellowParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
 		starOrangeParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
 		starYellowParticleSystem.emit(60);
-		smokeParticleSystem.emit(500);
+		smokeParticleSystem.emit(400);
 		
 		starYellowParticleSystem.emit(10);
 		

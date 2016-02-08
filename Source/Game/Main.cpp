@@ -311,14 +311,6 @@ int main() {
 		else {
 			kmhMinustank2.texture = nothing;
 		}
-		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_R)) {
-			i = (i + 1) % 10;
-			number2.texture = numbers[i];
-		}
-		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_F)) {
-			hudSprite3.texSize[1] += 0.01;
-			hudSprite3.size[1] += 0.018;
-		}
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;

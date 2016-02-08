@@ -10,6 +10,7 @@ namespace tankwars {
     struct MeshInstance;
     class ParticleSystem;
     class Hud;
+    class SkyBox;
 
     class Renderer {
     public:
@@ -34,6 +35,7 @@ namespace tankwars {
         void addSceneObject(const MeshInstance& instance);
         void removeSceneObject(const MeshInstance& instance);
         void setTerrain(const VoxelTerrain* terrain);
+        void setSkyBox(const SkyBox* skyBox);
         void addParticleSystem(const ParticleSystem& particleSystem);
         void removeParticleSystem(const ParticleSystem& particleSystem);
 
@@ -71,6 +73,9 @@ namespace tankwars {
         GLuint hudSpriteVS;
         GLuint hudSpriteFS;
         GLuint hudSpriteProgram;
+        GLuint skyBoxVS;
+        GLuint skyBoxFS;
+        GLuint skyBoxProgram;
 
         // Uniform locations
         GLint toonLightingModelMatrixLocation;
@@ -116,6 +121,8 @@ namespace tankwars {
         GLint hudSpriteTexDimensionsLocation;
         GLint hudSpriteTransparencyLocation;
 
+        GLint skyBoxViewProjMatLocation;
+
         // Shadow mapping
         static constexpr GLsizei ShadowMapSize = 4096;
         GLuint shadowMap;
@@ -137,5 +144,6 @@ namespace tankwars {
         const Camera* cameraBottom = nullptr;
         const Hud* hudTop = nullptr;
         const Hud* hudBottom = nullptr;
+        const SkyBox* skyBox = nullptr;
     };
 }

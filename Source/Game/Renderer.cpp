@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,6 +13,7 @@
 #include "ParticleSystem.h"
 #include "Camera.h"
 #include "Hud.h"
+#include "SkyBox.h"
 
 namespace {
     GLuint quadVAO = 0;
@@ -41,6 +43,10 @@ namespace {
         glBindVertexArray(quadVAO);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glBindVertexArray(0);
+    }
+
+    glm::vec3 correctGamma(const glm::vec3& color) {
+        return { pow(color.r, 2.2f), pow(color.g, 2.2f), pow(color.b, 2.2f) };
     }
 }
 
@@ -74,6 +80,10 @@ namespace tankwars {
         hudSpriteVS = createShaderFromFile("Content/Shaders/HudSprite.vsh", GL_VERTEX_SHADER);
         hudSpriteFS = createShaderFromFile("Content/Shaders/HudSprite.fsh", GL_FRAGMENT_SHADER);
         hudSpriteProgram = createAndLinkProgram(hudSpriteVS, hudSpriteFS);
+
+        skyBoxVS = createShaderFromFile("Content/Shaders/SkyBox.vsh", GL_VERTEX_SHADER);
+        skyBoxFS = createShaderFromFile("Content/Shaders/SkyBox.fsh", GL_FRAGMENT_SHADER);
+        skyBoxProgram = createAndLinkProgram(skyBoxVS, skyBoxFS);
 
         // Query uniform locations from the shader programs
         toonLightingModelMatrixLocation = glGetUniformLocation(toonLightingProgram, "ModelMatrix");
@@ -119,6 +129,8 @@ namespace tankwars {
         hudSpriteTexDimensionsLocation = glGetUniformLocation(hudSpriteProgram, "TexDimensions");
         hudSpriteTransparencyLocation = glGetUniformLocation(hudSpriteProgram, "Transparency");
 
+        skyBoxViewProjMatLocation = glGetUniformLocation(skyBoxProgram, "ViewProjMat");
+
         // Create shadow map
         glGenTextures(1, &shadowMap);
         glBindTexture(GL_TEXTURE_2D, shadowMap);
@@ -147,24 +159,34 @@ namespace tankwars {
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+        glEnable(GL_FRAMEBUFFER_SRGB);
+        glDisable(GL_DITHER);
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+        glDisable(GL_SAMPLE_COVERAGE);
+        glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_STENCIL_TEST);
 
         // Load textures
         terrainTextureTop = createTextureFromFile("Content/Textures/terrain_test.png", true);
         terrainTextureSide = createTextureFromFile("Content/Textures/terrain_test.png", true);
         terrainTextureBottom = createTextureFromFile("Content/Textures/terrain_test.png", true);
 
-        float aniso = 0.0f;
-        glBindTexture(GL_TEXTURE_2D, terrainTextureTop);
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
+        if (isExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
+            float aniso = 0.0f;
+            glBindTexture(GL_TEXTURE_2D, terrainTextureTop);
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
 
-        glBindTexture(GL_TEXTURE_2D, terrainTextureSide);
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
+            glBindTexture(GL_TEXTURE_2D, terrainTextureSide);
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
 
-        glBindTexture(GL_TEXTURE_2D, terrainTextureBottom);
-        glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
+            glBindTexture(GL_TEXTURE_2D, terrainTextureBottom);
+            glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
+        }
     }
 
     Renderer::Renderer(Renderer&& other) {
@@ -273,6 +295,10 @@ namespace tankwars {
         this->terrain = terrain;
     }
 
+    void Renderer::setSkyBox(const SkyBox* skyBox) {
+        this->skyBox = skyBox;
+    }
+
     void Renderer::addParticleSystem(const ParticleSystem& particleSystem) {
         particleSystems.push_back(&particleSystem);
     }
@@ -329,8 +355,8 @@ namespace tankwars {
         // Render terrain
         glCullFace(GL_BACK);
         glUseProgram(toonTerrainProgram);
-        glUniform3fv(toonTerrainAmbientColorLocation, 1, glm::value_ptr(ambientColor));
-        glUniform3fv(toonTerrainLightColorLocation, 1, glm::value_ptr(lightColor));
+        glUniform3fv(toonTerrainAmbientColorLocation, 1, glm::value_ptr(correctGamma(ambientColor)));
+        glUniform3fv(toonTerrainLightColorLocation, 1, glm::value_ptr(correctGamma(lightColor)));
         glUniform3fv(toonTerrainDirToLightLocation, 1, glm::value_ptr(-glm::normalize(lightDirection)));
         glUniform3fv(toonTerrainEyePosLocation, 1, glm::value_ptr(cameraPos));
         glUniformMatrix4fv(toonTerrainViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMatrix));
@@ -362,8 +388,8 @@ namespace tankwars {
         // Render the meshes
         glCullFace(GL_BACK);
         glUseProgram(toonLightingProgram);
-        glUniform3fv(toonLightingAmbientColorLocation, 1, glm::value_ptr(ambientColor));
-        glUniform3fv(toonLightingLightColorLocation, 1, glm::value_ptr(lightColor));
+        glUniform3fv(toonLightingAmbientColorLocation, 1, glm::value_ptr(correctGamma(ambientColor)));
+        glUniform3fv(toonLightingLightColorLocation, 1, glm::value_ptr(correctGamma(lightColor)));
         glUniform3fv(toonLightingDirToLightLocation, 1, glm::value_ptr(-glm::normalize(lightDirection)));
         glUniform3fv(toonLightingEyePosLocation, 1, glm::value_ptr(cameraPos));
         glUniformMatrix4fv(toonLightingViewProjMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewProjMatrix));
@@ -382,11 +408,29 @@ namespace tankwars {
 
             glUniformMatrix4fv(toonLightingModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(modelMat));
             glUniformMatrix4fv(toonLightingInvTrModelMatrixLocation, 1, GL_FALSE, glm::value_ptr(invTrModelMat));
-            glUniform3fv(toonLightingMaterialDiffuseLocation, 1, glm::value_ptr(sceneObject->material->diffuseColor));
-            glUniform3fv(toonLightingMaterialSpecularLocation, 1, glm::value_ptr(sceneObject->material->specularColor));
+            glUniform3fv(toonLightingMaterialDiffuseLocation, 1, glm::value_ptr(correctGamma(sceneObject->material->diffuseColor)));
+            glUniform3fv(toonLightingMaterialSpecularLocation, 1, glm::value_ptr(correctGamma(sceneObject->material->specularColor)));
             glUniform1f(toonLightingSpecularExponentLocation, sceneObject->material->specularExponent);
 
             sceneObject->mesh->render();
+        }
+
+        // Render the skybox
+        if (skyBox) {
+            glUseProgram(skyBoxProgram);
+
+            auto skyBoxViewProjMat = camera.getProjMatrix() * glm::mat4(glm::mat3(viewMatrix));
+            glUniformMatrix4fv(skyBoxViewProjMatLocation, 1, GL_FALSE, glm::value_ptr(skyBoxViewProjMat));
+
+            glDepthFunc(GL_LEQUAL);
+            glDepthMask(GL_FALSE);
+            glCullFace(GL_FRONT);
+
+            skyBox->render();
+
+            glDepthMask(GL_TRUE);
+            glCullFace(GL_BACK);
+            glDepthFunc(GL_LESS);
         }
 
         // Render particles

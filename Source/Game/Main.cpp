@@ -79,24 +79,12 @@ int main() {
     auto dynamicsWorld = std::make_unique<btDiscreteDynamicsWorld>(
         dispatcher.get(), broadphase.get(), solver.get(), collisionConfiguration.get());
 
-	//TESTINGQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ
-	/*btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
-	btDefaultMotionState* groundMotionState =
-		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 15, 0)));
-	btRigidBody::btRigidBodyConstructionInfo
-		groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
-	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
-	dynamicsWorld->addRigidBody(groundRigidBody);
-	*/
     // Init input systems
     tankwars::Keyboard::init();
     glfwSetKeyCallback(window, &tankwars::Keyboard::keyCallback);
     glfwSetWindowFocusCallback(window, &tankwars::Keyboard::windowFocusCallback);
 
-    // The game loop
-    auto lastTime = glfwGetTime();
-
-    // TEST
+    // Setup game stuff
     tankwars::Renderer renderer;
     tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap("Content/Maps/test_very_big.png",
         dynamicsWorld.get(), 16, 8, 16, 8);
@@ -105,32 +93,6 @@ int main() {
     tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30),0);
 	tankwars::Tank tank2(dynamicsWorld.get(), renderer, btVector3(40, 25, -40), 1);
 	gContactAddedCallback = tankwars::customCallback;
-
-
-    /*btCollisionShape* fallShape = new btSphereShape(2);
-    btDefaultMotionState* fallMotionState =
-        new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(20, 50, -20)));
-    btScalar mass = 50;
-    btVector3 fallInertia(0, 0, 0);
-    fallShape->calculateLocalInertia(mass, fallInertia);
-    btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass, fallMotionState, fallShape, fallInertia);
-    btRigidBody* fallRigidBody = new btRigidBody(fallRigidBodyCI);*/
-    //dynamicsWorld->addRigidBody(fallRigidBody);
-
-	
-    tankwars::Mesh sphereMesh = tankwars::createSphereMesh(2, 16, 16);
-    tankwars::Material mat;
-    mat.specularExponent = 256;
-    tankwars::MeshInstance sphere(sphereMesh, mat);
-    renderer.addSceneObject(sphere);
-
-    /*auto smokeTexture = tankwars::createTextureFromFile("Content/Textures/comic-boom-explosion.png");
-    tankwars::ParticleSystem particleSystem(512, smokeTexture);
-    particleSystem.setEmitterPosition({30, 30, -30});
-    particleSystem.setParticleColorRange({1, 1, 1, 0.25f}, {1, 1, 1, 0.75f});
-    particleSystem.setParticleSizeRange(1, 2);
-    particleSystem.setParticleLifeTimeRange(3, 4);
-    renderer.addParticleSystem(particleSystem);*/
     
     float roll = 0.0f;
     float yaw = 0.0f;
@@ -203,7 +165,6 @@ int main() {
 	hud1.addSprite(hudSprite4, 2);
     renderer.attachHud(tankwars::Renderer::ViewportTop, hud1);
 
-
     tankwars::Hud hud2;
 	hud2.addSprite(hudSprite, 4);
 	hud2.addSprite(hudSprite2, 3);
@@ -211,7 +172,9 @@ int main() {
 	hud2.addSprite(hudSprite4tr, 1);
 	hud2.addSprite(hudSprite42, 2);
     renderer.attachHud(tankwars::Renderer::ViewportBottom, hud2);
-
+    
+    // The game loop
+    auto lastTime = glfwGetTime();
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
@@ -257,7 +220,6 @@ int main() {
 	    if (tankwars::Keyboard::isKeyDown(GLFW_KEY_O)) tank1.driveBack(true);
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_J))tank1.turn(true);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_L))tank1.turn(false);
-		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_P))//particleSystem.emit(1);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_SPACE)) {
             for (size_t z = 1; z < terrain2.getDepth()-1; z++)
             for (size_t y = 1; y < terrain2.getHeight()-1; y++)
@@ -295,24 +257,7 @@ int main() {
 		
 		tank1.update((float)currentTime);
 		tank2.update((float)currentTime);
-
-        //terrain2.updateMesh();
-
 		tankwars::explosionHandler->update(frameTime);
-        // TEST
-        
-        /*btTransform tr;
-        fallRigidBody->getMotionState()->getWorldTransform(tr);
-        tr.getOpenGLMatrix(glm::value_ptr(sphere.modelMatrix));*/
-        
-        // END
-
-        /*particleSystem.update(frameTime, [&](tankwars::Particle& p) {
-            p.color.a -= 0.3f * frameTime;
-            if (p.color.a < 0.0f) {
-                p.isAlive = false;
-            }
-        });*/
 
         // Render
         int backBufferWidth, backBufferHeight;

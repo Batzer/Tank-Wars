@@ -32,6 +32,7 @@ namespace tankwars {
 		};
 
 		Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition, int tankID);
+        ~Tank();
 
 		void addWheels();
 		void update(float dt);

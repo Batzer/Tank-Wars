@@ -12,7 +12,7 @@ namespace tankwars {
         }
 		 
         file.seekg(0, std::ios::end);
-        auto size = static_cast<std::size_t>(file.tellg());
+        auto size = static_cast<int>(file.tellg());
         file.seekg(0, std::ios::beg);
 
         std::vector<char> buffer(size);
@@ -24,7 +24,7 @@ namespace tankwars {
     }
 
     Image::Image(const void* data, size_t size) {
-        image = stbi_load_from_memory(static_cast<const stbi_uc*>(data), size,
+        image = stbi_load_from_memory(static_cast<const stbi_uc*>(data), static_cast<int>(size),
             &width, &height, &numChannels, STBI_default);
     }
 

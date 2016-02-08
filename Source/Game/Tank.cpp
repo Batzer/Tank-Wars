@@ -39,6 +39,16 @@ namespace tankwars {
 		bulletHandler.updatePower(shootingPower);
 	}
 
+    Tank::~Tank() {
+        if (tank) {
+            dynamicsWorld->removeVehicle(tank.get());
+        }
+
+        if (tankChassis) {
+            dynamicsWorld->removeRigidBody(tankChassis.get());
+        }
+    }
+
 
 	void Tank::initializeTankMeshInstances(btVector3 startPos) {
 		//Material

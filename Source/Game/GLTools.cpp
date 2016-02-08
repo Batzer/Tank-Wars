@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <memory>
+#include <cstring>
 
 #include "Image.h"
 
@@ -88,7 +89,7 @@ namespace tankwars {
         return program;
     }
 
-    GLuint createTextureFromFile(const std::string& path, bool generateMipMaps) {
+    GLuint createTextureFromFile(const std::string& path, bool generateMipMaps, bool srgb) {
         static const GLint channelToFormat[] = {
             GL_R8, GL_RG8, GL_RGB8, GL_RGBA8
         };
@@ -103,6 +104,13 @@ namespace tankwars {
         case GL_RG8:   textureFormat = GL_RG;   break;
         case GL_RGB8:  textureFormat = GL_RGB;  break;
         case GL_RGBA8: textureFormat = GL_RGBA; break;
+        }
+
+        if (srgb && textureFormat == GL_RGB8) {
+            format = GL_SRGB8;
+        }
+        else if (srgb && textureFormat == GL_RGBA8) {
+            format = GL_SRGB8_ALPHA8;
         }
 
         if (!textureFormat || !textureFormatType) {
@@ -124,5 +132,19 @@ namespace tankwars {
         }
 
         return texture;
+    }
+
+    bool isExtensionSupported(const std::string& name) {
+        int numExtensions;
+        glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+        for(int i = 0; i < numExtensions; i++) {
+            const GLubyte* extStr = glGetStringi(GL_EXTENSIONS, i);
+            if (strcmp(reinterpret_cast<const char*>(extStr), name.c_str()) == 0 ){
+                return true;
+            }
+        }
+
+        return false;
     }
 }

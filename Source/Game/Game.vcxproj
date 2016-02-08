@@ -277,6 +277,7 @@
     <ClCompile Include="MeshTools.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="VoxelChunk.cpp" />
@@ -292,6 +293,7 @@
     <None Include="..\..\Content\Shaders\HudSprite.fsh" />
     <None Include="..\..\Content\Shaders\Outline.fsh" />
     <None Include="..\..\Content\Shaders\ParticleBillboard.fsh" />
+    <None Include="..\..\Content\Shaders\SkyBox.fsh" />
     <None Include="..\..\Content\Shaders\ToonLighting.fsh" />
     <None Include="..\..\Content\Shaders\ToonTerrain.fsh" />
   </ItemGroup>
@@ -314,6 +316,7 @@
     <ClInclude Include="MeshTools.h" />
     <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VoxelChunk.h" />
@@ -352,6 +355,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Content\Shaders\HudSprite.vsh">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Content\Shaders\SkyBox.vsh">
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

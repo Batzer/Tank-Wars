@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Source\Game\Game.vcxproj", "{5ECA6EE4-A8B7-4A1A-B212-DCF85CC19B81}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ThirdParty", "ThirdParty", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glfw3", "ThirdParty\glfw3\glfw3.vcxproj", "{5BC7C71D-A36E-45A5-91D9-9BC4FD141351}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletPhysics", "ThirdParty\BulletPhysics\BulletPhysics.vcxproj", "{1FC2F8E4-FF1A-4482-BC40-FA2A4B175A63}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletPhysics", "ThirdParty\bullet3\src\BulletPhysics.vcxproj", "{1FC2F8E4-FF1A-4482-BC40-FA2A4B175A63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

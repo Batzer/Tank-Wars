@@ -32,6 +32,11 @@ namespace tankwars {
         float defaultMaxLifeTime = 1.0f;
     };
 
+    enum class EmitterType {
+        Point,
+        Sphere
+    };
+
     class ParticleSystem {
     public:
         ParticleSystem(size_t maxParticles, GLuint texture,
@@ -43,6 +48,8 @@ namespace tankwars {
         void render() const;
 
         void setEmitterPosition(const glm::vec3& position);
+        void setEmitterType(EmitterType type);
+        void setEmitterRadius(float radius);
         void setParticleTexture(GLuint texture);
         void setParticleVelocityRange(const glm::vec3& min, const glm::vec3& max);
         void setParticleAccelerationRange(const glm::vec3& min, const glm::vec3& max);
@@ -60,6 +67,8 @@ namespace tankwars {
         std::vector<ParticleInstanceData> particleInstanceData;
         size_t maxParticles;
         size_t nextFreeParticle = 0;
+        EmitterType emitterType = EmitterType::Point;
+        float emitterRadius = 0.5f;
         glm::vec3 emitterPosition = glm::vec3(0, 0, 0);
         glm::vec3 minParticleVelocity;
         glm::vec3 maxParticleVelocity;
@@ -72,6 +81,7 @@ namespace tankwars {
         float minParticleLifeTime;
         float maxParticleLifeTime;
 
+        std::uniform_real_distribution<float> positionDist;
         std::uniform_real_distribution<float> velocityXDist;
         std::uniform_real_distribution<float> velocityYDist;
         std::uniform_real_distribution<float> velocityZDist;

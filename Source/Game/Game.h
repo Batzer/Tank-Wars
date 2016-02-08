@@ -17,6 +17,7 @@ namespace tankwars {
 		void render();
 		void bindControllerToTank(int controllerID, Tank* tank);
 		void tankGotHit(int index);
+		void reset();
 	private:
 		btScalar getBestHeightFor(btVector3 pos);
 		btScalar getBestHeightFor2(btVector3 pos);

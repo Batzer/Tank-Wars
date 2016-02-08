@@ -15,6 +15,13 @@ namespace tankwars {
 		std::cout << "Available joysticks: 1st-" << joystickAvailable[0] << " 2nd-" << joystickAvailable[1];
 		return joystickAvailable[0] + joystickAvailable[1];
 	}
+	void Game::reset() {
+		int height = static_cast<int>(getBestHeightFor(spawnCoordinates[0]));
+		tanks[0]->reset(glm::vec3(spawnCoordinates[0].getX(), height, -spawnCoordinates[0].getZ()), glm::vec3(terrain->getWidth() / 2, 0, terrain->getDepth()));
+
+		height = static_cast<int>(getBestHeightFor(spawnCoordinates[2]));
+		tanks[1]->reset(glm::vec3(spawnCoordinates[2].getX(), height, -spawnCoordinates[2].getZ()), glm::vec3(terrain->getWidth() / 2, 0, terrain->getDepth()));
+	}
 	void Game::tankGotHit(int index) {
 		tanks[1 ^ index]->addPoint();
 		int closestPointToEnemy = 0;
@@ -94,10 +101,10 @@ namespace tankwars {
 		float rotation_alpha = 0.1f;
 		//name
 		//const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-		if (joystickAvailable[0]) {
+		if (joystickAvailable[1]) {
 			//axis
 			int count;
-			const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
+			const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_2, &count);
 			for (char i = 0; i < count; i++) {
 				switch (i) {
 				case 0:		//L-stick x-Axis
@@ -117,7 +124,7 @@ namespace tankwars {
 			//std::cout << axis[0] << "\t" << axis[1] << "\t" << axis[2] << "\t" << axis[3]<<"\n";
 			//buttons
 			count;
-			const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
+			const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_2, &count);
 			for (char i = 0; i < count; i++) {
 				switch (i) {
 				case 0:

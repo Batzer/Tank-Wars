@@ -116,6 +116,7 @@ int main() {
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank2);
+    game.reset();
 	
 	GLuint numbers[10];
 	numbers[0] = tankwars::createTextureFromFile("Content/Hud/Numbers/Zero.png");

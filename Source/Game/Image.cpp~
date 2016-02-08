@@ -9,7 +9,7 @@ namespace tankwars {
     Image::Image(const std::string& path) {
         std::ifstream file(path, std::ios::binary | std::ios::in);
         if (!file.is_open()) {
-            throw std::runtime_error("Attempt to open non-existent image file: " + path);
+            throw std::runtime_error("Attempt to open non-existent image file");
         }
 		 
         file.seekg(0, std::ios::end);

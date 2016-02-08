@@ -71,7 +71,7 @@ namespace tankwars {
 	private:
 		//GLuint dirtTexture;
 		//ParticleSystem dirtParticleSystem;
-		int points = 0;
+		int points;
         void initializeTankMeshInstances(btVector3 startPos);
 		void setTankTuning();
 

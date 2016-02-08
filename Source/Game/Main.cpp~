@@ -93,12 +93,12 @@ int main() {
     renderer.setTerrain(&terrain2);
 
     tankwars::SkyBox skyBox(
-        "Content/Skybox/Hintergrund1.png",
-        "Content/Skybox/Hintergrund2.png",
-        "Content/Skybox/Hintergrund3.png",
-        "Content/Skybox/Hintergrund4.png",
-        "Content/Skybox/Sonne.png",
-        "Content/Skybox/Floor.png");
+        "Content/SkyBox/Hintergrund1.png",
+        "Content/SkyBox/Hintergrund2.png",
+        "Content/SkyBox/Hintergrund3.png",
+        "Content/SkyBox/Hintergrund4.png",
+        "Content/SkyBox/Sonne.png",
+        "Content/SkyBox/Floor.png");
     renderer.setSkyBox(&skyBox);
 	
     tankwars::Tank tank1(dynamicsWorld.get(),renderer, btVector3(30, 25, -30),0);

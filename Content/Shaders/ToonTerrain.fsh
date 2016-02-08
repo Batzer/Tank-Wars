@@ -50,15 +50,15 @@ void main() {
 		color += (diffuseFactor * MaterialDiffuse + specularFactor * MaterialSpecular) * shadow;
 	}
 
-	vec3 sampleX = texture(ColorMapSide, outWorldPos.yz).rgb;
-	vec3 sampleZ = texture(ColorMapSide, outWorldPos.xy).rgb;
+	vec3 sampleX = texture(ColorMapSide, outWorldPos.yz * 0.5).rgb;
+	vec3 sampleZ = texture(ColorMapSide, outWorldPos.xy * 0.5).rgb;
 
 	vec3 sampleY;
 	if (N.y > 0.0) {
-		sampleY = texture(ColorMapTop, outWorldPos.xz).rgb;
+		sampleY = texture(ColorMapTop, outWorldPos.xz * 0.5).rgb;
 	}
 	else {
-		sampleY = texture(ColorMapBottom, outWorldPos.xz).rgb;
+		sampleY = texture(ColorMapBottom, outWorldPos.xz * 0.5).rgb;
 	}
 
 	vec3 blendedColor = sampleX * abs(N.x) + sampleY * abs(N.y) + sampleZ * abs(N.z);

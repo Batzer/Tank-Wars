@@ -47,7 +47,7 @@ namespace tankwars {
     void ExplosionHandler::update(btScalar dt) {
 		handleExplosions();
 		smokeParticleSystem.update(dt, [&](tankwars::Particle& p){
-			btScalar val = (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.002;
+			btScalar val = (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.002f;
 			if (p.velocity[0] < 0) {
 				p.velocity[0] += val;
 			}
@@ -81,15 +81,15 @@ namespace tankwars {
 		});
 		starYellowParticleSystem.update(dt, [&](tankwars::Particle& p) {
 			if(p.size<2)
-			p.size += 0.001;
+			p.size += 0.001f;
 			/*p.color.a -= 0.4f * dt;
 			if (p.color.a < 0.0f) {
 				p.isAlive = false;
 			}*/
 		});
 		starOrangeParticleSystem.update(dt, [&](tankwars::Particle& p) {
-			if (p.size < 2.5)
-				p.size += 0.003;
+			if (p.size < 2.5f)
+				p.size += 0.003f;
 			/*p.color.a -= 0.3f * dt;
 			if (p.color.a < 0.0f) {
 				p.isAlive = false;

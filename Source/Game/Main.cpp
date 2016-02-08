@@ -116,6 +116,7 @@ int main() {
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank2);
+<<<<<<< HEAD
 	game.reset();
 
 	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
@@ -126,6 +127,10 @@ int main() {
 	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
 	dynamicsWorld->addRigidBody(groundRigidBody);
 
+=======
+    game.reset();
+	
+>>>>>>> 283929fd030530d24e9365150cbf1b20045c0d8c
 	GLuint numbers[10];
 	numbers[0] = tankwars::createTextureFromFile("Content/Hud/Numbers/Zero.png");
 	numbers[1] = tankwars::createTextureFromFile("Content/Hud/Numbers/One.png");
@@ -223,7 +228,7 @@ int main() {
 
 	tankwars::HudSprite hudSprite4tr;
 	hudSprite4tr.position = { -1.05, -1.4 };
-	hudSprite4tr.transparency = 0.4;
+	hudSprite4tr.transparency = 0.4f;
 	hudSprite4tr.size = { 0.3, 1.8 };
 	hudSprite4tr.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy4.png");
 
@@ -282,17 +287,17 @@ int main() {
 		game.update((float)currentTime);
 
 		
-		hudSprite4.texSize[1] = 0.2923 + tank1.getShootingPowerInSteps()*0.002226;
-		hudSprite4.size[1] = 0.5261 + tank1.getShootingPowerInSteps()*0.0040095;
+		hudSprite4.texSize[1] = 0.2923f + tank1.getShootingPowerInSteps()*0.002226f;
+		hudSprite4.size[1] = 0.5261f + tank1.getShootingPowerInSteps()*0.0040095f;
 
-		hudSprite42.texSize[1] = 0.2923 + tank2.getShootingPowerInSteps()*0.002226;
-		hudSprite42.size[1] = 0.5261 + tank2.getShootingPowerInSteps()*0.0040095;
+		hudSprite42.texSize[1] = 0.2923f + tank2.getShootingPowerInSteps()*0.002226f;
+		hudSprite42.size[1] = 0.5261f + tank2.getShootingPowerInSteps()*0.0040095f;
 
-		hudSprite3.texSize[1] = 0.34 + tank1.getShootingTimerRestInSteps((float)currentTime)*0.0024;
-		hudSprite3.size[1] = 0.612 + tank1.getShootingTimerRestInSteps((float)currentTime)*0.00432;
+		hudSprite3.texSize[1] = 0.34f + tank1.getShootingTimerRestInSteps((float)currentTime)*0.0024f;
+		hudSprite3.size[1] = 0.612f + tank1.getShootingTimerRestInSteps((float)currentTime)*0.00432f;
 
-		hudSprite32.texSize[1] = 0.34 + tank2.getShootingTimerRestInSteps((float)currentTime)*0.0024;
-		hudSprite32.size[1] = 0.612 + tank2.getShootingTimerRestInSteps((float)currentTime)*0.00432;
+		hudSprite32.texSize[1] = 0.34f + tank2.getShootingTimerRestInSteps((float)currentTime)*0.0024f;
+		hudSprite32.size[1] = 0.612f + tank2.getShootingTimerRestInSteps((float)currentTime)*0.00432f;
 		
 		number1.texture = numbers[tank1.getPoints() % 10];
 		number2.texture = numbers[((int)(tank1.getPoints() / 10)) % 10];
@@ -319,6 +324,17 @@ int main() {
 		else {
 			kmhMinustank2.texture = nothing;
 		}
+<<<<<<< HEAD
+=======
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_R)) {
+			i = (i + 1) % 10;
+			number2.texture = numbers[i];
+		}
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_F)) {
+			hudSprite3.texSize[1] += 0.01f;
+			hudSprite3.size[1] += 0.018f;
+		}
+>>>>>>> 283929fd030530d24e9365150cbf1b20045c0d8c
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
@@ -386,6 +402,10 @@ int main() {
     }
 
     // Clean up
+    glDeleteTextures(10, numbers);
+    glDeleteTextures(1, &minus);
+    glDeleteTextures(1, &nothing);
+    glDeleteTextures(1, &kmh.texture);
     glDeleteTextures(1, &hudSprite.texture);
     glDeleteTextures(1, &hudSprite2.texture);
     glDeleteTextures(1, &hudSprite3.texture);

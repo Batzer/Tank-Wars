@@ -16,11 +16,8 @@ namespace tankwars {
     public:
         Renderer();
         Renderer(const Renderer&) = delete;
-        Renderer(Renderer&& other);
         ~Renderer();
-
         Renderer& operator=(const Renderer&) = delete;
-        Renderer& operator=(Renderer&& other);
 
         void render();
         void setBackBufferSize(GLsizei width, GLsizei height);

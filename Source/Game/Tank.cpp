@@ -11,9 +11,9 @@ namespace tankwars {
 		  tankTuning(),
 		  tankBoxShape(new btBoxShape(btVector3(1.5f, .3f, 2.f))),
 		  tankSmallBoxShape(new btBoxShape(btVector3(0.04f, 0.04f, 0.04f))),
-		  tankID(tankID),
-		  dirtTexture(tankwars::createTextureFromFile("Content/Textures/Dreck.png")),
-		  dirtParticleSystem(512,dirtTexture)
+		  tankID(tankID)
+		  //dirtTexture(tankwars::createTextureFromFile("Content/Textures/Dreck.png")),
+		  //dirtParticleSystem(512,dirtTexture)
 	{
 		//setTankTuning();
 		//tr.setIdentity();s
@@ -42,13 +42,14 @@ namespace tankwars {
 		initializeTankMeshInstances(startingPosition);
 		bulletHandler.updatePower(shootingPower);
 		tankBreakingForce = maxBreakingForce;
-
+        /*
 		dirtParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
 		dirtParticleSystem.setParticleSizeRange(0.1f, .2f);
 		dirtParticleSystem.setParticleLifeTimeRange(0.2f, 0.4f);
 		dirtParticleSystem.setEmitterType(EmitterType::Sphere);
 		dirtParticleSystem.setEmitterRadius(0.5f);
 		renderer.addParticleSystem(dirtParticleSystem);
+        */
 	}
 
     Tank::~Tank() {
@@ -366,7 +367,7 @@ namespace tankwars {
 		btTransform trans;
 		tankChassis->getMotionState()->getWorldTransform(trans);
 		trans.getOpenGLMatrix(glm::value_ptr(tankModelMat));
-
+        /*
 		if (tank->getCurrentSpeedKmHour()) {
 			if (tank->getWheelInfo(0).m_raycastInfo.m_groundObject) {
 				glm::mat4 mat = tankModelMat;// glm::translate(tankModelMat, glm::vec3(0, 0, -1));
@@ -393,6 +394,7 @@ namespace tankwars {
 		dirtParticleSystem.update(dt, [&](tankwars::Particle& p) {
 			
 		});
+        */
 		if (tankEngineForce<0 && tank->getCurrentSpeedKmHour()<0) {
 			tankEngineForce += std::abs(pow(tank->getCurrentSpeedKmHour(), 3))*dragCoefficient;
 		}

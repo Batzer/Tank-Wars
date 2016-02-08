@@ -295,7 +295,7 @@ namespace tankwars {
 			btTransform trans;
 			trans.setFromOpenGLMatrix(glm::value_ptr(tankMeshInstances[2].modelMatrix));
 
-			bulletHandler.createNewBullet(trans, btVector3(tankMeshInstances[0].modelMatrix[2][0], tankMeshInstances[0].modelMatrix[2][1], tankMeshInstances[0].modelMatrix[2][2]),tank->getCurrentSpeedKmHour());
+			bulletHandler.createNewBullet(trans,glm::vec3(tankMeshInstances[0].modelMatrix[2][0], tankMeshInstances[0].modelMatrix[2][1], tankMeshInstances[0].modelMatrix[2][2]),-1*tank->getCurrentSpeedKmHour());
 			lastTimeShot = dt;
 		}
 	}
@@ -434,14 +434,14 @@ namespace tankwars {
 	void Tank::BulletHandler::updatePower(btScalar pwr) {
 		power = pwr;
 	}
-	void Tank::BulletHandler::createNewBullet(btTransform& tr,btVector3 drivingDirection,btScalar drivingSpeed) {
+	void Tank::BulletHandler::createNewBullet(btTransform& tr,glm::vec3 drivingDirection,btScalar drivingSpeed) {
 		glm::mat4 bulletMatrix;
 		tr.getOpenGLMatrix(glm::value_ptr(bulletMatrix));
-
+		drivingDirection = glm::normalize(drivingDirection);
 		for (int i = 0; i < bulletMax; i++) {
 			if (!bullets.at(i).active) {
 				bullets.at(i).set(new btRigidBody(mass, new btDefaultMotionState(tr), &bulletShape, bulletInertia));
-				bullets.at(i).bulletBody->setLinearVelocity(-btVector3(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2])*power);
+				bullets.at(i).bulletBody->setLinearVelocity(btVector3(drivingDirection[0], drivingDirection[1], drivingDirection[2])*drivingSpeed-btVector3(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2])*power);
 				bullets.at(i).bulletBody->setCollisionFlags(bullets.at(i).bulletBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 				bullets.at(i).bulletBody->setUserIndex(10);
 				bullets.at(i).bulletBody->setUserPointer(&bullets.at(i));

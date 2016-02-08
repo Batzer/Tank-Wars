@@ -116,7 +116,6 @@ int main() {
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank2);
-<<<<<<< HEAD
 	game.reset();
 
 	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
@@ -127,10 +126,6 @@ int main() {
 	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
 	dynamicsWorld->addRigidBody(groundRigidBody);
 
-=======
-    game.reset();
-	
->>>>>>> 283929fd030530d24e9365150cbf1b20045c0d8c
 	GLuint numbers[10];
 	numbers[0] = tankwars::createTextureFromFile("Content/Hud/Numbers/Zero.png");
 	numbers[1] = tankwars::createTextureFromFile("Content/Hud/Numbers/One.png");
@@ -324,17 +319,6 @@ int main() {
 		else {
 			kmhMinustank2.texture = nothing;
 		}
-<<<<<<< HEAD
-=======
-		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_R)) {
-			i = (i + 1) % 10;
-			number2.texture = numbers[i];
-		}
-		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_F)) {
-			hudSprite3.texSize[1] += 0.01f;
-			hudSprite3.size[1] += 0.018f;
-		}
->>>>>>> 283929fd030530d24e9365150cbf1b20045c0d8c
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;

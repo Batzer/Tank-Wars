@@ -159,7 +159,7 @@ namespace tankwars {
 			BulletHandler(btDynamicsWorld* dynamicsWorld, Renderer& renderer, int tankId);
             ~BulletHandler();
 
-			void createNewBullet(btTransform& tr, btVector3 drivingDirection, btScalar drivingSpeed);
+			void createNewBullet(btTransform& tr, glm::vec3 drivingDirection, btScalar drivingSpeed);
 			void updateBullets(btScalar dt, btTransform direction);
 			void removeBullet(int index);
 			void updatePower(btScalar pwr);

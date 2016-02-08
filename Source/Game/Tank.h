@@ -45,6 +45,9 @@ namespace tankwars {
 		glm::vec3 getPosition();
 		btRigidBody* getRigidBody();
 
+		btScalar getShootingPowerInSteps();
+		btScalar getShootingTimerRestInSteps(btScalar dt);
+
 		void moveCam(bool closer, btScalar dt);
 		btScalar getCameraOffsetDistance();
 		btScalar getCameraOffsetHeight();
@@ -101,7 +104,7 @@ namespace tankwars {
 		float timeBetweenShots = .5f;
 
 		float lastPowerAdjust = 0;
-		float timeBetweenPowerAdjusts = 0.3f;
+		float timeBetweenPowerAdjusts = 0.001f;
 		//Tank Physics Variables
 		float dragCoefficient = .03f;
 
@@ -128,8 +131,8 @@ namespace tankwars {
 
 		//Tank Movement Variables
 		btScalar shootingPower = 20;				//not adjusted
-		btScalar shootingPowerIncrease = 5;		//not adjusted
-		btScalar shootingPowerMax = 90;			//not adjusted
+		btScalar shootingPowerIncrease = 0.1f;		//not adjusted
+		btScalar shootingPowerMax = 30;			//not adjusted
 		btScalar shootingPowerMin = 10;
 
 		btScalar turretMinAngle = -.2f;

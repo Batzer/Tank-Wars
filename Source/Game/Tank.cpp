@@ -42,10 +42,16 @@ namespace tankwars {
 
 	void Tank::initializeTankMeshInstances(btVector3 startPos) {
 		//Material
-		tankMaterial.diffuseColor = { 0.6f, 0.6f, 0 };
-		tankMaterial.specularColor = { 1, 1, 0 };
-		tankMaterial.specularExponent = 16;
-
+		if (tankID) {
+			tankMaterial.diffuseColor = { 0, 0, 1 };
+			tankMaterial.specularColor = { 0, 0.5f, 0 };					//adjust specular color
+			tankMaterial.specularExponent = 16;
+		}
+		else {
+			tankMaterial.diffuseColor = { 1, 0, 0 };
+			tankMaterial.specularColor = { 0, 0.5f, 0 };					//adjust specular color
+			tankMaterial.specularExponent = 16;
+		}
 
 		auto tankBodyModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankBody.obj");
 		auto tankHeadModel = tankwars::readWavefrontFromFile("Content/Animations/TankObj/TankHeadCentered.obj");
@@ -190,7 +196,16 @@ namespace tankwars {
 		}
 		return cameraOffsetHeight;
 	}
-
+	btScalar Tank::getShootingPowerInSteps() {
+		return (shootingPower - shootingPowerMin) / shootingPowerIncrease;
+	}
+	btScalar Tank::getShootingTimerRestInSteps(btScalar dt) {
+		btScalar temp = dt - lastTimeShot;
+		btScalar step = timeBetweenShots / 100;
+		int i;
+		for ( i = 0; i*step < temp; i++) {}
+		return i;
+	}
 	//-------------------------------------------Controller-Functions----------------------------
 
 	void Tank::reset(glm::vec3 pos,glm::vec3 lookAt) {

@@ -154,34 +154,46 @@ int main() {
 	game.bindControllerToTank(1, &tank2);
     
     tankwars::HudSprite hudSprite;
-	hudSprite.position = { -0.91 , -0.5};
+	hudSprite.position = { -1.05 , -1.4};
 	hudSprite.transparency = 1;
 	hudSprite.size = { 0.3, 1.8 };
     hudSprite.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy.png");
 
 	tankwars::HudSprite hudSprite2;
-	hudSprite2.position = { -0.91 , -0.5 };
+	hudSprite2.position = { -1.05 , -1.4 };
 	hudSprite2.transparency = 1;
 	hudSprite2.size = { 0.3, 1.8 };
 	hudSprite2.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy2.png");
 
 	tankwars::HudSprite hudSprite3;
-	hudSprite3.position = { -0.91 , -0.5 };
+	hudSprite3.position = { -1.05, -1.4 };
 	hudSprite3.transparency = 1;
 	hudSprite3.size = { 0.3, 1.8 };
 	hudSprite3.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy3.png");
 
+	tankwars::HudSprite hudSprite32;
+	hudSprite32.position = { -1.05, -1.4 };
+	hudSprite32.transparency = 1;
+	hudSprite32.size = { 0.3, 1.8 };
+	hudSprite32.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy3.png");
+
 	tankwars::HudSprite hudSprite4tr;
-	hudSprite4tr.position = { -0.91 , -0.5 };
-	hudSprite4tr.transparency = 0.5;
+	hudSprite4tr.position = { -1.05, -1.4 };
+	hudSprite4tr.transparency = 0.4;
 	hudSprite4tr.size = { 0.3, 1.8 };
 	hudSprite4tr.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy4.png");
 
 	tankwars::HudSprite hudSprite4;
-	hudSprite4.position = { -0.91 , -0.5 };
+	hudSprite4.position = { -1.05 , -1.4 };
 	hudSprite4.transparency = 1;
 	hudSprite4.size = { 0.3, 1.8 };
 	hudSprite4.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy4.png");
+
+	tankwars::HudSprite hudSprite42;
+	hudSprite42.position = { -1.05 , -1.4 };
+	hudSprite42.transparency = 1;
+	hudSprite42.size = { 0.3, 1.8 };
+	hudSprite42.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy4.png");
 
     tankwars::Hud hud1;
     hud1.addSprite(hudSprite, 4);
@@ -193,7 +205,11 @@ int main() {
 
 
     tankwars::Hud hud2;
-    hud2.addSprite(hudSprite, 0);
+	hud2.addSprite(hudSprite, 4);
+	hud2.addSprite(hudSprite2, 3);
+	hud2.addSprite(hudSprite32, 0);
+	hud2.addSprite(hudSprite4tr, 1);
+	hud2.addSprite(hudSprite42, 2);
     renderer.attachHud(tankwars::Renderer::ViewportBottom, hud2);
 
     while (!glfwWindowShouldClose(window)) {
@@ -206,10 +222,27 @@ int main() {
 
         // Update game here
 		game.update((float)currentTime);
-		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_T)) {
-			hudSprite4.texSize[1] -= 0.01;
-			hudSprite4.size[1] -= 0.03;
+
+		hudSprite4.texSize[1] = 0.2923 + tank1.getShootingPowerInSteps()*0.002226;
+		hudSprite4.size[1] = 0.5261 + tank1.getShootingPowerInSteps()*0.0040095;
+
+		hudSprite42.texSize[1] = 0.2923 + tank2.getShootingPowerInSteps()*0.002226;
+		hudSprite42.size[1] = 0.5261 + tank2.getShootingPowerInSteps()*0.0040095;
+		
+		hudSprite3.texSize[1] = 0.34 + tank1.getShootingTimerRestInSteps((float)currentTime)*0.0024;
+		hudSprite3.size[1] = 0.612 + tank1.getShootingTimerRestInSteps((float)currentTime)*0.00432;
+
+		hudSprite32.texSize[1] = 0.34 + tank2.getShootingTimerRestInSteps((float)currentTime)*0.0024;
+		hudSprite32.size[1] = 0.612 + tank2.getShootingTimerRestInSteps((float)currentTime)*0.00432;
+		
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_R)) {
+			hudSprite3.texSize[1] -= 0.01;
+			hudSprite3.size[1] -= 0.018;
 		}
+		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_F)) {
+			hudSprite3.texSize[1] += 0.01;
+			hudSprite3.size[1] += 0.018;
+		}std::cout << hudSprite3.texSize[1] << "  " << hudSprite3.size[1] << "\n";
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;

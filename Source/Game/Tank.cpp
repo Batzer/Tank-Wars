@@ -37,6 +37,7 @@ namespace tankwars {
 
 		initializeTankMeshInstances(startingPosition);
 		bulletHandler.updatePower(shootingPower);
+		tankBreakingForce = maxBreakingForce;
 	}
 
     Tank::~Tank() {
@@ -142,7 +143,9 @@ namespace tankwars {
 			tank->getWheelInfo(i).m_rollInfluence = 01.f;
 		}
 	}
-
+	int Tank::getSpeed() {
+		return -(int)tank->getCurrentSpeedKmHour();
+	}
 	glm::vec3 Tank::getPosition() {
 		btTransform trans;
 		tankChassis->getMotionState()->getWorldTransform(trans);

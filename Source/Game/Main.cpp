@@ -114,12 +114,83 @@ int main() {
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank2);
-    
-    tankwars::HudSprite hudSprite;
-	hudSprite.position = { -1.05 , -1.4};
+	
+	GLuint numbers[10];
+	numbers[0] = tankwars::createTextureFromFile("Content/Hud/Numbers/Zero.png");
+	numbers[1] = tankwars::createTextureFromFile("Content/Hud/Numbers/One.png");
+	numbers[2] = tankwars::createTextureFromFile("Content/Hud/Numbers/Two.png");
+	numbers[3] = tankwars::createTextureFromFile("Content/Hud/Numbers/Three.png");
+	numbers[4] = tankwars::createTextureFromFile("Content/Hud/Numbers/Four.png");
+	numbers[5] = tankwars::createTextureFromFile("Content/Hud/Numbers/Five.png");
+	numbers[6] = tankwars::createTextureFromFile("Content/Hud/Numbers/Six.png");
+	numbers[7] = tankwars::createTextureFromFile("Content/Hud/Numbers/Seven.png");
+	numbers[8] = tankwars::createTextureFromFile("Content/Hud/Numbers/Eight.png");
+	numbers[9] = tankwars::createTextureFromFile("Content/Hud/Numbers/Nine.png");
+	GLuint minus = tankwars::createTextureFromFile("Content/Hud/Numbers/Minus.png");
+	GLuint nothing = tankwars::createTextureFromFile("Content/Hud/Numbers/Nothing.png");
+
+	tankwars::HudSprite kmhNumber1;
+	kmhNumber1.transparency = 1;
+	kmhNumber1.size = { 0.06,0.21 };
+	kmhNumber1.position = {-0.71,-0.901};
+
+	tankwars::HudSprite kmhNumber2;
+	kmhNumber2.transparency = 1;
+	kmhNumber2.size = { 0.06,0.21 };
+	kmhNumber2.position = { -0.735,-0.901 };
+
+	tankwars::HudSprite kmhMinus;
+	kmhMinus.transparency = 1;
+	kmhMinus.size = { 0.06,0.21 };
+	kmhMinus.position = { -0.76,-0.901 };
+
+	tankwars::HudSprite kmhNumber1tank2;
+	kmhNumber1tank2.transparency = 1;
+	kmhNumber1tank2.size = { 0.06,0.21 };
+	kmhNumber1tank2.position = { -0.71,-0.901 };
+
+	tankwars::HudSprite kmhNumber2tank2;
+	kmhNumber2tank2.transparency = 1;
+	kmhNumber2tank2.size = { 0.06,0.21 };
+	kmhNumber2tank2.position = { -0.735,-0.901 };
+
+	tankwars::HudSprite kmhMinustank2;
+	kmhMinustank2.transparency = 1;
+	kmhMinustank2.size = { 0.06,0.21 };
+	kmhMinustank2.position = { -0.76,-0.901 };
+
+	tankwars::HudSprite kmh;
+	kmh.transparency = 1;
+	kmh.texture = tankwars::createTextureFromFile("Content/Hud/Numbers/kmh.png");
+	kmh.size = {0.2,0.2};
+	kmh.position = { -0.7,-0.9 };
+
+	tankwars::HudSprite number1;
+	number1.transparency = 1;
+	number1.size = { 0.1,0.35 };
+	number1.position = { 0.92,-1.05 };
+
+	tankwars::HudSprite number2;
+	number2.transparency = 1;
+	number2.size = { 0.1,0.35 };
+	number2.position = { 0.88,-1.05 };
+
+
+	tankwars::HudSprite number1tank2;
+	number1tank2.transparency = 1;
+	number1tank2.size = { 0.1,0.35 };
+	number1tank2.position = { 0.92,0.7 };
+
+	tankwars::HudSprite number2tank2;
+	number2tank2.transparency = 1;
+	number2tank2.size = { 0.1,0.35 };
+	number2tank2.position = { 0.88,0.7 };
+
+	tankwars::HudSprite hudSprite;
+	hudSprite.position = { -1.05 , -1.4 };
 	hudSprite.transparency = 1;
 	hudSprite.size = { 0.3, 1.8 };
-    hudSprite.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy.png");
+	hudSprite.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy.png");
 
 	tankwars::HudSprite hudSprite2;
 	hudSprite2.position = { -1.05 , -1.4 };
@@ -157,24 +228,37 @@ int main() {
 	hudSprite42.size = { 0.3, 1.8 };
 	hudSprite42.texture = tankwars::createTextureFromFile("Content/Hud/gamethingy4.png");
 
-    tankwars::Hud hud1;
-    hud1.addSprite(hudSprite, 4);
+	tankwars::Hud hud1;
+	hud1.addSprite(kmhMinus, 10);
+	hud1.addSprite(kmhNumber2, 9);
+	hud1.addSprite(kmhNumber1, 8);
+	hud1.addSprite(kmh, 7);
+	hud1.addSprite(number2, 6);
+	hud1.addSprite(number1, 5);
+	hud1.addSprite(hudSprite, 4);
 	hud1.addSprite(hudSprite2, 3);
 	hud1.addSprite(hudSprite3, 0);
 	hud1.addSprite(hudSprite4tr, 1);
 	hud1.addSprite(hudSprite4, 2);
-    renderer.attachHud(tankwars::Renderer::ViewportTop, hud1);
+	renderer.attachHud(tankwars::Renderer::ViewportTop, hud1);
 
-    tankwars::Hud hud2;
+	tankwars::Hud hud2;
+	hud2.addSprite(kmhMinustank2, 10);
+	hud2.addSprite(kmhNumber2tank2, 9);
+	hud2.addSprite(kmhNumber1tank2, 8);
+	hud2.addSprite(kmh, 7);
+	hud2.addSprite(number2tank2, 6);
+	hud2.addSprite(number1tank2, 5);
 	hud2.addSprite(hudSprite, 4);
 	hud2.addSprite(hudSprite2, 3);
 	hud2.addSprite(hudSprite32, 0);
 	hud2.addSprite(hudSprite4tr, 1);
 	hud2.addSprite(hudSprite42, 2);
-    renderer.attachHud(tankwars::Renderer::ViewportBottom, hud2);
-    
+	renderer.attachHud(tankwars::Renderer::ViewportBottom, hud2);
+	
     // The game loop
     auto lastTime = glfwGetTime();
+	int i = 0;
     while (!glfwWindowShouldClose(window)) {
         auto currentTime = glfwGetTime();
         auto frameTime = static_cast<float>(currentTime - lastTime);
@@ -186,26 +270,52 @@ int main() {
         // Update game here
 		game.update((float)currentTime);
 
+		
 		hudSprite4.texSize[1] = 0.2923 + tank1.getShootingPowerInSteps()*0.002226;
 		hudSprite4.size[1] = 0.5261 + tank1.getShootingPowerInSteps()*0.0040095;
 
 		hudSprite42.texSize[1] = 0.2923 + tank2.getShootingPowerInSteps()*0.002226;
 		hudSprite42.size[1] = 0.5261 + tank2.getShootingPowerInSteps()*0.0040095;
-		
+
 		hudSprite3.texSize[1] = 0.34 + tank1.getShootingTimerRestInSteps((float)currentTime)*0.0024;
 		hudSprite3.size[1] = 0.612 + tank1.getShootingTimerRestInSteps((float)currentTime)*0.00432;
 
 		hudSprite32.texSize[1] = 0.34 + tank2.getShootingTimerRestInSteps((float)currentTime)*0.0024;
 		hudSprite32.size[1] = 0.612 + tank2.getShootingTimerRestInSteps((float)currentTime)*0.00432;
 		
+		number1.texture = numbers[tank1.getPoints() % 10];
+		number2.texture = numbers[((int)(tank1.getPoints() / 10)) % 10];
+
+		number1tank2.texture = numbers[tank2.getPoints() % 10];
+		number2tank2.texture = numbers[((int)(tank2.getPoints() / 10)) % 10];
+
+		kmhNumber1.texture = numbers[std::abs(tank1.getSpeed())%10];
+		kmhNumber2.texture = numbers[((int)(std::abs(tank1.getSpeed())/10)) % 10];
+
+		if (tank1.getSpeed() < 0) {
+			kmhMinus.texture = minus;
+		}
+		else {
+			kmhMinus.texture = nothing;
+		}
+
+		kmhNumber1tank2.texture = numbers[std::abs(tank2.getSpeed()) % 10];
+		kmhNumber2tank2.texture = numbers[((int)(std::abs(tank2.getSpeed()) / 10)) % 10];
+
+		if (tank2.getSpeed() < 0) {
+			kmhMinustank2.texture = minus;
+		}
+		else {
+			kmhMinustank2.texture = nothing;
+		}
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_R)) {
-			hudSprite3.texSize[1] -= 0.01;
-			hudSprite3.size[1] -= 0.018;
+			i = (i + 1) % 10;
+			number2.texture = numbers[i];
 		}
 		if (tankwars::Keyboard::isKeyDown(GLFW_KEY_F)) {
 			hudSprite3.texSize[1] += 0.01;
 			hudSprite3.size[1] += 0.018;
-		}std::cout << hudSprite3.texSize[1] << "  " << hudSprite3.size[1] << "\n";
+		}
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_ESCAPE)) glfwSetWindowShouldClose(window, GL_TRUE);
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_W)) freeCam.position += freeCam.direction *  static_cast<float>(frameTime) * camSpeed;
         if (tankwars::Keyboard::isKeyDown(GLFW_KEY_S)) freeCam.position -= freeCam.direction *  static_cast<float>(frameTime) * camSpeed;

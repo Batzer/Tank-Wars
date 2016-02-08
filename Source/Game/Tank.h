@@ -65,6 +65,7 @@ namespace tankwars {
 		void addPoint();
 		int getPoints();
 		void toggleShootingMode(btScalar dt);
+		int getSpeed();
 	private:
 		int points;
         void initializeTankMeshInstances(btVector3 startPos);

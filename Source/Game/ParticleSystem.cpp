@@ -29,6 +29,7 @@ namespace tankwars {
         , maxParticleSize(config.defaultMaxSize)
         , minParticleLifeTime(config.defaultMinLifeTime)
         , maxParticleLifeTime(config.defaultMaxLifeTime)
+        , positionDist(-emitterRadius, emitterRadius)
         , velocityXDist(minParticleVelocity.x, maxParticleVelocity.x)
         , velocityYDist(minParticleVelocity.y, maxParticleVelocity.y)
         , velocityZDist(minParticleVelocity.z, maxParticleVelocity.z)
@@ -85,7 +86,14 @@ namespace tankwars {
         }
 
         for (std::size_t i = 0; i < amount; i++) {
-            particles[nextFreeParticle].position = emitterPosition;
+            glm::vec3 position = emitterPosition;
+            if (emitterType == EmitterType::Sphere) {
+                position.x = positionDist(mt);
+                position.y = positionDist(mt);
+                position.z = positionDist(mt);
+            }
+
+            particles[nextFreeParticle].position = position;
             particles[nextFreeParticle].velocity = glm::vec3(velocityXDist(mt), velocityYDist(mt), velocityZDist(mt));
             particles[nextFreeParticle].acceleration = glm::vec3(accelerationXDist(mt), accelerationYDist(mt), accelerationZDist(mt));
             particles[nextFreeParticle].color = glm::vec4(colorRDist(mt), colorGDist(mt), colorBDist(mt), colorADist(mt));
@@ -143,6 +151,15 @@ namespace tankwars {
 
     void ParticleSystem::setEmitterPosition(const glm::vec3& position) {
         emitterPosition = position;
+    }
+
+    void ParticleSystem::setEmitterType(EmitterType type) {
+        emitterType = type;
+    }
+
+    void ParticleSystem::setEmitterRadius(float radius) {
+        emitterRadius = radius;
+        positionDist = std::uniform_real_distribution<float>(-emitterRadius, emitterRadius);
     }
 
     void ParticleSystem::setParticleVelocityRange(const glm::vec3& min, const glm::vec3& max) {

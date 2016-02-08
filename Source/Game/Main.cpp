@@ -128,13 +128,13 @@ int main() {
 	game.bindControllerToTank(1, &tank2);
 	game.reset();
 
-	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
-	btDefaultMotionState* groundMotionState =
-		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -2, 0)));
-	btRigidBody::btRigidBodyConstructionInfo
-		groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
-	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
-	dynamicsWorld->addRigidBody(groundRigidBody);
+	std::unique_ptr<btCollisionShape> groundShape(new btStaticPlaneShape(btVector3(0, 1, 0), 1));
+    std::unique_ptr<btDefaultMotionState> groundMotionState(
+		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -2, 0))));
+	btRigidBody::btRigidBodyConstructionInfo groundRigidBodyCI(
+        0, groundMotionState.get(), groundShape.get(), btVector3(0, 0, 0));
+    std::unique_ptr<btRigidBody> groundRigidBody(new btRigidBody(groundRigidBodyCI));
+	dynamicsWorld->addRigidBody(groundRigidBody.get());
 
 	GLuint numbers[10];
 	numbers[0] = tankwars::createTextureFromFile("Content/Hud/Numbers/Zero.png");
@@ -407,6 +407,7 @@ int main() {
     glDeleteTextures(1, &hudSprite4tr.texture);
     glDeleteTextures(1, &hudSprite4.texture);
     glDeleteTextures(1, &hudSprite42.texture);
+    dynamicsWorld->removeRigidBody(groundRigidBody.get());
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;

@@ -26,6 +26,8 @@ namespace tankwars {
 		starYellowParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
 		starYellowParticleSystem.setParticleSizeRange(1, 2);
 		starYellowParticleSystem.setParticleLifeTimeRange(3, 4);
+		starYellowParticleSystem.setEmitterType(EmitterType::Sphere);
+		starYellowParticleSystem.setEmitterRadius(1);
 		renderer.addParticleSystem(starYellowParticleSystem);
 
 		starOrangeParticleSystem.setParticleColorRange({ 1, 1, 1, 0.25f }, { 1, 1, 1, 0.75f });
@@ -41,7 +43,7 @@ namespace tankwars {
     void ExplosionHandler::update(btScalar dt) {
 		handleExplosions();
 		smokeParticleSystem.update(dt, [&](tankwars::Particle& p){
-			btScalar val = (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.001;
+			btScalar val = (std::pow(p.velocity[0], 2) + std::pow(p.velocity[1], 2) + std::pow(p.velocity[2], 2))*0.002;
 			if (p.velocity[0] < 0) {
 				p.velocity[0] += val;
 			}

@@ -169,9 +169,9 @@ namespace tankwars {
         glDisable(GL_STENCIL_TEST);
 
         // Load textures
-        terrainTextureTop = createTextureFromFile("Content/Textures/terrain_test.png", true);
-        terrainTextureSide = createTextureFromFile("Content/Textures/terrain_test.png", true);
-        terrainTextureBottom = createTextureFromFile("Content/Textures/terrain_test.png", true);
+        terrainTextureTop = createTextureFromFile("Content/Textures/testtest.jpg", true);
+        terrainTextureSide = createTextureFromFile("Content/Textures/testtest.jpg", true);
+        terrainTextureBottom = createTextureFromFile("Content/Textures/testtest.jpg", true);
 
         if (isExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
             float aniso = 0.0f;

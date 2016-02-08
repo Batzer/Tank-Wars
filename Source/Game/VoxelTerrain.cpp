@@ -168,7 +168,7 @@ namespace tankwars {
         for (int x = 0; x < heightMap.getWidth(); x++) {
             int heightValue;
             if (x == 0 || x == heightMap.getWidth() - 1 || z == 0 || z == heightMap.getHeight() - 1) {
-                heightValue = static_cast<int>(terrain.getHeight() - 1);
+                heightValue = static_cast<int>(terrain.getHeight() - 1) / 3;
             }
             else {
                 auto index = (heightMap.getWidth() - x - 1) + (heightMap.getHeight() - z - 1) * heightMap.getWidth();

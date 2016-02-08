@@ -116,7 +116,16 @@ int main() {
 	game.setupControllers();
 	game.bindControllerToTank(0, &tank1);
 	game.bindControllerToTank(1, &tank2);
-	
+	game.reset();
+
+	btCollisionShape* groundShape = new btStaticPlaneShape(btVector3(0, 1, 0), 1);
+	btDefaultMotionState* groundMotionState =
+		new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, -2, 0)));
+	btRigidBody::btRigidBodyConstructionInfo
+		groundRigidBodyCI(0, groundMotionState, groundShape, btVector3(0, 0, 0));
+	btRigidBody* groundRigidBody = new btRigidBody(groundRigidBodyCI);
+	dynamicsWorld->addRigidBody(groundRigidBody);
+
 	GLuint numbers[10];
 	numbers[0] = tankwars::createTextureFromFile("Content/Hud/Numbers/Zero.png");
 	numbers[1] = tankwars::createTextureFromFile("Content/Hud/Numbers/One.png");

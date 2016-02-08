@@ -107,7 +107,7 @@ namespace tankwars {
 		starYellowParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
 		starOrangeParticleSystem.setEmitterPosition(glm::vec3(pair.first.getX(), pair.first.getY(), pair.first.getZ()));
 		starYellowParticleSystem.emit(60);
-		smokeParticleSystem.emit(400);
+		smokeParticleSystem.emit(300);
 		
 		starYellowParticleSystem.emit(10);
 		

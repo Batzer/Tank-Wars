@@ -4,7 +4,9 @@
 #include <string>
 #include <memory>
 #include <cstdint>
+#include <cstddef>
 
+#include <GL/gl3w.h>
 #include <btBulletDynamicsCommon.h>
 
 #include "Mesh.h"

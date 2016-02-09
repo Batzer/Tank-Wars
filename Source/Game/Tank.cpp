@@ -1,5 +1,9 @@
 #include "Tank.h"
+
 #include <glm/gtc/type_ptr.hpp>
+
+#include "Renderer.h"
+
 namespace tankwars {
 
 	Tank::Tank(btDiscreteDynamicsWorld *dynamicsWorld, Renderer& renderer, btVector3 startingPosition,int tankID)
@@ -229,7 +233,7 @@ namespace tankwars {
 		btScalar step = timeBetweenShots / 100;
 		int i;
 		for ( i = 0; i*step < temp; i++) {}
-		return i;
+		return static_cast<btScalar>(i);
 	}
 	//-------------------------------------------Controller-Functions----------------------------
 
@@ -480,7 +484,7 @@ namespace tankwars {
 		for (int i = 0; i < bulletMax; i++) {
 			if (!bullets.at(i).active) {
 				bullets.at(i).set(new btRigidBody(mass, new btDefaultMotionState(tr), &bulletShape, bulletInertia));
-				bullets.at(i).bulletBody->setLinearVelocity(btVector3(drivingDirection[0], drivingDirection[1], drivingDirection[2])*drivingSpeed*0.1-btVector3(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2])*power);
+				bullets.at(i).bulletBody->setLinearVelocity(btVector3(drivingDirection[0], drivingDirection[1], drivingDirection[2])*drivingSpeed*0.1f-btVector3(bulletMatrix[2][0], bulletMatrix[2][1], bulletMatrix[2][2])*power);
 				bullets.at(i).bulletBody->setCollisionFlags(bullets.at(i).bulletBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 				bullets.at(i).bulletBody->setUserIndex(10);
 				bullets.at(i).bulletBody->setUserPointer(&bullets.at(i));

@@ -68,7 +68,7 @@ namespace tankwars {
             errorMessage += infoLogBuffer.get();
             throw std::runtime_error(errorMessage);
         }
-
+        /*
         glValidateProgram(program);
 
         GLint validateStatus;
@@ -86,7 +86,7 @@ namespace tankwars {
             errorMessage += infoLogBuffer.get();
             throw std::runtime_error(errorMessage);
         }
-
+        */
         return program;
     }
 

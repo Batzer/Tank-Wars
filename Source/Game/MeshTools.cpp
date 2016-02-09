@@ -1,6 +1,8 @@
 #include "MeshTools.h"
 #include <vector>
+#include <cstdint>
 #include <glm/gtc/constants.hpp>
+#include <glm/glm.hpp>
 
 namespace tankwars {
     Mesh createBoxMesh(float width, float height, float depth) {

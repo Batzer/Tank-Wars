@@ -15,11 +15,12 @@
 #include "Mesh.h"
 #include "MeshInstance.h"
 #include "MeshTools.h" // Won't be needed in the final version
-#include "Renderer.h"
 //#include "GLTools.h"
 //#include "ParticleSystem.h"
 
 namespace tankwars {
+    class Renderer;
+
 	class Tank {
 	public:
 		struct Bullet {

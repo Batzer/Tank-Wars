@@ -1,20 +1,20 @@
 #pragma once
 
-
-#include <algorithm>
+#include <utility>
 #include <vector>
 #include <memory>
 
 #include <btBulletCollisionCommon.h>
 #include <btBulletDynamicsCommon.h>
 
-#include "Renderer.h"
-#include "Tank.h"
-#include "Game.h"
 #include "ParticleSystem.h"
-#include "GLTools.h"
 
 namespace tankwars {
+    class Renderer;
+    class VoxelTerrain;
+    class Tank;
+    class Game;
+
 	bool customCallback(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1);
 
 	class ExplosionHandler {

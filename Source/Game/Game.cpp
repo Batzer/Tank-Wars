@@ -1,5 +1,15 @@
 #include "Game.h"
+
 #include <cmath>
+#include <iostream>
+#include <random>
+
+#include <GL/gl3w.h> // To be sure
+#include <GLFW/glfw3.h>
+
+#include "VoxelTerrain.h"
+#include "Tank.h"
+#include "Camera.h"
 
 namespace tankwars {
 	Game::Game(Camera * camera, VoxelTerrain* ter)

@@ -2,6 +2,7 @@
 
 #include <array>
 
+#include <GL/gl3w.h> // To be sure
 #include <GLFW/glfw3.h>
 
 namespace tankwars {

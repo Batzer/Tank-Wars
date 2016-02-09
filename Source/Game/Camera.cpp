@@ -36,11 +36,6 @@ namespace tankwars {
         right = rotation * right;
     }
 
-	void Camera::rotatePos(float angle) {
-		(void) angle;
-		//ho do i rotaaaaate
-	}
-
     void Camera::setAxes(const glm::vec3& forward, const glm::vec3& up, const glm::vec3& right) {
         this->right = right;
         this->up = up;

@@ -1,5 +1,13 @@
 #include "ExplosionHandling.h"
 
+#include <algorithm>
+#include <cmath>
+
+#include "Renderer.h"
+#include "Tank.h"
+#include "Game.h"
+#include "GLTools.h"
+
 namespace tankwars {
     std::unique_ptr<ExplosionHandler> explosionHandler;
 
@@ -67,7 +75,7 @@ namespace tankwars {
 				p.velocity[2] -= val;
 			}
 			if (p.lifeTime > 4.f) {
-				p.color.a -= 0.4;
+				p.color.a -= 0.4f;
 				if (p.color.a < 0) {
 					p.isAlive = false;
 				}

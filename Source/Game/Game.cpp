@@ -64,8 +64,8 @@ namespace tankwars {
 
             if (joystickAvailable[i]) {
                 auto name = glfwGetJoystickName(GLFW_JOYSTICK_1 + i);
-                isXboxController[i] = (strcmp(name, XboxControllerName) == 0);
-                if (!disableXboxHack) isXboxController[i] = (i == 0); // HACK: Glfw sees no difference, so still hardcode controller 1 for xbox
+                //isXboxController[i] = (strcmp(name, XboxControllerName) == 0);
+                isXboxController[i] = !disableXboxHack ? (i == 0) : false; // HACK: Glfw sees no difference, so still hardcode controller 1 for xbox
                 std::cout << "Joystick " << (i + 1) << ": \"" << name << "\"\n";
 
                 joystickConfigs[i].Turn               = isXboxController[i] ? XBoxTurn : GenericTurn;

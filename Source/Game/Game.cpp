@@ -57,7 +57,7 @@ namespace tankwars {
 		spawnCoordinates[3] = btVector3(ter->getWidth() - spawnOffset, 0, spawnOffset);
     }
 
-	int Game::setupControllers() {
+	int Game::setupControllers(bool disableXboxHack) {
         // NOTE: Maybe map the functions to the keys, so that they are not hard-coded?
         for (int i = 0; i < 2; i++) {
             joystickAvailable[i] = glfwJoystickPresent(GLFW_JOYSTICK_1 + i);
@@ -65,7 +65,7 @@ namespace tankwars {
             if (joystickAvailable[i]) {
                 auto name = glfwGetJoystickName(GLFW_JOYSTICK_1 + i);
                 isXboxController[i] = (strcmp(name, XboxControllerName) == 0);
-                isXboxController[i] = (i == 0); // HACK: Glfw sees no difference, so still hardcode controller 1 for xbox
+                if (!disableXboxHack) isXboxController[i] = (i == 0); // HACK: Glfw sees no difference, so still hardcode controller 1 for xbox
                 std::cout << "Joystick " << (i + 1) << ": \"" << name << "\"\n";
 
                 joystickConfigs[i].Turn               = isXboxController[i] ? XBoxTurn : GenericTurn;

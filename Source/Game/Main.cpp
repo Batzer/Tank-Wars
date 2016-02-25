@@ -2,6 +2,7 @@
 #include <memory>
 #include <string>
 #include <cstring>
+#include <cstdlib>
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -43,8 +44,12 @@ void errorCallback(int error, const char* description) {
 
 int main(int argc, char* argv[]) {
     // Parse the command line arguments
+    // Example: tankwars -f -m my_level.png -j 1 0
     bool requestFullscreen = false;
     std::string mapName("good_level.png");
+    int playerOneController = 0;
+    int playerTwoController = 1;
+    bool disableXboxHack = false;
 
     for (int i = 0; i < argc; i++) {
         if (strcmp(argv[i], "-f") == 0) {
@@ -57,6 +62,18 @@ int main(int argc, char* argv[]) {
             }
 
             mapName = argv[i + 1];
+        }
+        else if (strcmp(argv[i], "-j") == 0) {
+            if (i + 2 >= argc) {
+                std::cerr << "No joystick indices specified!\n";
+                return -1;
+            }
+
+            playerOneController = atoi(argv[i + 1]);
+            playerTwoController = atoi(argv[i + 2]);
+        }
+        else if (strcmp(argv[i], "--noxbox") == 0) {
+            disableXboxHack = true;
         }
     }
 
@@ -162,9 +179,9 @@ int main(int argc, char* argv[]) {
     renderer.attachCamera(tankwars::Renderer::ViewportBottom, freeCam2);
     renderer.setSplitScreenEnabled(true);
 
-	game.setupControllers();
-	game.bindControllerToTank(0, &tank1);
-	game.bindControllerToTank(1, &tank2);
+	game.setupControllers(disableXboxHack);
+	game.bindControllerToTank(playerOneController, &tank1);
+	game.bindControllerToTank(playerTwoController, &tank2);
 	game.reset();
 
 	std::unique_ptr<btCollisionShape> groundShape(new btStaticPlaneShape(btVector3(0, 1, 0), 1));

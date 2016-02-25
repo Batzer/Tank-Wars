@@ -15,7 +15,7 @@ namespace tankwars {
 	public:
 		Game(Camera* camera, VoxelTerrain* ter);
 
-		int setupControllers();
+		int setupControllers(bool disableXboxHack);
 		void addCamera(Camera* camera);
 		void update(float dt);
 		void render();

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <memory>
+#include <string>
+#include <cstring>
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -39,11 +41,30 @@ void errorCallback(int error, const char* description) {
     std::cerr << description;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+    // Parse the command line arguments
+    bool requestFullscreen = false;
+    std::string mapName("good_level.png");
+
+    for (int i = 0; i < argc; i++) {
+        if (strcmp(argv[i], "-f") == 0) {
+            requestFullscreen = true;
+        }
+        else if (strcmp(argv[i], "-m") == 0) {
+            if (i + 1 >= argc) {
+                std::cerr << "No path to map specified!\n";
+                return -1;
+            }
+
+            mapName = argv[i + 1];
+        }
+    }
+
     // Init glfw
     glfwSetErrorCallback(&errorCallback);
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW3.\n";
+        return -1;
     }
 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -51,14 +72,30 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_SAMPLES, UseMsaa ? 4 : 1); // MSAA
     glfwWindowHint(GLFW_SRGB_CAPABLE, GL_TRUE);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
     // Create the window and GL context
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    GLFWwindow* window = glfwCreateWindow(ResolutionX, ResolutionY, WindowTitle,
-        GoFullscreen ? glfwGetPrimaryMonitor() : nullptr, nullptr);
+    GLFWwindow* window;
+    if (requestFullscreen) {
+        auto monitor = glfwGetPrimaryMonitor();
+        auto displayMode = glfwGetVideoMode(monitor);
+
+        glfwWindowHint(GLFW_RED_BITS, displayMode->redBits);
+        glfwWindowHint(GLFW_GREEN_BITS, displayMode->greenBits);
+        glfwWindowHint(GLFW_BLUE_BITS, displayMode->blueBits);
+        glfwWindowHint(GLFW_REFRESH_RATE, displayMode->refreshRate);
+    
+        window = glfwCreateWindow(displayMode->width, displayMode->height,
+                                  WindowTitle, monitor, nullptr);
+    }
+    else {
+        window = glfwCreateWindow(ResolutionX, ResolutionY, WindowTitle,
+                                  nullptr, nullptr);
+    }
 
     if (!window) {
         std::cerr << "Failed to create a window and context.\n";
+        return -1;
     }
 
     glfwMakeContextCurrent(window);
@@ -67,10 +104,12 @@ int main() {
     // Init the OpenGL function loader
     if (gl3wInit()) {
         std::cerr << "Failed to initialize GL3W.\n";
+        return -1;
     }
 
     if (!gl3wIsSupported(3, 3)) {
         std::cerr << "OpenGL 3.3 Core is not supported on this device.\n";
+        return -1;
     }
 
     // Init bullet physics
@@ -89,7 +128,7 @@ int main() {
     // Setup game stuff
     tankwars::Renderer renderer;
     tankwars::VoxelTerrain terrain2 = tankwars::VoxelTerrain::fromHeightMap(
-        "Content/Maps/good_level.png", dynamicsWorld.get(), 16, 8, 16, 8);
+        "Content/Maps/" + mapName, dynamicsWorld.get(), 16, 8, 16, 8);
     renderer.setTerrain(&terrain2);
 
     tankwars::SkyBox skyBox(

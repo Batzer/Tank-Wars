@@ -4,6 +4,8 @@
 #include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
 
+#include <random>
+
 namespace tankwars {
     class Camera;
     class Tank;
@@ -38,5 +40,9 @@ namespace tankwars {
 		float explosion_radius = 3;
 		btScalar lastPositionChange = .0f;
 		btScalar timeBetweenPositionChanges = 3.f;
+        
+        std::random_device randomDevice;
+        std::default_random_engine randomEngine;
+        std::uniform_int_distribution<int> uniformDist;
 	};
 }

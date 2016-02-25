@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include <iostream>
-#include <random>
 
 #include <GL/gl3w.h> // To be sure
 #include <GLFW/glfw3.h>
@@ -13,11 +12,13 @@
 
 namespace tankwars {
 	Game::Game(Camera * camera, VoxelTerrain* ter)
-            : camera(camera),terrain(ter) {
-		spawnCoordinates[0] = btVector3(spawnOffset,0, spawnOffset);
-		spawnCoordinates[1] = btVector3(spawnOffset,0,ter->getDepth()- spawnOffset);
-		spawnCoordinates[2] = btVector3(ter->getWidth()- spawnOffset,0, ter->getDepth() - spawnOffset);
-		spawnCoordinates[3] = btVector3(ter->getWidth() - spawnOffset,0,spawnOffset);
+            : camera(camera),terrain(ter),
+              randomEngine(randomDevice()),
+              uniformDist(0, 3) {
+		spawnCoordinates[0] = btVector3(spawnOffset, 0, spawnOffset);
+		spawnCoordinates[1] = btVector3(spawnOffset, 0, ter->getDepth() - spawnOffset);
+		spawnCoordinates[2] = btVector3(ter->getWidth() - spawnOffset, 0, ter->getDepth() - spawnOffset);
+		spawnCoordinates[3] = btVector3(ter->getWidth() - spawnOffset, 0, spawnOffset);
     }
 
 	int Game::setupControllers() {
@@ -35,23 +36,29 @@ namespace tankwars {
 		tanks[1]->reset(glm::vec3(spawnCoordinates[2].getX(), height, -spawnCoordinates[2].getZ()), glm::vec3(terrain->getWidth() / 2, 0, terrain->getDepth()));
 	}
 	void Game::tankGotHit(int index) {
-		tanks[1 ^ index]->addPoint();
+        auto tankIndex = 1 ^ index;
+		tanks[tankIndex]->addPoint();
+
 		int closestPointToEnemy = 0;
-		glm::vec3 posi(tanks[1 ^ index]->getPosition().x, tanks[1 ^ index]->getPosition().y, -tanks[1 ^ index]->getPosition().z);
-		for (int i = 0; i < 3; i++) {
-			if (!closer(spawnCoordinates[i], spawnCoordinates[i + 1],posi)) {
-				closestPointToEnemy = i + 1;
+        const auto& tankPos = tanks[tankIndex]->getPosition();
+		glm::vec3 pos(tankPos.x, tankPos.y, -tankPos.z);
+
+		for (int i = 1; i < 4; i++) {
+			if (closer(spawnCoordinates[i], spawnCoordinates[closestPointToEnemy], pos)) {
+				closestPointToEnemy = i;
 			}
 		}
-		std::random_device r;
-		std::default_random_engine e1(r());
-		std::uniform_int_distribution<int> uniform_dist(0, 2);
-		int mean = uniform_dist(e1);
-		if (mean >= closestPointToEnemy) {
-			mean++;
-		}
-		int height = static_cast<int>(getBestHeightFor(spawnCoordinates[mean]));
-		tanks[index]->reset(glm::vec3(spawnCoordinates[mean].getX(), height, -spawnCoordinates[mean].getZ()), glm::vec3(terrain->getWidth()/2,0,terrain->getDepth()));
+
+        int spawnIndex = uniformDist(randomEngine);
+        while (spawnIndex == closestPointToEnemy) {
+            spawnIndex = uniformDist(randomEngine);
+        }
+
+        const auto& spawnLocation = spawnCoordinates[spawnIndex];
+		int height = static_cast<int>(getBestHeightFor(spawnLocation));
+        glm::vec3 spawnPos(spawnLocation.getX(), height, -spawnLocation.getZ());
+        glm::vec3 lookAt(terrain->getWidth() / 2, height, -static_cast<float>(terrain->getDepth() / 2));
+		tanks[index]->reset(spawnPos, lookAt);
 	}
 	btScalar Game::getBestHeightFor(btVector3 pos) {
 		int height;

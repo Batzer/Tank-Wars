@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <cstring>
 
 #include <GL/gl3w.h> // To be sure
 #include <GLFW/glfw3.h>
@@ -9,6 +10,41 @@
 #include "VoxelTerrain.h"
 #include "Tank.h"
 #include "Camera.h"
+
+namespace {
+    // Super ugly, but define a preset for the XBox 360 Controller
+    // and another one that seems to work with most controllers that
+    // have a Playstation layout
+    constexpr int GenericTurn = 0;
+    constexpr int GenericRotateHead = 2;
+    constexpr int GenericRotateTurret = 3;
+    constexpr int GenericToggleShootingMode = 0;
+    constexpr int GenericShoot = 2;
+    constexpr int GenericBreak = 3;
+    constexpr int GenericDriveForward = 5;
+    constexpr int GenericDriveBackward = 4;
+    constexpr int GenericDecrPower = 6;
+    constexpr int GenericIncrPower = 7;
+    constexpr int GenericReset = 8;
+    constexpr int GenericZoomOut = 12;
+    constexpr int GenericZoomIn = 14;
+
+    constexpr int XBoxTurn = 0;
+    constexpr int XBoxRotateHead = 4;
+    constexpr int XBoxRotateTurret = 3;
+    constexpr int XBoxToggleShootingMode = 0;
+    constexpr int XBoxShoot = 2;
+    constexpr int XBoxBreak = 3;
+    constexpr int XBoxDriveForward = 5;
+    constexpr int XBoxDriveBackward = 4;
+    constexpr int XBoxDecrPower = 6;
+    constexpr int XBoxIncrPower = 7;
+    constexpr int XBoxReset = 8;
+    constexpr int XBoxZoomOut = 10;
+    constexpr int XBoxZoomIn = 12;
+
+    const char* XboxControllerName = "Microsoft PC-joystick driver";
+}
 
 namespace tankwars {
 	Game::Game(Camera * camera, VoxelTerrain* ter)
@@ -23,9 +59,31 @@ namespace tankwars {
 
 	int Game::setupControllers() {
         // NOTE: Maybe map the functions to the keys, so that they are not hard-coded?
-		joystickAvailable[0] = glfwJoystickPresent(GLFW_JOYSTICK_1);
-		joystickAvailable[1] = glfwJoystickPresent(GLFW_JOYSTICK_2);
-		std::cout << "Available joysticks: 1st-" << joystickAvailable[0] << " 2nd-" << joystickAvailable[1];
+        for (int i = 0; i < 2; i++) {
+            joystickAvailable[i] = glfwJoystickPresent(GLFW_JOYSTICK_1 + i);
+
+            if (joystickAvailable[i]) {
+                auto name = glfwGetJoystickName(GLFW_JOYSTICK_1 + i);
+                isXboxController[i] = (strcmp(name, XboxControllerName) == 0);
+                isXboxController[i] = (i == 0); // HACK: Glfw sees no difference, so still hardcode controller 1 for xbox
+                std::cout << "Joystick " << (i + 1) << ": \"" << name << "\"\n";
+
+                joystickConfigs[i].Turn               = isXboxController[i] ? XBoxTurn : GenericTurn;
+                joystickConfigs[i].RotateHead         = isXboxController[i] ? XBoxRotateHead : GenericRotateHead;
+                joystickConfigs[i].RotateTurret       = isXboxController[i] ? XBoxRotateTurret : GenericRotateTurret;
+                joystickConfigs[i].ToggleShootingMode = isXboxController[i] ? XBoxToggleShootingMode : GenericToggleShootingMode;
+                joystickConfigs[i].Shoot              = isXboxController[i] ? XBoxShoot : GenericShoot;
+                joystickConfigs[i].Break              = isXboxController[i] ? XBoxBreak : GenericBreak;
+                joystickConfigs[i].DriveForward       = isXboxController[i] ? XBoxDriveForward : GenericDriveForward;
+                joystickConfigs[i].DriveBackward      = isXboxController[i] ? XBoxDriveBackward : GenericDriveBackward;
+                joystickConfigs[i].DecrPower          = isXboxController[i] ? XBoxDecrPower : GenericDecrPower;
+                joystickConfigs[i].IncrPower          = isXboxController[i] ? XBoxIncrPower : GenericIncrPower;
+                joystickConfigs[i].Reset              = isXboxController[i] ? XBoxReset : GenericReset;
+                joystickConfigs[i].ZoomOut            = isXboxController[i] ? XBoxZoomOut : GenericZoomOut;
+                joystickConfigs[i].ZoomIn             = isXboxController[i] ? XBoxZoomIn : GenericZoomIn;
+            }
+        }
+
 		return joystickAvailable[0] + joystickAvailable[1];
 	}
 	void Game::reset() {
@@ -118,255 +176,48 @@ namespace tankwars {
 	void Game::controller(float dt) {
 		float movement_alpha = 1;
 		float rotation_alpha = 0.1f;
-		//name
-		//const char* name = glfwGetJoystickName(GLFW_JOYSTICK_1);
-		if (joystickAvailable[1]) {
-			//axis
-			int count;
-			const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_2, &count);
-			for (char i = 0; i < count; i++) {
-				switch (i) {
-				case 0:		//L-stick x-Axis
-					if (abs(axis[i]) > 0.2f) tanks[1]->turnController(axis[i]);
-                    else tanks[1]->turnController(0.0f);
-					break;
-				case 1:		//L-stick y-Axis
-					
-					break;
-				case 2:		//R-stick x-Axis
-                    if (abs(axis[i]) > 0.2f) tanks[1]->turnHeadAndTurretController(axis[i]);
-					break;
-				case 3:		//R-stick y-Axis
-                    if (abs(axis[i]) > 0.2f) tanks[1]->turnTurretController(axis[i]);
-					break;
-				}
-			}
-			//std::cout << axis[0] << "\t" << axis[1] << "\t" << axis[2] << "\t" << axis[3]<<"\n";
-			//buttons
-			count;
-			const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_2, &count);
-			for (char i = 0; i < count; i++) {
-				switch (i) {
-				case 0:
-					if (axes[i]) {
-						//std::cout << "|>" << "\n";
-						/*if (dt - lastPositionChange > timeBetweenPositionChanges) {
-							tankGotHit(1);
-							lastPositionChange = dt;
-						}*/
-						tanks[1]->toggleShootingMode(dt);
-					}
-					break;
-				case 1:
-					if (axes[i]) {
-						std::cout << "O" << "\n";
-						
-					}
-					break;
-				case 2:
-					if (axes[i]) {
-						//std::cout << "X" << "\n";
-						tanks[1]->shoot(dt);
-					}
-					break;
-				case 3:
-					if (axes[i]) {
-						//std::cout << "|_|" << "\n";
-						tanks[1]->breakController();
-					}
-					break;
-				case 4:
-					if (axes[i]) {
-						//std::cout << "L1" << "\n";
-						tanks[1]->driveController(false);
-					}
-					break;
-				case 5:
-					if (axes[i]) {
-						//std::cout << "R1" << "\n";
-						tanks[1]->driveController(true);
-					}
-					break;
-				case 6:
-					if (axes[i]) {
-						//std::cout << "L2" << "\n";
-						tanks[1]->adjustPower(false, dt);
-					}
-					break;
-				case 7:
-					if (axes[i]) {
-						//std::cout << "R2" << "\n";
-						tanks[1]->adjustPower(true, dt);
-					}
-					break;
 
-				case 8:
-					if (axes[i]) {
-						std::cout << "Select" << "\n";
-						glm::vec3 pos = tanks[1]->getPosition();
-						pos.y = getBestHeightFor2(btVector3(pos.x, pos.y, -pos.z));
-						tanks[1]->reset(pos, -tanks[1]->getDirectionVector());
-					}
-					break;
-				case 9:
-					if (axes[i]) {
-						std::cout << "Start" << "\n";
-					}
-					break;
-				case 10:
-					if (axes[i]) {
-						std::cout << "L3" << "\n";
-					}
-					break;
-				case 11:
-					if (axes[i]) {
-						std::cout << "R3" << "\n";
-					}
-					break;
+        for (int i = 0; i < 2; i++) {
+            if (!joystickAvailable[i]) {
+                continue;
+            }
 
-				case 12:
-					if (axes[i]) {
-						std::cout << "pad_up" << "\n";
-                        //camera->position += glm::vec3(0, 0, 1) * movement_alpha;
-						tanks[1]->moveCam(false,dt);
-					}
-					break;
-				case 13:
-					if (axes[i]) {
-						std::cout << "pad_right" << "\n";
-                        camera->position += glm::vec3(1, 0, 0) * movement_alpha;
-					}
-					break;
-				case 14:
-					if (axes[i]) {
-						std::cout << "pad_down" << "\n";
-                        //camera->position -= glm::vec3(0, 0, 1) * movement_alpha;
-						tanks[1]->moveCam(true, dt);
-					}
-					break;
-				case 15:
-					if (axes[i]) {
-						std::cout << "pad_left" << "\n";
-                        camera->position -= glm::vec3(1, 0, 0) * movement_alpha;
-					}
-					break;
-				default:
-					break;
-
-				}
-			}
-		}
-
-        // Settings are for the XBox 360 controller
-		if (joystickAvailable[0]) {
-            //axis
             int count;
-            const float* axis = glfwGetJoystickAxes(GLFW_JOYSTICK_1, &count);
-            for (char i = 0; i < count; i++) {
-                switch (i) {
-                case 0:
-                    if (abs(axis[i]) > 0.2f) tanks[0]->turnController(axis[i]);
-                    else tanks[0]->turnController(0.0f);
-                    break;
-                case 3:
-                    if (abs(axis[i]) > 0.2f) tanks[0]->turnTurretController(axis[i]);
-                    break;
-                case 4:
-                    if (abs(axis[i]) > 0.2f) tanks[0]->turnHeadAndTurretController(axis[i]);
-                    break;
-                }
+            auto axis = glfwGetJoystickAxes(GLFW_JOYSTICK_1 + i, &count);
+            auto buttons = glfwGetJoystickButtons(GLFW_JOYSTICK_1 + i, &count);
+
+            auto value = axis[joystickConfigs[i].Turn];
+            if (abs(value) > 0.2f) {
+                tanks[i]->turnController(value);
             }
-            
-            const unsigned char* axes = glfwGetJoystickButtons(GLFW_JOYSTICK_1, &count);
-            for (char i = 0; i < count; i++) {
-                switch (i) {
-                case 0:
-                    if (axes[i]) {
-                        tanks[0]->toggleShootingMode(dt);
-                    }
-                    break;
-                case 1:
-                    if (axes[i]) {
-                       
-                    }
-                    break;
-                case 2:
-                    if (axes[i]) {
-                        tanks[0]->shoot(dt);
-                    }
-                    break;
-                case 3:
-                    if (axes[i]) {
-                        tanks[0]->breakController();
-                    }
-                    break;
-                case 4:
-                    if (axes[i]) {
-                        tanks[0]->driveController(false);
-                    }
-                    break;
-                case 5:
-                    if (axes[i]) {
-                        tanks[0]->driveController(true);
-                    }
-                    break;
-                case 6:
-                    if (axes[i]) {
-                        tanks[0]->adjustPower(false, dt);
-                    }
-                    break;
-                case 7:
-                    if (axes[i]) {
-                        tanks[0]->adjustPower(true, dt);
-                    }
-                    break;
-
-                case 8:
-                    if (axes[i]) {
-                        glm::vec3 pos = tanks[0]->getPosition();
-                        pos.y = getBestHeightFor2(btVector3(pos.x, pos.y, -pos.z));
-                        tanks[0]->reset(pos, -tanks[0]->getDirectionVector());
-                    }
-                    break;
-                case 9:
-                    if (axes[i]) {
-                    }
-                    break;
-                case 10:
-                    if (axes[i]) {
-                        tanks[0]->moveCam(false, dt);
-                    }
-                    break;
-                case 11:
-                    if (axes[i]) {
-                    }
-                    break;
-
-                case 12:
-                    if (axes[i]) {
-                        tanks[0]->moveCam(true,dt);
-                    }
-                    break;
-                case 13:
-                    if (axes[i]) {
-                        camera->position += glm::vec3(1, 0, 0) * movement_alpha;
-                    }
-                    break;
-                case 14:
-                    if (axes[i]) {
-                        
-                    }
-                    break;
-                case 15:
-                    if (axes[i]) {
-                        camera->position -= glm::vec3(1, 0, 0) * movement_alpha;
-                    }
-                    break;
-                default:
-                    break;
-
-                }
+            else {
+                tanks[i]->turnController(0.0f);
             }
-		}
+
+            value = axis[joystickConfigs[i].RotateHead];
+            if (abs(value) > 0.2f) {
+                tanks[i]->turnHeadAndTurretController(value);
+            }
+
+            value = axis[joystickConfigs[i].RotateTurret];
+            if (abs(value) > 0.2f) {
+                tanks[i]->turnTurretController(value);
+            }
+
+            if (buttons[joystickConfigs[i].ToggleShootingMode]) tanks[i]->toggleShootingMode(dt);
+            if (buttons[joystickConfigs[i].Shoot])              tanks[i]->shoot(dt);
+            if (buttons[joystickConfigs[i].Break])              tanks[i]->breakController();
+            if (buttons[joystickConfigs[i].DriveBackward])      tanks[i]->driveController(false);
+            if (buttons[joystickConfigs[i].DriveForward])       tanks[i]->driveController(true);
+            if (buttons[joystickConfigs[i].DecrPower])          tanks[i]->adjustPower(false, dt);
+            if (buttons[joystickConfigs[i].IncrPower])          tanks[i]->adjustPower(true, dt);
+            if (buttons[joystickConfigs[i].ZoomOut])            tanks[i]->moveCam(false, dt);
+            if (buttons[joystickConfigs[i].ZoomIn])             tanks[i]->moveCam(true, dt);
+            if (buttons[joystickConfigs[i].Reset]) {
+                glm::vec3 pos = tanks[i]->getPosition();
+                pos.y = getBestHeightFor2(btVector3(pos.x, pos.y, -pos.z));
+                tanks[i]->reset(pos, -tanks[i]->getDirectionVector());
+            }      
+        }
 	}
 }

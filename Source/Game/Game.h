@@ -24,6 +24,22 @@ namespace tankwars {
 		void reset();
 
 	private:
+        struct JoystickConfig {
+            int Turn;
+            int RotateHead;
+            int RotateTurret;
+            int ToggleShootingMode;
+            int Shoot;
+            int Break;
+            int DriveForward;
+            int DriveBackward;
+            int DecrPower;
+            int IncrPower;
+            int Reset;
+            int ZoomOut;
+            int ZoomIn;
+        };
+
 		btScalar getBestHeightFor(btVector3 pos);
 		btScalar getBestHeightFor2(btVector3 pos);
 		bool isPlaneClear(btVector3 vec, int height);
@@ -44,5 +60,9 @@ namespace tankwars {
         std::random_device randomDevice;
         std::default_random_engine randomEngine;
         std::uniform_int_distribution<int> uniformDist;
+
+        // Hacks for controllers
+        bool isXboxController[2];
+        JoystickConfig joystickConfigs[2];
 	};
 }
